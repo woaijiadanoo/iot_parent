@@ -16,14 +16,23 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>1.8</java.version>
+        <iot.common.version>0.0.1-SNAPSHOT</iot.common.version>
     </properties>
 
     <modules>
-
+        <module>iot_user</module>
+        <module>iot_common</module>
     </modules>
     <!-- 类似于BOM形式进行依赖包的版本号管理 -->
     <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.ruyuan.jiangzh</groupId>
+                <artifactId>iot_common</artifactId>
+                <version>${iot.common.version}</version>
+            </dependency>
 
+        </dependencies>
     </dependencyManagement>
 
 </project>
