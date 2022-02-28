@@ -96,4 +96,10 @@ public class EntityGenerator {
 
     }
 
+    public static void main(String[] args) {
+        EntityGenerator entityGenerator = new EntityGenerator();
+        entityGenerator.entityGenerator();
+
+    }
+
 }
