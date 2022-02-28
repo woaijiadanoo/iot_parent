@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.iot.user;
+package com.ruyuan.jiangzh.iot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
