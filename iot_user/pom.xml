@@ -33,6 +33,10 @@
             <groupId>com.ruyuan.jiangzh</groupId>
             <artifactId>iot_common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ruyuan.jiangzh</groupId>
+            <artifactId>iot_service_sdk</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.dubbo</groupId>

@@ -17,6 +17,7 @@
     <properties>
         <java.version>1.8</java.version>
         <iot.common.version>0.0.1-SNAPSHOT</iot.common.version>
+        <iot.sdk.version>0.0.1-SNAPSHOT</iot.sdk.version>
 
         <dubbo.version>3.0.5</dubbo.version>
         <netty.version>4.1.65.Final</netty.version>
@@ -33,6 +34,7 @@
         <module>iot_user</module>
         <module>iot_gateway</module>
         <module>iot_common</module>
+        <module>iot_service_sdk</module>
     </modules>
     <!-- 类似于BOM形式进行依赖包的版本号管理 -->
     <dependencyManagement>
@@ -41,6 +43,11 @@
                 <groupId>com.ruyuan.jiangzh</groupId>
                 <artifactId>iot_common</artifactId>
                 <version>${iot.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ruyuan.jiangzh</groupId>
+                <artifactId>iot_service_sdk</artifactId>
+                <version>${iot.sdk.version}</version>
             </dependency>
 
             <dependency>

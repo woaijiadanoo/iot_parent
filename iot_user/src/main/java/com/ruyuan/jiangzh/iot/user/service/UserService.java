@@ -3,16 +3,17 @@ package com.ruyuan.jiangzh.iot.user.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.Gson;
 import com.ruyuan.jiangzh.iot.user.dao.entity.IotUser;
 import com.ruyuan.jiangzh.iot.user.dao.mapper.IotUserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ruyuan.jiangzh.service.sdk.UserServiceAPI;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService implements UserServiceAPI {
 
     @Resource
     private IotUserMapper iotUserMapper;
@@ -91,4 +92,10 @@ public class UserService {
         );
     }
 
+    @Override
+    public String getUserAll() {
+        List<IotUser> iotUsers = showXml();
+        String userJson = new Gson().toJson(iotUsers);
+        return userJson;
+    }
 }
