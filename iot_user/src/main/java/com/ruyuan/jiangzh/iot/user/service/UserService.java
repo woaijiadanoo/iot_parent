@@ -17,6 +17,15 @@ public class UserService {
     @Resource
     private IotUserMapper iotUserMapper;
 
+    public List<IotUser> showXml(){
+        List<IotUser> users = iotUserMapper.getAll();
+        users.stream().forEach(
+                System.out::println
+        );
+
+        return users;
+    }
+
     public void insert(){
         IotUser user = new IotUser();
 

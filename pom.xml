@@ -31,6 +31,7 @@
 
     <modules>
         <module>iot_user</module>
+        <module>iot_gateway</module>
         <module>iot_common</module>
     </modules>
     <!-- 类似于BOM形式进行依赖包的版本号管理 -->

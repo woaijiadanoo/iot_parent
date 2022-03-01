@@ -13,6 +13,8 @@ public class IotUserApplication {
 
         UserService userService = (UserService)context.getBean("userService");
 
+        userService.showXml();
+
 //        userService.insert();
 
 //        userService.query();
