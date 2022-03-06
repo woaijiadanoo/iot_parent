@@ -1,5 +1,7 @@
 package com.ruyuan.jiangzh.iot.base.web;
 
+import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
+
 /**
  *  公共的web返回对象
  * @param <M>
@@ -25,6 +27,7 @@ public class RespDTO<M>{
     public static<M> RespDTO success(){
         RespDTO dto = new RespDTO();
         dto.setCode(RespCodeEnum.SUCCESS.getCode());
+        dto.setRequestId(IoTStringUtils.requestId());
         dto.setMessage("");
         dto.setState("");
         dto.setData(null);
@@ -40,9 +43,58 @@ public class RespDTO<M>{
     public static<M> RespDTO success(M data){
         RespDTO dto = new RespDTO();
         dto.setCode(RespCodeEnum.SUCCESS.getCode());
+        dto.setRequestId(IoTStringUtils.requestId());
         dto.setMessage("");
         dto.setState("");
         dto.setData(data);
+
+        return dto;
+    }
+
+    /**
+     *  失败情况下的返回值 - 不携带state
+     * @param <M>
+     * @return
+     */
+    public static<M> RespDTO failture(int code,String message){
+        RespDTO dto = new RespDTO();
+        dto.setCode(code);
+        dto.setRequestId(IoTStringUtils.requestId());
+        dto.setMessage(message);
+        dto.setState("");
+        dto.setData(null);
+
+        return dto;
+    }
+
+    /**
+     *  失败情况下的返回值 - 不携带state
+     * @param <M>
+     * @return
+     */
+    public static<M> RespDTO systemFailture(Exception ex){
+        RespDTO dto = new RespDTO();
+        dto.setCode(RespCodeEnum.SYSTEM_ERROR.getCode());
+        dto.setRequestId(IoTStringUtils.requestId());
+        dto.setMessage(ex.getMessage());
+        dto.setState("");
+        dto.setData(null);
+
+        return dto;
+    }
+
+    /**
+     *  失败情况下的返回值 - 携带state
+     * @param <M>
+     * @return
+     */
+    public static<M> RespDTO failture(int code,String message,String state){
+        RespDTO dto = new RespDTO();
+        dto.setCode(code);
+        dto.setRequestId(IoTStringUtils.requestId());
+        dto.setMessage(state);
+        dto.setState("");
+        dto.setData(null);
 
         return dto;
     }
@@ -63,6 +115,11 @@ public class RespDTO<M>{
         this.data = data;
     }
 
+
+    private void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
     public int getCode() {
         return code;
     }
@@ -78,4 +135,9 @@ public class RespDTO<M>{
     public M getData() {
         return data;
     }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
 }
