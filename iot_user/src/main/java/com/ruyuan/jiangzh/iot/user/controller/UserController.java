@@ -1,6 +1,8 @@
 package com.ruyuan.jiangzh.iot.user.controller;
 
 import com.ruyuan.jiangzh.iot.base.exception.AppException;
+import com.ruyuan.jiangzh.iot.base.web.BaseController;
+import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
 import com.ruyuan.jiangzh.iot.user.dao.entity.IotUser;
 import com.ruyuan.jiangzh.iot.user.service.UserService;
@@ -15,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/user")
-public class UserController {
+public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
@@ -29,10 +31,11 @@ public class UserController {
         List<IotUser> iotUsers = userService.showXml();
 
         // 假装有传入一个username
-        String msgId = "username_is_null";
-        String username = "";
-        if(username.trim().length() == 0){
-//            throw new AppException(msgId);
+        String msgId = "user.username.ugly";
+        String username = "Allen";
+        Object[] params = new Object[]{username};
+        if(username.trim().length() >  0){
+            throw new AppException(RespCodeEnum.RESOURCE_NOT_EXISTS.getCode(), msgId,params);
         }
 
         return RespDTO.success(iotUsers);

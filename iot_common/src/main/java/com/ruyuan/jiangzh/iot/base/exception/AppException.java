@@ -1,6 +1,7 @@
 package com.ruyuan.jiangzh.iot.base.exception;
 
 import com.ruyuan.jiangzh.iot.base.message.MessageHelper;
+import com.ruyuan.jiangzh.iot.base.web.StateCodeEnum;
 
 public class AppException extends LogException{
 
@@ -19,21 +20,25 @@ public class AppException extends LogException{
     public AppException(int code,String msgId){
         super(msgId);
         this.code = code;
+        this.state = StateCodeEnum.getState(code);
     }
 
     public AppException(int code,String state,String msgId, Object[] params){
         this(code,msgId);
         this.params = params;
+        this.state = state;
     }
 
     public AppException(int code,String state,String msgId){
         super(msgId);
         this.code = code;
+        this.state = state;
     }
 
     public AppException(int code,String msgId, Object[] params){
         this(code,msgId);
         this.params = params;
+        this.state = StateCodeEnum.getState(code);
     }
 
     /**

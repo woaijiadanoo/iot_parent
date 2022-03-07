@@ -92,8 +92,8 @@ public class RespDTO<M>{
         RespDTO dto = new RespDTO();
         dto.setCode(code);
         dto.setRequestId(IoTStringUtils.requestId());
-        dto.setMessage(state);
-        dto.setState("");
+        dto.setMessage(message);
+        dto.setState(state);
         dto.setData(null);
 
         return dto;

@@ -28,6 +28,14 @@ public class ServiceLocator {
         return serviceLocator;
     }
 
+    /**
+     *  ServiceLocator实例的获取方式
+     * @return
+     */
+    public static ServiceLocator getInstance(){
+        return serviceLocator;
+    }
+
     private void setCtx(ApplicationContext ctx) {
         ServiceLocator.ctx = ctx;
     }
