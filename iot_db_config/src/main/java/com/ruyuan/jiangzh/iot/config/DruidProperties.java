@@ -14,7 +14,7 @@ public class DruidProperties {
 
     private String username = "root";
 
-    private String password = "123456";
+    private String password = "";
 
     private String driverClassName = "com.mysql.cj.jdbc.Driver";
 

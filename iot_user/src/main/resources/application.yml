@@ -1,6 +1,8 @@
 server:
   port: 8081
 
+filters:
+  traceId: true
 
 mybatis-plus:
   mapper-locations: classpath*:com/ruyuan/jiangzh/iot/user/**/xml/*Mapper.xml
@@ -13,7 +15,7 @@ spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/ruyuan_iot?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=UTC
     username: root
-    password: 123456
+    password:
     filters: log4j,wall,mergeStat
 
 
