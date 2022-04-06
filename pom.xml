@@ -38,6 +38,7 @@
         <module>iot_common</module>
         <module>iot_service_sdk</module>
         <module>iot_db_config</module>
+        <module>iot_ddd_demo</module>
     </modules>
     <!-- 类似于BOM形式进行依赖包的版本号管理 -->
     <dependencyManagement>
