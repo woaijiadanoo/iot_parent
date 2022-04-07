@@ -28,6 +28,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
         <!-- 非Spring依赖 -->
         <dependency>
             <groupId>com.ruyuan.jiangzh</groupId>

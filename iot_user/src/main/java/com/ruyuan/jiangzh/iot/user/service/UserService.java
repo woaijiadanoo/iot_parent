@@ -55,6 +55,15 @@ public class UserService implements UserServiceAPI {
         iotUserMapper.update(user, queryWrapper);
     }
 
+    public IotUser selectByName(String username){
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.like("user_name", username);
+
+        List<IotUser> list = iotUserMapper.selectList(queryWrapper);
+
+        return (list != null && list.size()>0) ? list.get(0) : null;
+    }
+
     public void delete(){
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.like("user_name", "天");
