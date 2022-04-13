@@ -30,6 +30,8 @@
         <log4j.version>1.2.17</log4j.version>
         <guava.version>31.0.1-jre</guava.version>
         <java.driver.core.version>4.10.0</java.driver.core.version>
+        <jjwt.version>0.9.0</jjwt.version>
+        <fastjson.version>1.2.60</fastjson.version>
     </properties>
 
     <modules>
@@ -125,6 +127,20 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+
+            <!-- JSON处理 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!-- JWT依赖 -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
             </dependency>
 
             <dependency>
