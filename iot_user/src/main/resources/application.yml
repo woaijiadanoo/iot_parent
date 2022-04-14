@@ -1,6 +1,8 @@
 server:
   port: 8081
 
+filters:
+  traceId: true
 
 mybatis-plus:
   mapper-locations: classpath*:com/ruyuan/jiangzh/iot/user/**/xml/*Mapper.xml

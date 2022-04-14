@@ -8,6 +8,11 @@ public class IoTStringUtils {
         1111-1111-111
      */
     public static String requestId(){
+        return ThreadLocalUtils.getRequestId();
+    }
+
+    // 生成requestId
+    public static String genRequestId(){
         return UUID.randomUUID().toString().replace("-","");
     }
 
