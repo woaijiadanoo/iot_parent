@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
+import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
+import com.ruyuan.jiangzh.iot.user.controller.UserDTO;
 import com.ruyuan.jiangzh.iot.user.dao.entity.IotUser;
 import com.ruyuan.jiangzh.iot.user.dao.mapper.IotUserMapper;
 import com.ruyuan.jiangzh.service.sdk.UserServiceAPI;
@@ -27,11 +29,12 @@ public class UserService implements UserServiceAPI {
         return users;
     }
 
-    public void insert(){
-        IotUser user = new IotUser();
+    public void insert(UserDTO userDTO){
 
-        user.setUuid("222");
-        user.setUserName("Allen");
+        IotUser user = new IotUser();
+        String uuid = UUIDHelper.fromTimeUUID(userDTO.getUserId().getId());
+        user.setUuid(uuid);
+        user.setUserName(userDTO.getUsername());
 
         iotUserMapper.insert(user);
 

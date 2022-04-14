@@ -1,6 +1,7 @@
 package com.ruyuan.jiangzh.iot.user.controller;
 
 import com.ruyuan.jiangzh.iot.base.exception.AppException;
+import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.web.BaseController;
 import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
@@ -50,6 +51,24 @@ public class UserController extends BaseController {
         }
 
         return RespDTO.success(iotUsers);
+    }
+
+    /*
+        创建用户， 之所以不用POST是为了演示方便
+        http://localhost:8081/api/user/saveUser?username=allen
+     */
+    @RequestMapping(value = "/saveUser",method = RequestMethod.GET)
+    public RespDTO saveUser(String username){
+        // 加入一个新的UUID生成规则
+        UserId userId = new UserId(UUIDHelper.genUuid());
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(userId);
+        userDTO.setUsername(username);
+
+        userService.insert(userDTO);
+
+        return RespDTO.success(userDTO);
     }
 
 }
