@@ -1,6 +1,9 @@
 server:
   port: 8082
 
+filters:
+  traceId: true
+  jwt: true
 
 logging:
   config: classpath:logback.xml
