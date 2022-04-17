@@ -18,6 +18,7 @@ public class JWTUtils {
     // 混淆字符串
     private String secretStr = "defaultSecret";
 
+    private static String jwtHeaderName = "jwt";
     /**
      *  生成 randomKey
      * @return
@@ -97,4 +98,7 @@ public class JWTUtils {
         return result;
     }
 
+    public static String getJwtHeaderName() {
+        return jwtHeaderName;
+    }
 }
