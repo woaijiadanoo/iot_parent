@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.iot.user.configs;
+package com.ruyuan.jiangzh.iot.user.infrastructure.configs;
 
 import com.ruyuan.jiangzh.iot.base.message.AppResourceBundleMessageSource;
 import org.springframework.context.MessageSource;
