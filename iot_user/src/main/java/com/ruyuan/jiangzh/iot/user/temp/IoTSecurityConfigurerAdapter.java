@@ -36,6 +36,8 @@ public class IoTSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     /*
         初始化ProcessingFilter
+
+        单独从paramter中获取用户名
      */
     @Bean
     public HeaderAuthenticationProcessingFilter headerAuthenticationProcessingFilter() throws Exception {
@@ -43,12 +45,27 @@ public class IoTSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
         HeaderAuthenticationPathRequestMatcher requestMatcher = new HeaderAuthenticationPathRequestMatcher(matchPath);
 
+
         HeaderAuthenticationProcessingFilter headerAuthenticationProcessingFilter = new HeaderAuthenticationProcessingFilter(requestMatcher);
 
         headerAuthenticationProcessingFilter.setAuthenticationManager(authenticationManagerBean());
 
         return headerAuthenticationProcessingFilter;
     }
+
+    // 配合JWTFilter一起使用的
+//    @Bean
+//    public HeaderAuthenticationProcessingJWTFilter headerAuthenticationProcessingFilter() throws Exception {
+//        List<String> matchPath = new ArrayList<>(Arrays.asList(SERVICE_API_AUTH_ENTER_POINT));
+//
+//        HeaderAuthenticationPathRequestMatcher requestMatcher = new HeaderAuthenticationPathRequestMatcher(matchPath);
+//
+//        HeaderAuthenticationProcessingJWTFilter headerAuthenticationProcessingFilter = new HeaderAuthenticationProcessingJWTFilter(requestMatcher);
+//
+//        headerAuthenticationProcessingFilter.setAuthenticationManager(authenticationManagerBean());
+//
+//        return headerAuthenticationProcessingFilter;
+//    }
 
     /*
        初始化authenticationManager
@@ -100,5 +117,6 @@ public class IoTSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedHandler(errorResponseHandler)
                 .and()
                 .addFilterBefore(headerAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+
     }
 }
