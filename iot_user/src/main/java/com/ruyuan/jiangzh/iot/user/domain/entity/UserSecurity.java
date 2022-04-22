@@ -10,29 +10,30 @@ import java.util.stream.Stream;
 
 public class UserSecurity extends UserEntity{
 
-    private AuthorityRole authorityRole;
-    private Collection<GrantedAuthority> authorities;
+    public UserSecurity(){}
 
-    public AuthorityRole getAuthorityRole() {
-        return authorityRole;
+    public UserSecurity(String username){
+        this.setUsername(username);
+        this.setAuthorityRole(AuthorityRole.DEFAULT_USER);
     }
 
-    public void setAuthorityRole(AuthorityRole authorityRole) {
-        this.authorityRole = authorityRole;
+    private Collection<GrantedAuthority> authorities;
+
+    public static Collection<GrantedAuthority> getDefaultAuthorities() {
+        Collection<GrantedAuthority> authorities = Stream.of(AuthorityRole.DEFAULT_USER)
+                .map(role -> new SimpleGrantedAuthority(role.name()))
+                .collect(Collectors.toList());
+        return authorities;
     }
 
     public Collection<GrantedAuthority> getAuthorities() {
-        if(authorityRole != null){
+        if(getAuthorityRole() != null){
             if(authorities == null){
-                authorities = Stream.of(authorityRole)
-                        .map(role -> new SimpleGrantedAuthority(authorityRole.name()))
+                authorities = Stream.of(getAuthorityRole())
+                        .map(role -> new SimpleGrantedAuthority(role.name()))
                         .collect(Collectors.toList());
             }
         }
         return authorities;
-    }
-
-    public void setAuthorities(Collection<GrantedAuthority> authorities) {
-        this.authorities = authorities;
     }
 }

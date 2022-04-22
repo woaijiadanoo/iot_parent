@@ -14,9 +14,4 @@
 
     <dubbo:registry address="zookeeper://localhost:2181" client="curator"/>
 
-    <dubbo:service
-            interface="com.ruyuan.jiangzh.service.sdk.UserServiceAPI"
-            ref="userService"
-    />
-
 </beans>

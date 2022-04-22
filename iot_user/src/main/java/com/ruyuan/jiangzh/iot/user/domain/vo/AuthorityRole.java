@@ -4,7 +4,8 @@ public enum AuthorityRole {
 
     SYS_ADMIN(0),
     TENANT_ADMIN(1),
-    USER(2);
+    USER(2),
+    DEFAULT_USER(3);
 
     private int code;
     AuthorityRole(int code){
