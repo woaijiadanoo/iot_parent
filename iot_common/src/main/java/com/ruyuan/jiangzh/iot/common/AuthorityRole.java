@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.iot.user.domain.vo;
+package com.ruyuan.jiangzh.iot.common;
 
 public enum AuthorityRole {
 

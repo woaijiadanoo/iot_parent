@@ -1,7 +1,7 @@
 package com.ruyuan.jiangzh.iot.user.temp;
 
 import com.ruyuan.jiangzh.iot.user.domain.entity.UserEntity;
-import com.ruyuan.jiangzh.iot.user.domain.entity.UserSecurity;
+import com.ruyuan.jiangzh.iot.user.domain.entity.SecurityUser;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +23,9 @@ public class HeaderAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        UserSecurity userSecurity = null;
-        if(authentication.getPrincipal() instanceof UserSecurity){
-            userSecurity =  (UserSecurity)authentication.getPrincipal();
+        SecurityUser userSecurity = null;
+        if(authentication.getPrincipal() instanceof SecurityUser){
+            userSecurity =  (SecurityUser)authentication.getPrincipal();
         }
 
         UserEntity userEntity = userRepository.describeUserByName(userSecurity.getUsername());

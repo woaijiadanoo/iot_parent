@@ -1,20 +1,20 @@
 package com.ruyuan.jiangzh.iot.user.temp;
 
-import com.ruyuan.jiangzh.iot.user.domain.entity.UserSecurity;
+import com.ruyuan.jiangzh.iot.user.domain.entity.SecurityUser;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 public class HeaderAuthenticationToken extends AbstractAuthenticationToken {
 
-    private UserSecurity userSecurity;
+    private SecurityUser userSecurity;
 
-    public HeaderAuthenticationToken(UserSecurity userSecurity) {
+    public HeaderAuthenticationToken(SecurityUser userSecurity) {
         super(userSecurity.getAuthorities());
         this.userSecurity = userSecurity;
     }
 
     public HeaderAuthenticationToken(String username) {
-        super(UserSecurity.getDefaultAuthorities());
-        userSecurity = new UserSecurity(username);
+        super(SecurityUser.getDefaultAuthorities());
+        userSecurity = new SecurityUser(username);
     }
 
     @Override

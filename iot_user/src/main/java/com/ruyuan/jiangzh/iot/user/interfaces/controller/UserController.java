@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.ruyuan.jiangzh.iot.base.exception.AppException;
 import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
-import com.ruyuan.jiangzh.iot.user.domain.entity.UserSecurity;
+import com.ruyuan.jiangzh.iot.user.domain.entity.SecurityUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -27,18 +27,18 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public RespDTO getUsers(){
 
-        UserSecurity currentUser = currentUser();
+        SecurityUser currentUser = currentUser();
 
         logger.info("currentUser : [{}]", new Gson().toJson(currentUser));
 
         return RespDTO.success();
     }
 
-    public UserSecurity currentUser(){
+    public SecurityUser currentUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserSecurity userSecurity = null;
-        if(authentication.getPrincipal() instanceof UserSecurity){
-            userSecurity = (UserSecurity)authentication.getPrincipal();
+        SecurityUser userSecurity = null;
+        if(authentication.getPrincipal() instanceof SecurityUser){
+            userSecurity = (SecurityUser)authentication.getPrincipal();
         }
         if(userSecurity == null){
             throw new AppException(RespCodeEnum.PERMISSION_DENIED.getCode() , "user.premission_denied");

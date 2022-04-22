@@ -1,7 +1,9 @@
 package com.ruyuan.jiangzh.service.sdk;
 
+import com.ruyuan.jiangzh.service.dto.SecurityUserDTO;
+
 public interface UserServiceAPI {
 
-    String getUserAll();
+    SecurityUserDTO describeUserByName(String username);
 
 }

@@ -1,6 +1,6 @@
 package com.ruyuan.jiangzh.iot.user.domain.entity;
 
-import com.ruyuan.jiangzh.iot.user.domain.vo.AuthorityRole;
+import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -8,11 +8,11 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class UserSecurity extends UserEntity{
+public class SecurityUser extends UserEntity{
 
-    public UserSecurity(){}
+    public SecurityUser(){}
 
-    public UserSecurity(String username){
+    public SecurityUser(String username){
         this.setUsername(username);
         this.setAuthorityRole(AuthorityRole.DEFAULT_USER);
     }

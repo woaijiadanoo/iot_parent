@@ -1,10 +1,10 @@
-package com.ruyuan.jiangzh.iot.user.domain.entity;
+package com.ruyuan.jiangzh.service.dto;
 
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 
 import java.util.UUID;
 
-public class UserEntity {
+public class SecurityUserDTO {
 
     private UUID tenantId;
     private UUID userId;

@@ -24,6 +24,13 @@
     <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.ruyuan.jiangzh</groupId>
+      <artifactId>iot_common</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
