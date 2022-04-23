@@ -1,6 +1,10 @@
-package com.ruyuan.jiangzh.iot.user.temp;
+package com.ruyuan.jiangzh.iot.user.infrastructure.configs;
 
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.UserRepository;
+import com.ruyuan.jiangzh.iot.user.infrastructure.auth.HeaderAuthenticationPathRequestMatcher;
+import com.ruyuan.jiangzh.iot.user.infrastructure.auth.HeaderAuthenticationProcessingFilter;
+import com.ruyuan.jiangzh.iot.user.infrastructure.auth.HeaderAuthenticationProvider;
+import com.ruyuan.jiangzh.iot.user.infrastructure.auth.IoTErrorResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;

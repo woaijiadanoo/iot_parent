@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.iot.user.temp;
+package com.ruyuan.jiangzh.iot.user.infrastructure.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;

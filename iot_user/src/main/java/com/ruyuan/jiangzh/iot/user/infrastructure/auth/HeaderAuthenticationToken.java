@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.iot.user.temp;
+package com.ruyuan.jiangzh.iot.user.infrastructure.auth;
 
 import com.ruyuan.jiangzh.iot.user.domain.entity.SecurityUser;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

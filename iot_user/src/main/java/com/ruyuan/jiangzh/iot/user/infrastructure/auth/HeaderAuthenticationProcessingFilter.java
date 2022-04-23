@@ -1,7 +1,8 @@
-package com.ruyuan.jiangzh.iot.user.temp;
+package com.ruyuan.jiangzh.iot.user.infrastructure.auth;
 
 import com.ruyuan.jiangzh.iot.base.enums.CommonEnums;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
+import com.ruyuan.jiangzh.iot.user.infrastructure.auth.HeaderAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -17,19 +18,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class HeaderAuthenticationProcessingJWTFilter extends AbstractAuthenticationProcessingFilter {
+public class HeaderAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected HeaderAuthenticationProcessingJWTFilter(RequestMatcher requestMatcher) {
+    public HeaderAuthenticationProcessingFilter(RequestMatcher requestMatcher) {
         super(requestMatcher);
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
-        String username = request.getAttribute(CommonEnums.USERNAME_HEADER.getName()) +"";
+        // 正式业务的时候。我们应该在header中获取
+//        String username = request.getHeader(CommonEnums.USERNAME_HEADER.getName());
+        // 为什么不用attribute，因为用postman不好演示attribute，所以我们用parameter
+        // 注意， 这里jwtFitler和authFilter不适配
+        String username = request.getParameter(CommonEnums.USERNAME_HEADER.getName());
 
-        logger.info("HeaderAuthenticationProcessingJWTFilter username : [{}]", username);
+        logger.info("HeaderAuthenticationProcessingFilter username : [{}]", username);
 
         if(!IoTStringUtils.isBlank(username)){
             HeaderAuthenticationToken authenticationToken = new HeaderAuthenticationToken(username);

@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.iot.user.temp;
+package com.ruyuan.jiangzh.iot.user.infrastructure.auth;
 
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
