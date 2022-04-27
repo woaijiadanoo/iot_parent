@@ -16,7 +16,6 @@
 
     <dubbo:service
             interface="com.ruyuan.jiangzh.service.sdk.UserServiceAPI"
-            ref="userService"
-    />
+                   ref="userServiceImpl" />
 
 </beans>
