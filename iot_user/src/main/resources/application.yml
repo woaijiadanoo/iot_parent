@@ -3,7 +3,7 @@ server:
 
 filters:
   traceId: true
-  jwt: true
+  jwt: false
 
 mybatis-plus:
   mapper-locations: classpath*:com/ruyuan/jiangzh/iot/user/**/xml/*Mapper.xml

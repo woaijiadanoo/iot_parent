@@ -1,6 +1,8 @@
 package com.ruyuan.jiangzh.iot.user.domain.entity;
 
 import com.ruyuan.jiangzh.iot.base.uuid.CreateTimeIdBase;
+import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
+import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.po.TenantPO;
 import com.ruyuan.jiangzh.iot.user.domain.vo.TenantId;
 
 import java.io.Serializable;
@@ -16,6 +18,24 @@ public class Tenant extends CreateTimeIdBase implements Serializable {
 
     public Tenant(TenantId id){
         super(id);
+    }
+
+    public static TenantPO transToPo(Tenant tenant){
+        TenantPO tenantPO = new TenantPO();
+        tenantPO.setUuid(UUIDHelper.fromTimeUUID(tenant.getId().getUuid()));
+        tenantPO.setName(tenant.getName());
+        tenantPO.setEmail(tenant.getEmail());
+        tenantPO.setPhone(tenant.getPhone());
+        return tenantPO;
+    }
+
+    public static Tenant transToEntity(TenantPO tenantPO){
+        TenantId tenantId = new TenantId(UUIDHelper.fromStringId(tenantPO.getUuid()));
+        Tenant tenant = new Tenant(tenantId);
+        tenant.setName(tenantPO.getName());
+        tenant.setPhone(tenantPO.getPhone());
+        tenant.setEmail(tenantPO.getEmail());
+        return tenant;
     }
 
     public String getEmail() {

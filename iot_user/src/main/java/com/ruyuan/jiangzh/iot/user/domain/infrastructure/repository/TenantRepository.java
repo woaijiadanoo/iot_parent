@@ -3,6 +3,7 @@ package com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruyuan.jiangzh.iot.user.domain.entity.Tenant;
+import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.po.TenantPO;
 import com.ruyuan.jiangzh.iot.user.domain.vo.TenantId;
 
 public interface TenantRepository {
@@ -17,6 +18,6 @@ public interface TenantRepository {
     boolean delTenant(TenantId tenantId);
 
     // 列表查询
-    IPage<Tenant> tenants(IPage<Tenant> page, Wrapper<Tenant> queryWrapper);
+    IPage<TenantPO> tenants(IPage<TenantPO> page, Wrapper<TenantPO> queryWrapper);
 
 }
