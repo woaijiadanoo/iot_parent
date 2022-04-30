@@ -36,6 +36,10 @@ public class TenantRepositoryImpl implements TenantRepository {
 
     @Override
     public Tenant saveTenant(Tenant tenant) {
+        // 生成TenantId
+        TenantId tenantId = new TenantId(UUIDHelper.genUuid());
+        tenant.setId(tenantId);
+
         TenantPO tenantPO = Tenant.transToPo(tenant);
         tenantMapper.insert(tenantPO);
 

@@ -14,6 +14,10 @@ public abstract class EntityIdBase<I extends UUIDBased> implements Serializable 
         this.id = id;
     }
 
+    public void setId(I id) {
+        this.id = id;
+    }
+
     public I getId() {
         return id;
     }

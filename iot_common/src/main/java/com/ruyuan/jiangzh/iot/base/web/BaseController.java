@@ -50,7 +50,7 @@ public class BaseController {
 
     // 参数校验，尤其是非空验证
     // param_1：待校验的参数，param_2: msgId
-    protected  void checkParamter(String param, String msgId){
+    protected  void checkParameter(String param, String msgId){
         if (IoTStringUtils.isBlank(param)) {
             throw new AppException(RespCodeEnum.PARAM_IS_NULL.getCode(), msgId);
         }

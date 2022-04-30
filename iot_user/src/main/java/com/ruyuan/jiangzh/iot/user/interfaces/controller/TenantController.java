@@ -1,12 +1,10 @@
 package com.ruyuan.jiangzh.iot.user.interfaces.controller;
 
 import com.ruyuan.jiangzh.iot.base.exception.AppException;
-import com.ruyuan.jiangzh.iot.base.uuid.UUIDBased;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.web.BaseController;
 import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
-import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.user.domain.entity.SecurityUser;
 import com.ruyuan.jiangzh.iot.user.domain.entity.Tenant;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.TenantRepository;
@@ -17,12 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.UUID;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -38,6 +31,56 @@ public class TenantController  extends BaseController {
     private static final String PREMISSION_DENIED = "user.premission_denied";
 
     /*
+        http://localhost:8081/api/v1/tenant?ruyuan_name=jiangzh
+        {
+            "email":"jz01@gmail.com",
+            "phone":"13822222222",
+            "name":"jz01"
+        }
+     */
+    @RequestMapping(value = "/tenant", method = RequestMethod.POST)
+    public RespDTO saveTenant(@RequestBody Tenant tenant){
+        try {
+            // save本身代表了新增或者修改
+            boolean newTenant = tenant.getId() == null;
+            if(newTenant){
+                // 这里是新增
+                Tenant result = tenantRepository.saveTenant(tenant);
+                return RespDTO.success(checkNotNull(result));
+            }else{
+                // TODO , 这里是修改
+                return RespDTO.success();
+            }
+        } catch (Exception e){
+            // 报警并记录日志
+            logger.error("saveTenant error:[{}]", e.getMessage());
+            // 封装成自定义异常
+            return RespDTO.systemFailture(e);
+        }
+    }
+
+    /*
+        http://localhost:8081/api/v1/tenant/073d0ca0-c7cc-11ec-99ce-614a2c1ca286?ruyuan_name=jiangzh
+     */
+    @RequestMapping(value = "/tenant/{tenantId}", method = RequestMethod.DELETE)
+    public RespDTO deleteTenant(@PathVariable("tenantId") String tenantIdStr){
+        checkParameter(tenantIdStr, PARAMTER_IS_NULL_MSG_ID);
+        try {
+            TenantId tenantId = new TenantId(toUUID(tenantIdStr));
+            if(tenantRepository.delTenant(tenantId)){
+                return RespDTO.success();
+            }else{
+                return RespDTO.failture(RespCodeEnum.DELETE_FAILTURE.getCode(), "tenant.delete_failture");
+            }
+        } catch (Exception e){
+            // 报警并记录日志
+            logger.error("deleteTenant error:[{}]", e.getMessage());
+            // 封装成自定义异常
+            return RespDTO.systemFailture(e);
+        }
+    }
+
+    /*
         http://localhost:8081/api/v1/tenant/073d0ca0-c7cc-11ec-99ce-614a2c1ca286?ruyuan_name=jiangzh
      */
     @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN')")
@@ -45,7 +88,7 @@ public class TenantController  extends BaseController {
     public RespDTO getTenantById(@PathVariable("tenantId") String tenantIdStr){
         // 参数校验，尤其是非空验证
         // param_1：待校验的参数，param_2: msgId
-        checkParamter(tenantIdStr, PARAMTER_IS_NULL_MSG_ID);
+        checkParameter(tenantIdStr, PARAMTER_IS_NULL_MSG_ID);
         try {
             // toUUID就是将字符串转换为UUID
             TenantId tenantId = new TenantId(toUUID(tenantIdStr));
