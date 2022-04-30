@@ -12,7 +12,7 @@ public class UserRepositoryImpl implements UserRepository {
     public UserEntity describeUserByName(String username) {
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(username);
-        userEntity.setAuthorityRole(AuthorityRole.USER);
+        userEntity.setAuthorityRole(AuthorityRole.TENANT_ADMIN);
 
         return userEntity;
     }
