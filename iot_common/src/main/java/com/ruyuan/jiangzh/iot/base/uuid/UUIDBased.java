@@ -19,7 +19,7 @@ public abstract class UUIDBased implements Serializable {
         this.uuid = uuid;
     }
 
-    public UUID getId(){
+    public UUID getUuid(){
         return uuid;
     }
 
