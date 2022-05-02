@@ -9,6 +9,8 @@ public class SecurityUserDTO {
     private UUID tenantId;
     private UUID userId;
     private String username;
+    private String email;
+    private String phone;
     private AuthorityRole authorityRole;
 
     public UUID getTenantId() {
@@ -41,5 +43,21 @@ public class SecurityUserDTO {
 
     public void setAuthorityRole(AuthorityRole authorityRole) {
         this.authorityRole = authorityRole;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
