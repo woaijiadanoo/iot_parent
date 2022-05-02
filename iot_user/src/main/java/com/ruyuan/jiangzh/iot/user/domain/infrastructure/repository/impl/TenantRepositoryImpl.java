@@ -3,7 +3,9 @@ package com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
+import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.user.domain.entity.Tenant;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.TenantRepository;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.impl.mapper.TenantMapper;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class TenantRepositoryImpl implements TenantRepository {
@@ -58,9 +62,41 @@ public class TenantRepositoryImpl implements TenantRepository {
     }
 
     @Override
-    public IPage<TenantPO> tenants(IPage<TenantPO> page, Wrapper<TenantPO> queryWrapper) {
-        IPage<TenantPO> iPage = tenantMapper.selectPage(page, queryWrapper);
-        return iPage;
+    public PageDTO<Tenant> tenants(PageDTO<Tenant> page) {
+       // 要组织mybatis-plus需要的请求数据
+        IPage<TenantPO> input = new Page<>(page.getNowPage(), page.getPageSize());
+        QueryWrapper queryWrapper = null;
+        if(page.getConditions().size() > 0){
+            queryWrapper = new QueryWrapper();
+            Set<String> keys = page.getConditions().keySet();
+            for(String key : keys){
+                // 给queryWrapper填充条件信息
+                spellCondition(queryWrapper, key, page.getConditions().get(key));
+            }
+        }
+
+        IPage output = tenantMapper.selectPage(input, queryWrapper);
+        List<TenantPO> records = output.getRecords();
+
+        // 转换为领域实体
+        List<Tenant> result = records.stream().map(po -> new Tenant(po)).collect(Collectors.toList());
+
+        // 组织返回对象
+        page.setResult(output.getTotal(), output.getPages(), result);
+
+        return page;
     }
+
+    private void spellCondition(QueryWrapper queryWrapper, String fieldName, Object fieldValue){
+        // 也可以用switch，自行决定就好
+        if("email".equalsIgnoreCase(fieldName)){
+            if(fieldValue != null){
+                queryWrapper.like("email", fieldValue);
+            }
+        }else if("phone".equalsIgnoreCase(fieldName)){
+            queryWrapper.eq("phone", fieldValue);
+        }
+    }
+
 
 }

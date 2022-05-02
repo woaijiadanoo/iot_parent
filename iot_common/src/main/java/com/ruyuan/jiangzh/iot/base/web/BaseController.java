@@ -56,5 +56,11 @@ public class BaseController {
         }
     }
 
+    // 给PageDTO传入条件参数
+    protected void spellCondition(PageDTO pageDTO, String fieldName, Object fieldValue){
+        if(fieldValue != null){
+            pageDTO.spellCondition(fieldName, fieldValue);
+        }
+    }
 
 }

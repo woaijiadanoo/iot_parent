@@ -3,8 +3,10 @@ package com.ruyuan.jiangzh.iot.user.interfaces.controller;
 import com.ruyuan.jiangzh.iot.base.exception.AppException;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.web.BaseController;
+import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
+import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.user.domain.entity.SecurityUser;
 import com.ruyuan.jiangzh.iot.user.domain.entity.Tenant;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.TenantRepository;
@@ -38,6 +40,7 @@ public class TenantController  extends BaseController {
             "name":"jz01"
         }
      */
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN')")
     @RequestMapping(value = "/tenant", method = RequestMethod.POST)
     public RespDTO saveTenant(@RequestBody Tenant tenant){
         try {
@@ -62,6 +65,7 @@ public class TenantController  extends BaseController {
     /*
         http://localhost:8081/api/v1/tenant/073d0ca0-c7cc-11ec-99ce-614a2c1ca286?ruyuan_name=jiangzh
      */
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN')")
     @RequestMapping(value = "/tenant/{tenantId}", method = RequestMethod.DELETE)
     public RespDTO deleteTenant(@PathVariable("tenantId") String tenantIdStr){
         checkParameter(tenantIdStr, PARAMTER_IS_NULL_MSG_ID);
@@ -104,6 +108,39 @@ public class TenantController  extends BaseController {
             // 封装成自定义异常
             return RespDTO.systemFailture(e);
         }
+    }
+
+    /*
+        http://localhost:8081/api/v1/tenants?ruyuan_name=jiangzh
+        http://localhost:8081/api/v1/tenants?ruyuan_name=jiangzh&pageSize=5
+        http://localhost:8081/api/v1/tenants?ruyuan_name=jiangzh&nowPage=2&pageSize=5
+        http://localhost:8081/api/v1/tenants?ruyuan_name=jiangzh&nowPage=2&pageSize=5&email=gmail
+        http://localhost:8081/api/v1/tenants?ruyuan_name=jiangzh&nowPage=2&pageSize=5&email=gmail&phone=13866666666
+     */
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN')")
+    @RequestMapping(value = "/tenants", method = RequestMethod.GET)
+    public RespDTO tenants(
+            @RequestParam(name = "nowPage", required = false, defaultValue = "1") long nowPage,
+            @RequestParam(name = "pageSize", required = false, defaultValue = "10") long pageSize,
+            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(name = "phone", required = false) String phone){
+        try {
+            // 组织page对象
+            PageDTO<Tenant> pageDTO = new PageDTO<>(nowPage,pageSize);
+            spellCondition(pageDTO,"email", email);
+            spellCondition(pageDTO,"phone", phone);
+
+            // 请求业务数据返回值
+            PageDTO<Tenant> tenants = tenantRepository.tenants(pageDTO);
+
+            return RespDTO.success(tenants);
+        } catch (Exception e){
+            // 报警并记录日志
+            logger.error("tenants error:[{}]", e.getMessage());
+            // 封装成自定义异常
+            return RespDTO.systemFailture(e);
+        }
+
     }
 
     // 检查TenantId的合法性
