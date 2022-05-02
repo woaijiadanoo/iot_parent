@@ -34,7 +34,7 @@ public class EntityGenerator {
 
     static{
         tableNames = new String[]{
-                "tenant"
+                "user"
         };
     }
 

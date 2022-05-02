@@ -7,7 +7,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.util.UUID;
 
-public class UserId extends UUIDBased {
+public class UserId  extends UUIDBased {
 
     @JsonCreator
     public UserId(UUID id){
