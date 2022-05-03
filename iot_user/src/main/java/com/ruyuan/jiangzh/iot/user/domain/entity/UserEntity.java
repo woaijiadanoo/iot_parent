@@ -10,7 +10,7 @@ import com.ruyuan.jiangzh.iot.user.domain.vo.UserId;
 
 import java.io.Serializable;
 
-public class UserEntity extends CreateTimeIdBase implements Serializable {
+public class UserEntity extends CreateTimeIdBase<UserId> implements Serializable {
 
     private TenantId tenantId;
     private String username;

@@ -3,7 +3,7 @@ package com.ruyuan.jiangzh.iot.base.uuid;
 import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class CreateTimeIdBase<I extends UUIDBased> extends EntityIdBase implements Serializable {
+public abstract class CreateTimeIdBase<I extends UUIDBased> extends EntityIdBase<I> implements Serializable {
 
     private long createTime;
 
