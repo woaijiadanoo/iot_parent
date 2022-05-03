@@ -45,7 +45,7 @@ public class BaseController {
 
     // toUUID就是将字符串转换为UUID
     protected UUID toUUID(String uuidStr){
-        return UUID.fromString(uuidStr);
+        return IoTStringUtils.toUUID(uuidStr);
     }
 
     // 参数校验，尤其是非空验证
