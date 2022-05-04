@@ -19,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -48,8 +45,7 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public RespDTO saveUser(@RequestBody UserDTO userDTO){
         try {
-            UserUtils userUtils = new UserUtils();
-            SecurityUser currentUser = userUtils.getCurrentUser();
+            SecurityUser currentUser = currentUser();
 
             boolean newUser = userDTO.getUserId() == null ? true : false;
             // 待保存的Entity
@@ -76,6 +72,32 @@ public class UserController extends BaseController {
     }
 
     /*
+        http://localhost:8081/api/v1/user/940f0e60-c8a0-11ec-989e-8b76480d43cf?ruyuan_name=ruyuan_00
+     */
+    @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
+    public RespDTO findUserById(@PathVariable("userId") String userIdStr){
+        // 获取当前用户
+//        SecurityUser currentUser = currentUser();
+        // 查询待查看的用户
+        UserEntity user = userRepository.findUserById(new UserId(toUUID(userIdStr)));
+        // 判断是不是同一个tenant，如果是则返回，如果不是则返回空
+
+        return RespDTO.success(user);
+    }
+
+    /*
+        http://localhost:8081/api/v1/user/940f0e60-c8a0-11ec-989e-8b76480d43cf?ruyuan_name=ruyuan_00
+     */
+    @RequestMapping(value = "/user/{userId}", method = RequestMethod.DELETE)
+    public RespDTO delUser(@PathVariable("userId") String userIdStr){
+        UserId userId = new UserId(toUUID(userIdStr));
+        userRepository.delUser(userId);
+
+        return RespDTO.success();
+    }
+
+
+    /*
         http://localhost:8081/api/users?ruyuan_name=ruyuan_00
      */
     @RequestMapping(value = "/users", method = RequestMethod.GET)
@@ -88,6 +110,13 @@ public class UserController extends BaseController {
         UserEntity userById = userRepository.findUserById(userId);
 
         return RespDTO.success(userById);
+    }
+
+    private SecurityUser currentUser(){
+        UserUtils userUtils = new UserUtils();
+        SecurityUser currentUser = userUtils.getCurrentUser();
+
+        return currentUser;
     }
 
 }
