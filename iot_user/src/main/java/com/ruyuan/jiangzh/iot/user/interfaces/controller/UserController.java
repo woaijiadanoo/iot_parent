@@ -3,6 +3,7 @@ package com.ruyuan.jiangzh.iot.user.interfaces.controller;
 import com.google.gson.Gson;
 import com.ruyuan.jiangzh.iot.base.exception.AppException;
 import com.ruyuan.jiangzh.iot.base.web.BaseController;
+import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
@@ -45,7 +46,8 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public RespDTO saveUser(@RequestBody UserDTO userDTO){
         try {
-            SecurityUser currentUser = currentUser();
+            UserUtils userUtils = new UserUtils();
+            SecurityUser currentUser = userUtils.getCurrentUser();
 
             boolean newUser = userDTO.getUserId() == null ? true : false;
             // 待保存的Entity
@@ -74,15 +76,22 @@ public class UserController extends BaseController {
     /*
         http://localhost:8081/api/v1/user/940f0e60-c8a0-11ec-989e-8b76480d43cf?ruyuan_name=ruyuan_00
      */
+    /*
+            {
+                "code": 404,
+                "requestId": "a1da472947864b11b5d26503516d378b",
+                "message": "resource is empty",
+                "state": "resource_not_exists",
+                "data": null
+            }
+     */
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
     public RespDTO findUserById(@PathVariable("userId") String userIdStr){
-        // 获取当前用户
-//        SecurityUser currentUser = currentUser();
-        // 查询待查看的用户
-        UserEntity user = userRepository.findUserById(new UserId(toUUID(userIdStr)));
-        // 判断是不是同一个tenant，如果是则返回，如果不是则返回空
+        UserId  userId = new UserId(toUUID(userIdStr));
 
-        return RespDTO.success(user);
+        UserEntity userById = userRepository.findUserById(userId);
+
+        return RespDTO.success(checkNotNull(userById));
     }
 
     /*
@@ -90,33 +99,49 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.DELETE)
     public RespDTO delUser(@PathVariable("userId") String userIdStr){
-        UserId userId = new UserId(toUUID(userIdStr));
+        UserId  userId = new UserId(toUUID(userIdStr));
+
         userRepository.delUser(userId);
 
         return RespDTO.success();
     }
 
-
     /*
-        http://localhost:8081/api/users?ruyuan_name=ruyuan_00
+        http://localhost:8081/api/v1/users?ruyuan_name=ruyuan_00
      */
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public RespDTO getUsers(){
+    public RespDTO getUsers(
+            @RequestParam(name = "nowPage", required = false, defaultValue = "1") long nowPage,
+            @RequestParam(name = "pageSize", required = false, defaultValue = "10") long pageSize,
+            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(name = "phone", required = false) String phone){
 
-//        SecurityUser currentUser = currentUser();
-//        logger.info("currentUser : [{}]", new Gson().toJson(currentUser));
+        PageDTO<UserEntity> pageDTO = new PageDTO<>(nowPage, pageSize);
+        spellCondition(pageDTO,"email", email);
+        spellCondition(pageDTO,"phone", phone);
 
-        UserId userId = new UserId(toUUID("940f0e60-c8a0-11ec-989e-8b76480d43cf"));
-        UserEntity userById = userRepository.findUserById(userId);
+        PageDTO<UserEntity> users = userRepository.users(pageDTO);
 
-        return RespDTO.success(userById);
+        return RespDTO.success(users);
     }
 
-    private SecurityUser currentUser(){
-        UserUtils userUtils = new UserUtils();
-        SecurityUser currentUser = userUtils.getCurrentUser();
+    /*
+    http://localhost:8081/api/v1/admins?ruyuan_name=ruyuan_00
+ */
+    @RequestMapping(value = "/admins", method = RequestMethod.GET)
+    public RespDTO tenantAdmins(
+            @RequestParam(name = "nowPage", required = false, defaultValue = "1") long nowPage,
+            @RequestParam(name = "pageSize", required = false, defaultValue = "10") long pageSize,
+            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(name = "phone", required = false) String phone){
 
-        return currentUser;
+        PageDTO<UserEntity> pageDTO = new PageDTO<>(nowPage, pageSize);
+        spellCondition(pageDTO,"email", email);
+        spellCondition(pageDTO,"phone", phone);
+
+        PageDTO<UserEntity> users = userRepository.findTenantAdmins(pageDTO);
+
+        return RespDTO.success(users);
     }
 
 }
