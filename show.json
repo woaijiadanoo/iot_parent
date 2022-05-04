@@ -1,0 +1,44 @@
+{
+  "code": 200,
+  "requestId": "d79ecbface7b402cbc5ab08184cdef74",
+  "message": "",
+  "state": "",
+  "data": {
+    "nowPage": 1,
+    "pageSize": 10,
+    "totals": 2,
+    "totalPages": 1,
+    "records": [
+      {
+        "id": {
+          "uuid": "f20cc080-c89f-11ec-989e-8b76480d43cf",
+          "entityType": "USER"
+        },
+        "createTime": 1651334982792,
+        "tenantId": {
+          "uuid": "f20cc080-c89f-11ec-989e-8b76480d43cf",
+          "entityType": "TENANT"
+        },
+        "username": "ruyuan_00",
+        "authorityRole": "TENANT_ADMIN",
+        "email": "ruyuan_00@gmail.com",
+        "phone": "13800000000"
+      },
+      {
+        "id": {
+          "uuid": "d63c64d0-cae0-11ec-9b37-81865c447f52",
+          "entityType": "USER"
+        },
+        "createTime": 1651582755741,
+        "tenantId": {
+          "uuid": "f20cc080-c89f-11ec-989e-8b76480d43cf",
+          "entityType": "TENANT"
+        },
+        "username": "ruyuan_02",
+        "authorityRole": "USER",
+        "email": "ruyuan_02@gmail.com",
+        "phone": "13822222222"
+      }
+    ]
+  }
+}

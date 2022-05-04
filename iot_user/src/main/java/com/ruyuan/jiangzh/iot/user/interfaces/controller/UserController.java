@@ -8,6 +8,7 @@ import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
+import com.ruyuan.jiangzh.iot.user.application.appservice.UserAppService;
 import com.ruyuan.jiangzh.iot.user.domain.entity.SecurityUser;
 import com.ruyuan.jiangzh.iot.user.domain.entity.UserEntity;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.UserRepository;
@@ -22,6 +23,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+/*
+    TODO 将返回值里的UserEntity 转换为 UserDTO做返回，体会一下非贫血模型的转换，并且相互讨论
+ */
 @RestController
 @RequestMapping(value = "/api/v1")
 public class UserController extends BaseController {
@@ -32,6 +36,8 @@ public class UserController extends BaseController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserAppService userAppService;
     /*
         http://localhost:8081/api/v1/user?ruyuan_name=ruyuan_00
 
@@ -89,7 +95,7 @@ public class UserController extends BaseController {
     public RespDTO findUserById(@PathVariable("userId") String userIdStr){
         UserId  userId = new UserId(toUUID(userIdStr));
 
-        UserEntity userById = userRepository.findUserById(userId);
+        UserEntity userById = userAppService.findUserById(userId);
 
         return RespDTO.success(checkNotNull(userById));
     }
@@ -101,7 +107,7 @@ public class UserController extends BaseController {
     public RespDTO delUser(@PathVariable("userId") String userIdStr){
         UserId  userId = new UserId(toUUID(userIdStr));
 
-        userRepository.delUser(userId);
+        userAppService.delUser(userId);
 
         return RespDTO.success();
     }
@@ -120,7 +126,7 @@ public class UserController extends BaseController {
         spellCondition(pageDTO,"email", email);
         spellCondition(pageDTO,"phone", phone);
 
-        PageDTO<UserEntity> users = userRepository.users(pageDTO);
+        PageDTO<UserEntity> users = userAppService.users(pageDTO);
 
         return RespDTO.success(users);
     }
@@ -139,7 +145,7 @@ public class UserController extends BaseController {
         spellCondition(pageDTO,"email", email);
         spellCondition(pageDTO,"phone", phone);
 
-        PageDTO<UserEntity> users = userRepository.findTenantAdmins(pageDTO);
+        PageDTO<UserEntity> users = userAppService.findTenantAdmins(pageDTO);
 
         return RespDTO.success(users);
     }

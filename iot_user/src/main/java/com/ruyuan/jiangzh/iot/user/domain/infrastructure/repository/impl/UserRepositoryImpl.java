@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
+import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.user.domain.entity.SecurityUser;
 import com.ruyuan.jiangzh.iot.user.domain.entity.UserEntity;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.UserRepository;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -45,19 +47,10 @@ public class UserRepositoryImpl implements UserRepository {
      */
     @Override
     public UserEntity findUserById(UserId userId) {
-        UserEntity userEntity = pfindUserById(userId);
-        return userEntity;
-    }
-
-
-    private UserEntity pfindUserById(UserId userId) {
         String dataId = UUIDHelper.fromTimeUUID(userId.getUuid());
         UserPO userPO = userMapper.selectById(dataId);
-
-        UserEntity userEntity = new UserEntity(userPO);
-        UserEntity currentUser = currentUser();
-        if(userEntity.getTenantId().equals(currentUser.getTenantId())){
-            return userEntity;
+        if(userPO != null){
+            return new UserEntity(userPO);
         }else{
             return null;
         }
@@ -85,12 +78,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean delUser(UserId userId) {
         String dataId = UUIDHelper.fromTimeUUID(userId.getUuid());
-        UserEntity userEntity = pfindUserById(userId);
-        if(userEntity != null){
-            int deleted = userMapper.deleteById(dataId);
-            return deleted == 0 ? false : true;
-        }
-        return false;
+
+        int deleted = userMapper.deleteById(dataId);
+        return deleted == 0 ? false : true;
     }
 
     /*
@@ -170,6 +160,10 @@ public class UserRepositoryImpl implements UserRepository {
                 break;
             case "phone":
                 queryWrapper.eq("phone", fieldValue);
+                break;
+            case "tenantId":
+                UUID tenantId = IoTStringUtils.toUUID(fieldValue + "");
+                queryWrapper.eq("tenant_id", UUIDHelper.fromTimeUUID(tenantId));
                 break;
         }
     }
