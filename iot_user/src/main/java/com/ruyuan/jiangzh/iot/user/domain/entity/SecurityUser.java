@@ -17,6 +17,15 @@ public class SecurityUser extends UserEntity{
         this.setAuthorityRole(AuthorityRole.DEFAULT_USER);
     }
 
+    public SecurityUser(UserEntity userEntity){
+        super(userEntity.getId());
+        this.setTenantId(userEntity.getTenantId());
+        this.setUsername(userEntity.getUsername());
+        this.setPhone(userEntity.getPhone());
+        this.setEmail(userEntity.getEmail());
+        this.setAuthorityRole(userEntity.getAuthorityRole());
+    }
+
     private Collection<GrantedAuthority> authorities;
 
     public static Collection<GrantedAuthority> getDefaultAuthorities() {

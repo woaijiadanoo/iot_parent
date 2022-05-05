@@ -24,4 +24,16 @@ public enum AuthorityRole {
         return authorityRole;
     }
 
+    public static AuthorityRole describeRoleByName(String name){
+        AuthorityRole authorityRole = null;
+        if(!IoTStringUtils.isBlank(name)){
+            for(AuthorityRole currentRole : AuthorityRole.values()){
+                if(currentRole.name().equals(name)){
+                    return currentRole;
+                }
+            }
+        }
+        return authorityRole;
+    }
+
 }

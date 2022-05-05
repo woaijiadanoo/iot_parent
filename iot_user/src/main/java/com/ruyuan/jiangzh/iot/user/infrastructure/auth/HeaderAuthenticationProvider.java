@@ -30,13 +30,14 @@ public class HeaderAuthenticationProvider implements AuthenticationProvider {
         }
 
         UserEntity userEntity = userRepository.describeUserByName(userSecurity.getUsername());
+        SecurityUser result = null;
         if(userEntity != null){
-            userSecurity.setAuthorityRole(userEntity.getAuthorityRole());
+            result = new SecurityUser(userEntity);
         }
 
-        logger.info("authenticate userEntity:[{}] , userSecurity:[{}]", userEntity, userSecurity);
+        logger.info("authenticate userEntity:[{}] ,result : [{}],  userSecurity:[{}]", userEntity, result , userSecurity);
 
-        return new HeaderAuthenticationToken(userSecurity);
+        return new HeaderAuthenticationToken(result);
     }
 
     /*

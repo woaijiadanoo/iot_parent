@@ -23,4 +23,9 @@ public class IoTStringUtils {
         return true;
     }
 
+    // toUUID就是将字符串转换为UUID
+    public static UUID toUUID(String uuidStr){
+        return UUID.fromString(uuidStr);
+    }
+
 }

@@ -20,6 +20,13 @@ public class Tenant extends CreateTimeIdBase implements Serializable {
         super(id);
     }
 
+    public Tenant(TenantPO tenantPO){
+        super(new TenantId(UUIDHelper.fromStringId(tenantPO.getUuid())));
+        this.name = tenantPO.getName();
+        this.phone = tenantPO.getPhone();
+        this.email = tenantPO.getEmail();
+    }
+
     public static TenantPO transToPo(Tenant tenant){
         TenantPO tenantPO = new TenantPO();
         tenantPO.setUuid(UUIDHelper.fromTimeUUID(tenant.getId().getUuid()));

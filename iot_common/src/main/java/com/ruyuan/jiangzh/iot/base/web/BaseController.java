@@ -45,7 +45,7 @@ public class BaseController {
 
     // toUUID就是将字符串转换为UUID
     protected UUID toUUID(String uuidStr){
-        return UUID.fromString(uuidStr);
+        return IoTStringUtils.toUUID(uuidStr);
     }
 
     // 参数校验，尤其是非空验证
@@ -56,5 +56,11 @@ public class BaseController {
         }
     }
 
+    // 给PageDTO传入条件参数
+    protected void spellCondition(PageDTO pageDTO, String fieldName, Object fieldValue){
+        if(fieldValue != null){
+            pageDTO.spellCondition(fieldName, fieldValue);
+        }
+    }
 
 }

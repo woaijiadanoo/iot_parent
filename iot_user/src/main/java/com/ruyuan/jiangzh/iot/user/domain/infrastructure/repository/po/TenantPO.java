@@ -1,5 +1,6 @@
 package com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.po;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
@@ -16,7 +17,7 @@ import java.io.Serializable;
 public class TenantPO extends Model<TenantPO> {
 
     private static final long serialVersionUID = 1L;
-
+    @TableId
     private String uuid;
 
     private String email;
