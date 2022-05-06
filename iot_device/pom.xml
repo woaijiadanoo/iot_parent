@@ -9,19 +9,14 @@
         <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ruyuan.jiangzh</groupId>
-    <artifactId>iot-gateway</artifactId>
+    <artifactId>iot_device</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>iot_gateway</name>
+    <name>iot_device</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -37,16 +32,14 @@
         <dependency>
             <groupId>com.ruyuan.jiangzh</groupId>
             <artifactId>iot_common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-security</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.ruyuan.jiangzh</groupId>
             <artifactId>iot_service_sdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ruyuan.jiangzh</groupId>
+            <artifactId>iot_db_config</artifactId>
         </dependency>
 
         <dependency>
@@ -88,6 +81,22 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+
+        <!-- 资源引入 -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+
     </build>
+
 
 </project>

@@ -8,14 +8,13 @@
             http://dubbo.apache.org/schema/dubbo
             http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
-    <dubbo:protocol name="dubbo" port="20881" />
+    <dubbo:protocol name="dubbo" port="20882" />
     
     <dubbo:application name="hello-world-producer"/>
 
     <dubbo:registry address="zookeeper://localhost:2181" client="curator"/>
 
-    <dubbo:service
-            interface="com.ruyuan.jiangzh.service.sdk.UserServiceAPI"
-                   ref="userServiceImpl" />
+    <dubbo:reference check="false"
+            interface="com.ruyuan.jiangzh.service.sdk.UserServiceAPI"/>
 
 </beans>
