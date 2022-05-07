@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruyuan.jiangzh.iot.user.dao.mapper.ProductMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository.po.ProductPO">
+        <id column="uuid" property="uuid" />
+        <result column="user_id" property="userId" />
+        <result column="tenant_id" property="tenantId" />
+        <result column="product_name" property="productName" />
+        <result column="product_type" property="productType" />
+        <result column="device_type" property="deviceType" />
+        <result column="net_type" property="netType" />
+        <result column="data_format" property="dataFormat" />
+        <result column="data_check_level" property="dataCheckLevel" />
+        <result column="auth_type" property="authType" />
+        <result column="product_desc" property="productDesc" />
+        <result column="auto_active" property="autoActive" />
+        <result column="product_status" property="productStatus" />
+        <result column="product_key" property="productKey" />
+        <result column="product_secret" property="productSecret" />
+    </resultMap>
+</mapper>
