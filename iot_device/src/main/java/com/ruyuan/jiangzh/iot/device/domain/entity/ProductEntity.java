@@ -43,9 +43,9 @@ public class ProductEntity  extends CreateTimeIdBase<ProductId> implements Seria
     public ProductEntity(){}
     public ProductEntity(ProductId productId){super(productId);}
     public ProductEntity(ProductPO productPO){
-        super(new ProductId(IoTStringUtils.toUUID(productPO.getUuid())));
-        this.tenantId = IoTStringUtils.toUUID(productPO.getTenantId());
-        this.userId = IoTStringUtils.toUUID(productPO.getUserId());
+        super(new ProductId(UUIDHelper.fromStringId(productPO.getUuid())));
+        this.tenantId = UUIDHelper.fromStringId(productPO.getTenantId());
+        this.userId = UUIDHelper.fromStringId(productPO.getUserId());
         this.productStatus = ProductStatusEnums.getByCode(productPO.getProductStatus());
         this.productType = productPO.getProductType();
         this.productSecret = productPO.getProductSecret();

@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class BaseController {
 
-    private static final String PREMISSION_DENIED = "default.premission_denied";
+    protected static final String PREMISSION_DENIED = "default.premission_denied";
 
     /**
      *  统一的异常处理
