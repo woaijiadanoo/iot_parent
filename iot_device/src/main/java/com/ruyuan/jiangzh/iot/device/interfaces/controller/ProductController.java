@@ -9,10 +9,13 @@ import com.ruyuan.jiangzh.iot.base.web.RespDTO;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.device.domain.entity.ProductEntity;
+import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.ProductStatusEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository.ProductRepository;
 import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
 import com.ruyuan.jiangzh.iot.device.interfaces.dto.ProductDTO;
 import com.ruyuan.jiangzh.iot.device.interfaces.dto.ProductDetailDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/api/v1")
 public class ProductController extends BaseController {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ProductRepository productRepository;
@@ -156,6 +161,83 @@ public class ProductController extends BaseController {
             }
         }
         return RespDTO.failture(RespCodeEnum.PERMISSION_DENIED.getCode(), PREMISSION_DENIED);
+    }
+
+
+    /*
+        http://localhost:8082/api/v1/product/9a97f910-d28f-11ec-a05f-dbd50d7d93eb:updateAutoActive?ruyuan_name=ruyuan_00
+        {
+            "autoActive" : "false"
+        }
+        UUID: 9a97f910-d28f-11ec-a05f-dbd50d7d93eb
+     */
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
+    @RequestMapping(value = "/product/{productId}:updateAutoActive", method = RequestMethod.PUT)
+    public RespDTO updateAutoActive(
+                                        @PathVariable(value = "productId")String productIdStr,
+                                        @RequestBody ProductDetailDTO productDetailDTO){
+        boolean autoAcitve = productDetailDTO.getAutoActive();
+        logger.info("updateAutoActive autoAcitve:[{}]", autoAcitve);
+
+        ProductId productId = new ProductId(toUUID(productIdStr));
+        ProductEntity entity = productRepository.findProductById(productId);
+        /*
+            根据用户角色不同，TENANT_ADMIN可以查看同Tenant下的数据，USER只能查自己创建的数据
+         */
+        if(entity != null && entity.getId() != null){
+            IoTSecurityUser currentUser = getCurrentUser();
+            if(entity.getTenantId().equals(currentUser.getTenantId())){
+                if(currentUser.getAuthorityRole().equals(AuthorityRole.TENANT_ADMIN)){
+                    productRepository.updateAutoActive(productId, autoAcitve);
+                    return RespDTO.success();
+                }else if(currentUser.getAuthorityRole().equals(AuthorityRole.USER)){
+                    if(entity.getUserId().equals(currentUser.getUserId())){
+                        productRepository.updateAutoActive(productId, autoAcitve);
+                        return RespDTO.success();
+                    }
+                }
+            }
+        }
+        return RespDTO.failture(RespCodeEnum.PERMISSION_DENIED.getCode(), PREMISSION_DENIED);
+
+    }
+
+
+    /*
+        http://localhost:8082/api/v1/product/9a97f910-d28f-11ec-a05f-dbd50d7d93eb:updateProductStatus?ruyuan_name=ruyuan_00
+        {
+            "productStatus" : "1"
+        }
+     */
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
+    @RequestMapping(value = "/product/{productId}:updateProductStatus", method = RequestMethod.PUT)
+    public RespDTO updateProjectStatus(
+            @PathVariable(value = "productId")String productIdStr,
+            @RequestBody ProductDetailDTO productDetailDTO){
+        Integer productStatus = productDetailDTO.getProductStatus();
+        logger.info("updateProjectStatus productStatus:[{}]", productStatus);
+
+        ProductId productId = new ProductId(toUUID(productIdStr));
+        ProductEntity entity = productRepository.findProductById(productId);
+        /*
+            根据用户角色不同，TENANT_ADMIN可以查看同Tenant下的数据，USER只能查自己创建的数据
+         */
+        if(entity != null && entity.getId() != null){
+            IoTSecurityUser currentUser = getCurrentUser();
+            if(entity.getTenantId().equals(currentUser.getTenantId())){
+                if(currentUser.getAuthorityRole().equals(AuthorityRole.TENANT_ADMIN)){
+                    productRepository.updateProductStatus(productId, ProductStatusEnums.getByCode(productStatus));
+                    return RespDTO.success();
+                }else if(currentUser.getAuthorityRole().equals(AuthorityRole.USER)){
+                    if(entity.getUserId().equals(currentUser.getUserId())){
+                        productRepository.updateProductStatus(productId, ProductStatusEnums.getByCode(productStatus));
+                        return RespDTO.success();
+                    }
+                }
+            }
+        }
+        return RespDTO.failture(RespCodeEnum.PERMISSION_DENIED.getCode(), PREMISSION_DENIED);
+
     }
 
 }
