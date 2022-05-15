@@ -34,12 +34,43 @@ CREATE TABLE IF NOT EXISTS `product`(
      `net_type`  TINYINT NOT NULL DEFAULT 0,
      `data_format`  TINYINT NOT NULL DEFAULT 0,
      `data_check_level`  TINYINT NOT NULL DEFAULT 0,
-     `auth_type`  VARCHAR(50) NOT NULL DEFAULT 1,
+     `auth_type`  VARCHAR(50) NOT NULL DEFAULT 'secretKey',
      `product_desc`  VARCHAR(200) NOT NULL,
      `auto_active`  BOOLEAN NOT NULL DEFAULT true,
      `product_status`  TINYINT NOT NULL DEFAULT 1,
      `product_key`  VARCHAR(20) NOT NULL,
      `product_secret`  VARCHAR(10) NOT NULL
+) ENGINE = INNODB DEFAULT CHARSET = utf8 COLLATE = utf8_bin;
+
+
+CREATE TABLE IF NOT EXISTS `device`(
+       `uuid`  VARCHAR(31) PRIMARY KEY NOT NULL,
+       `user_id`  VARCHAR(31) DEFAULT NULL,
+       `tenant_id`  VARCHAR(31) DEFAULT NULL,
+       `product_id`  VARCHAR(31) DEFAULT NULL,
+       `product_name` VARCHAR(100) NOT NULL,
+       `device_type`  TINYINT DEFAULT NULL,
+       `regin_name` VARCHAR(100) NOT NULL,
+       `device_name` VARCHAR(100) NOT NULL,
+       `cn_name` VARCHAR(200) NOT NULL,
+       `auth_type`  VARCHAR(50) NOT NULL DEFAULT 'secretKey',
+       `ip_addr`  VARCHAR(50) NOT NULL,
+       `fw_version`  VARCHAR(50) NOT NULL,
+       `active_time`  DATETIME,
+       `last_online_time`  DATETIME,
+       `device_status`  TINYINT NOT NULL DEFAULT 0,
+       `sdk_type`  VARCHAR(20) NOT NULL,
+       `sdk_version`  VARCHAR(10) NOT NULL
+) ENGINE = INNODB DEFAULT CHARSET = utf8 COLLATE = utf8_bin;
+
+
+CREATE TABLE IF NOT EXISTS `device_sercet_info`(
+       `uuid`  VARCHAR(31) PRIMARY KEY NOT NULL,
+       `device_name` VARCHAR(100) NOT NULL,
+       `product_key`  VARCHAR(20) NOT NULL,
+       `product_secret` VARCHAR(20) NOT NULL,
+       `device_secret` VARCHAR(20) NOT NULL,
+       `auto_active` BOOLEAN NOT NULL
 ) ENGINE = INNODB DEFAULT CHARSET = utf8 COLLATE = utf8_bin;
 
 
