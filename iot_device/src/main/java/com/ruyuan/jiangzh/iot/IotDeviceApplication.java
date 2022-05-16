@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ImportResource;
 
-@MapperScan(value = "com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository.impl.mapper")
+@MapperScan(basePackages = {
+        "com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository.impl.mapper"
+        ,"com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.impl.mapper"})
 @ImportResource(locations = {"classpath:applicationContext-dubbo.xml"})
 @SpringBootApplication
 public class IotDeviceApplication {

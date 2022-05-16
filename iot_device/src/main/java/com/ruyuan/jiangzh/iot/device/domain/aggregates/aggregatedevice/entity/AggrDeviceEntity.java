@@ -13,7 +13,6 @@ import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnu
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
 import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
 import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -85,6 +84,8 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
             // 补充属性
             this.setRegion("shanghai");
             this.setAuthType("secretKey");
+            this.setDeviceStatus(DeviceStatusEnums.NOT_ACTIVE);
+
             AggrDeviceSercetEntity deviceSercet = this.getDeviceSercetEntity();
             deviceSercet.setDeviceSecret(IoTStringUtils.getRandomString(6));
 

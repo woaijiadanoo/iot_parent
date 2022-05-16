@@ -4,8 +4,6 @@ public class DeviceDTO {
 
     // 产品相关
     private String productId;
-    private String productName;
-    private Integer deviceType;
 
     // 设备相关
     private String deviceId;
@@ -27,22 +25,6 @@ public class DeviceDTO {
 
     public void setProductId(String productId) {
         this.productId = productId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public Integer getDeviceType() {
-        return deviceType;
-    }
-
-    public void setDeviceType(Integer deviceType) {
-        this.deviceType = deviceType;
     }
 
     public String getDeviceName() {

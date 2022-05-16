@@ -54,13 +54,13 @@ CREATE TABLE IF NOT EXISTS `device`(
        `device_name` VARCHAR(100) NOT NULL,
        `cn_name` VARCHAR(200) NOT NULL,
        `auth_type`  VARCHAR(50) NOT NULL DEFAULT 'secretKey',
-       `ip_addr`  VARCHAR(50) NOT NULL,
-       `fw_version`  VARCHAR(50) NOT NULL,
+       `ip_addr`  VARCHAR(50),
+       `fw_version`  VARCHAR(50),
        `active_time`  DATETIME,
        `last_online_time`  DATETIME,
        `device_status`  TINYINT NOT NULL DEFAULT 0,
-       `sdk_type`  VARCHAR(20) NOT NULL,
-       `sdk_version`  VARCHAR(10) NOT NULL
+       `sdk_type`  VARCHAR(20),
+       `sdk_version`  VARCHAR(10)
 ) ENGINE = INNODB DEFAULT CHARSET = utf8 COLLATE = utf8_bin;
 
 
