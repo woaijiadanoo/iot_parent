@@ -1,11 +1,19 @@
 package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity;
+import java.time.LocalDateTime;
 
 import com.ruyuan.jiangzh.iot.base.uuid.CreateTimeIdBase;
+import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
+import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
+import com.ruyuan.jiangzh.iot.common.JWTUtils;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceRepository;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceSercetRepository;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DevicePO;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
 import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
 import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -51,17 +59,100 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
     // 三元组聚合实体
     private AggrDeviceSercetEntity deviceSercetEntity;
 
+    private AggrDeviceSercetRepository deviceSercetRepository;
 
-    public void saveDevice(){
-        // repository.save
-    }
 
     private AggrDeviceRepository deviceRepository;
 
     public AggrDeviceEntity(){}
-    public AggrDeviceEntity(AggrDeviceRepository deviceRepository){
+    public AggrDeviceEntity(AggrDeviceRepository deviceRepository, AggrDeviceSercetRepository deviceSercetRepository){
+        this.deviceRepository = deviceRepository;
+        this.deviceSercetRepository = deviceSercetRepository;
+    }
+    public AggrDeviceEntity(DeviceId deviceId,AggrDeviceRepository deviceRepository, AggrDeviceSercetRepository deviceSercetRepository){
+        super(deviceId);
+        this.deviceRepository = deviceRepository;
+        this.deviceSercetRepository = deviceSercetRepository;
+    }
+
+    /*
+        =======================service start===========================>
+     */
+    public AggrDeviceEntity saveDeviceEntity(){
+        boolean isNew = this.getId() == null ? true : false;
+        if(isNew){
+            // 新增
+            // 补充属性
+            this.setRegion("shanghai");
+            this.setAuthType("secretKey");
+            AggrDeviceSercetEntity deviceSercet = this.getDeviceSercetEntity();
+            deviceSercet.setDeviceSecret(IoTStringUtils.getRandomString(6));
+
+            this.setId(new DeviceId(UUIDHelper.genUuid()));
+            DevicePO devicePO = this.entityToPO();
+            DeviceSercetInfoPO deviceSercetInfoPO = deviceSercetEntity.entityToPO(this.getId());
+
+            // 组织三元组等相关信息
+
+
+            deviceRepository.insertDevice(devicePO);
+            deviceSercetRepository.insertEntity(deviceSercetInfoPO);
+
+            return this;
+        }else{
+            // 修改
+            return null;
+        }
+    }
+
+    public DevicePO entityToPO(){
+        DevicePO devicePO = new DevicePO();
+        devicePO.setUuid(UUIDHelper.fromTimeUUID(this.getId().getUuid()));
+        devicePO.setUserId(UUIDHelper.fromTimeUUID(this.getUserId()));
+        devicePO.setTenantId(UUIDHelper.fromTimeUUID(this.getTenantId()));
+        devicePO.setProductId(UUIDHelper.fromTimeUUID(this.getProductId().getUuid()));
+        devicePO.setProductName(this.getProductName());
+        devicePO.setDeviceType(this.getDeviceType().getCode());
+        devicePO.setReginName(this.getRegion());
+        devicePO.setDeviceName(this.getDeviceName());
+        devicePO.setCnName(this.getCnName());
+        devicePO.setAuthType(this.getAuthType());
+        devicePO.setIpAddr(this.getIpAddr());
+        devicePO.setFwVersion(this.getFwVersion());
+//        devicePO.setActiveTime(this.getActiveTime());
+//        devicePO.setLastOnlineTime(LocalDateTime.now());
+        devicePO.setDeviceStatus(this.getDeviceStatus().getCode());
+        devicePO.setSdkType(this.getSdkType());
+        devicePO.setSdkVersion(this.getSdkVersion());
+
+        return devicePO;
+    }
+
+    /*
+        =======================service end===========================>
+     */
+
+    @Override
+    public void setId(DeviceId id) {
+        super.setId(id);
+    }
+
+    public AggrDeviceSercetRepository getDeviceSercetRepository() {
+        return deviceSercetRepository;
+    }
+
+    public void setDeviceSercetRepository(AggrDeviceSercetRepository deviceSercetRepository) {
+        this.deviceSercetRepository = deviceSercetRepository;
+    }
+
+    public AggrDeviceRepository getDeviceRepository() {
+        return deviceRepository;
+    }
+
+    public void setDeviceRepository(AggrDeviceRepository deviceRepository) {
         this.deviceRepository = deviceRepository;
     }
+
     public AggrDeviceEntity(DeviceId deviceId){super(deviceId);}
 
     public UUID getTenantId() {

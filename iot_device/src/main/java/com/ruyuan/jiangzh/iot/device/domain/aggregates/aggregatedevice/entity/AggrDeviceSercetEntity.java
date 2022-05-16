@@ -1,5 +1,9 @@
 package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity;
 
+import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
+import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
+
 public class AggrDeviceSercetEntity {
 
     private String productKey;
@@ -7,6 +11,18 @@ public class AggrDeviceSercetEntity {
     private String deviceName;
     private String productSecret;
     private Boolean autoActive;
+
+    public DeviceSercetInfoPO entityToPO(DeviceId deviceId){
+        DeviceSercetInfoPO deviceSercetInfoPO = new DeviceSercetInfoPO();
+        deviceSercetInfoPO.setUuid(UUIDHelper.fromTimeUUID(deviceId.getUuid()));
+        deviceSercetInfoPO.setDeviceName(this.getDeviceName());
+        deviceSercetInfoPO.setProductKey(this.getProductKey());
+        deviceSercetInfoPO.setProductSecret(this.getProductSecret());
+        deviceSercetInfoPO.setDeviceSecret(this.getDeviceSecret());
+        deviceSercetInfoPO.setAutoActive(this.getAutoActive());
+
+        return deviceSercetInfoPO;
+    }
 
     public String getProductKey() {
         return productKey;
