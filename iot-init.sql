@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `device_sercet_info`(
        `product_key`  VARCHAR(20) NOT NULL,
        `product_secret` VARCHAR(20) NOT NULL,
        `device_secret` VARCHAR(20) NOT NULL,
+       `device_status`  TINYINT NOT NULL DEFAULT 0,
        `auto_active` BOOLEAN NOT NULL
 ) ENGINE = INNODB DEFAULT CHARSET = utf8 COLLATE = utf8_bin;
 

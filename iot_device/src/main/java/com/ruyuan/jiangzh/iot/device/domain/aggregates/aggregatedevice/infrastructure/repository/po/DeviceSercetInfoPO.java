@@ -26,6 +26,7 @@ public class DeviceSercetInfoPO extends Model<DeviceSercetInfoPO> {
 
     private String deviceSecret;
 
+    private Integer deviceStatus;
     private Boolean autoActive;
 
     public String getUuid() {
@@ -81,6 +82,14 @@ public class DeviceSercetInfoPO extends Model<DeviceSercetInfoPO> {
         return null;
     }
 
+    public Integer getDeviceStatus() {
+        return deviceStatus;
+    }
+
+    public void setDeviceStatus(Integer deviceStatus) {
+        this.deviceStatus = deviceStatus;
+    }
+
     @Override
     public String toString() {
         return "DeviceSercetInfo{" +
@@ -89,6 +98,7 @@ public class DeviceSercetInfoPO extends Model<DeviceSercetInfoPO> {
         ", productKey=" + productKey +
         ", productSecret=" + productSecret +
         ", deviceSecret=" + deviceSecret +
+        ", deviceStatus=" + deviceStatus +
         ", autoActive=" + autoActive +
         "}";
     }

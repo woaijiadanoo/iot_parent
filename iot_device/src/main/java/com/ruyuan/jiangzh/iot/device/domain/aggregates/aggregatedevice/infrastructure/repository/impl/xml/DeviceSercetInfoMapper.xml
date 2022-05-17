@@ -9,6 +9,7 @@
         <result column="product_key" property="productKey" />
         <result column="product_secret" property="productSecret" />
         <result column="device_secret" property="deviceSecret" />
+        <result column="device_status" property="deviceStatus" />
         <result column="auto_active" property="autoActive" />
     </resultMap>
 </mapper>
