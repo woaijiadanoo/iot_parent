@@ -2,7 +2,7 @@ package com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums;
 
 public enum DeviceStatusEnums {
 
-    NOT_ACTIVE(0), ACTIVED(1), OFFLINE(2), ONLINE(3);
+    NOT_ACTIVE(0), ACTIVED(1), OFFLINE(2), ONLINE(3), CLOSE(5);
 
     private int code;
 

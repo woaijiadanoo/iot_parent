@@ -44,10 +44,4 @@ public interface AggrDeviceRepository {
      */
     boolean activeDevice();
 
-
-    /*
-        修改自动注册状态
-     */
-    boolean updateAutoActive(DeviceId deviceId, boolean autoActive);
-
 }
