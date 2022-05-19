@@ -17,6 +17,9 @@ public class IoTStringUtils {
         return UUID.randomUUID().toString().replace("-","");
     }
 
+    public static boolean isNotBlank(String str){
+        return !isBlank(str);
+    }
     public static boolean isBlank(String str){
         if(str != null && str.trim().length()>0){
             return false;
