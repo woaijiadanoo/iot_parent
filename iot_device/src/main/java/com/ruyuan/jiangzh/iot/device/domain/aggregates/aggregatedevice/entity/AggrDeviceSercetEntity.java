@@ -12,6 +12,15 @@ public class AggrDeviceSercetEntity {
     private String productSecret;
     private Boolean autoActive;
 
+
+    public void poToEntity(DeviceSercetInfoPO po){
+        this.setProductKey(po.getProductKey());
+        this.setDeviceSecret(po.getDeviceSecret());
+        this.setDeviceName(po.getDeviceName());
+        this.setProductSecret(po.getProductSecret());
+        this.setAutoActive(po.getAutoActive());
+    }
+
     public DeviceSercetInfoPO entityToPO(DeviceId deviceId){
         DeviceSercetInfoPO deviceSercetInfoPO = new DeviceSercetInfoPO();
         deviceSercetInfoPO.setUuid(UUIDHelper.fromTimeUUID(deviceId.getUuid()));

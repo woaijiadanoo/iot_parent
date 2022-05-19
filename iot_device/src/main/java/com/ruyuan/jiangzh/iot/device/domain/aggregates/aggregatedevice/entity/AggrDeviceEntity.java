@@ -3,6 +3,7 @@ import java.time.LocalDateTime;
 
 import com.ruyuan.jiangzh.iot.base.uuid.CreateTimeIdBase;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
+import com.ruyuan.jiangzh.iot.common.DateUtils;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.common.JWTUtils;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceRepository;
@@ -106,6 +107,30 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         }
     }
 
+
+    public void poToEntity(DevicePO po){
+        this.setId(new DeviceId(UUIDHelper.fromStringId(po.getUuid())));
+        this.setTenantId(UUIDHelper.fromStringId(po.getTenantId()));
+        this.setUserId(UUIDHelper.fromStringId(po.getUserId()));
+        this.setProductId(new ProductId(UUIDHelper.fromStringId(po.getProductId())));
+        this.setProductName(po.getProductName());
+        this.setDeviceType(DeviceTypeEnums.getByCode(po.getDeviceType()));
+        this.setRegion(po.getReginName());
+        this.setDeviceName(po.getDeviceName());
+        this.setAuthType(po.getAuthType());
+        this.setCnName(po.getCnName());
+        this.setIpAddr(po.getIpAddr());
+        this.setFwVersion(po.getFwVersion());
+        this.setDeviceStatus(DeviceStatusEnums.getByCode(po.getDeviceStatus()));
+        this.setSdkType(po.getSdkType());
+        this.setSdkVersion(po.getSdkVersion());
+        // po转entity的时候，别忘了转三元组对象
+//        this.setDeviceSercetEntity();
+
+        this.setActiveTime(DateUtils.getTimestampByLocalDateTime(po.getActiveTime()));
+        this.setLastOnlineTime(DateUtils.getTimestampByLocalDateTime(po.getLastOnlineTime()));
+    }
+
     public DevicePO entityToPO(){
         DevicePO devicePO = new DevicePO();
         devicePO.setUuid(UUIDHelper.fromTimeUUID(this.getId().getUuid()));
@@ -120,8 +145,13 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         devicePO.setAuthType(this.getAuthType());
         devicePO.setIpAddr(this.getIpAddr());
         devicePO.setFwVersion(this.getFwVersion());
-//        devicePO.setActiveTime(this.getActiveTime());
-//        devicePO.setLastOnlineTime(LocalDateTime.now());
+        if(this.getActiveTime() != null && this.getActiveTime() != 0L){
+            devicePO.setActiveTime(DateUtils.getLocalDateTimebyTimestamp(this.getActiveTime()));
+        }
+        if(this.getLastOnlineTime() != null && this.getLastOnlineTime() != 0L){
+            devicePO.setLastOnlineTime(DateUtils.getLocalDateTimebyTimestamp(this.getLastOnlineTime()));
+        }
+
         devicePO.setDeviceStatus(this.getDeviceStatus().getCode());
         devicePO.setSdkType(this.getSdkType());
         devicePO.setSdkVersion(this.getSdkVersion());
