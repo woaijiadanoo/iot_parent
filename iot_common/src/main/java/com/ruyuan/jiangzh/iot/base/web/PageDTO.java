@@ -36,6 +36,9 @@ public class PageDTO<T> {
         this.records = result;
     }
 
+    public void setConditions(Map<String, Object> conditions){
+        this.conditions = conditions;
+    }
     // 加入拼接条件
     public void spellCondition(String fieldName, Object fieldValue){
         conditions.put(fieldName, fieldValue);

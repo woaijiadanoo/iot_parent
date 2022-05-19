@@ -1,8 +1,10 @@
 package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity;
 import java.time.LocalDateTime;
 
+import com.ruyuan.jiangzh.iot.base.exception.AppException;
 import com.ruyuan.jiangzh.iot.base.uuid.CreateTimeIdBase;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
+import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.common.DateUtils;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.common.JWTUtils;
@@ -10,13 +12,18 @@ import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastru
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceSercetRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DevicePO;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.vo.DeviceInfosVO;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
 import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
 import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /*
     这个是聚合根
@@ -106,6 +113,104 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
             return null;
         }
     }
+
+    /*
+        列表查询，涵盖了根据产品获取设备列表【产品 -> 管理设备】
+     */
+    public PageDTO<AggrDeviceEntity> findDevices(PageDTO<AggrDeviceEntity> entityPage){
+        // 拼接repository层的条件参数
+        PageDTO<DevicePO> poPage = new PageDTO<>(entityPage.getNowPage(), entityPage.getPageSize());
+        poPage.setConditions(entityPage.getConditions());
+
+        poPage = deviceRepository.findDevices(poPage);
+
+        List<AggrDeviceEntity> entities = poPage.getRecords().stream().map(
+                po -> {
+                    // 完成PO向entity的转化
+                    AggrDeviceEntity entity = new AggrDeviceEntity();
+                    entity.poToEntity(po);
+                    return entity;
+                }
+        ).collect(Collectors.toList());
+
+        entityPage.setResult(poPage.getTotals(),poPage.getTotalPages(), entities);
+
+        return entityPage;
+    }
+
+    /*
+        获取设备的相关数量【设备总数，激活设备，当前在线】
+     */
+    public DeviceInfosVO findDeviceInfos(ProductId productId){
+        DeviceInfosVO deviceInfos = deviceRepository.findDeviceInfos(productId);
+        return deviceInfos;
+    }
+
+    /*
+        获取设备详情
+     */
+    public AggrDeviceEntity findDeviceById(DeviceId deviceId){
+        // 获取对应的数据实体
+        DevicePO devicePO = deviceRepository.findDeviceById(deviceId);
+        DeviceSercetInfoPO deviceSercetPO = deviceSercetRepository.findDeviceSercetById(deviceId);
+
+        // 数据实体转换为聚合
+        AggrDeviceEntity aggrDeviceEntity = new AggrDeviceEntity();
+        AggrDeviceSercetEntity aggrDeviceSercetEntity = new AggrDeviceSercetEntity();
+
+        aggrDeviceEntity.poToEntity(devicePO);
+        aggrDeviceSercetEntity.poToEntity(deviceSercetPO);
+
+        // 拼装聚合根
+        aggrDeviceEntity.setDeviceSercetEntity(aggrDeviceSercetEntity);
+
+        return aggrDeviceEntity;
+    }
+
+    /*
+        删除设备
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public boolean delDeviceEntity(DeviceId deviceId){
+        boolean delDeviceSercet = deviceSercetRepository.delDeviceSercetById(deviceId);
+        boolean delDevice = deviceRepository.delDeviceById(deviceId);
+
+        if(delDeviceSercet && delDevice){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /*
+        修改设备状态
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateDeviceStatus(DeviceId deviceId, DeviceStatusEnums deviceStatusEnums){
+        boolean updateDeviceSercetStatus = deviceSercetRepository.updateDeviceStatus(deviceId, deviceStatusEnums);
+        boolean updateDeviceStatus = deviceRepository.updateDeviceStatus(deviceId, deviceStatusEnums);
+
+        if(updateDeviceSercetStatus && updateDeviceStatus){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /*
+        修改自动激活状态
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateAutoActive(DeviceId deviceId, boolean autoActive){
+        boolean updateDeviceSercetStatus = deviceSercetRepository.updateAutoActive(deviceId, autoActive);
+
+        if(updateDeviceSercetStatus){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 
 
     public void poToEntity(DevicePO po){
