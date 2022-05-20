@@ -182,6 +182,18 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public boolean delDeviceEntity(){
+        boolean delDeviceSercet = deviceSercetRepository.delDeviceSercetById(this.getId());
+        boolean delDevice = deviceRepository.delDeviceById(this.getId());
+
+        if(delDeviceSercet && delDevice){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     /*
         修改设备状态
      */

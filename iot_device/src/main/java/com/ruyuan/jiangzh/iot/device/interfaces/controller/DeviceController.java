@@ -1,11 +1,14 @@
 package com.ruyuan.jiangzh.iot.device.interfaces.controller;
 
 import com.google.common.collect.Maps;
+import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
+import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceSercetEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.vo.DeviceInfosVO;
 import com.ruyuan.jiangzh.iot.device.domain.domainservice.DeviceDomainService;
+import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
 import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
@@ -16,6 +19,7 @@ import com.ruyuan.jiangzh.iot.base.security.IoTSecurityUser;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.factory.AggrDeviceFactory;
 import com.ruyuan.jiangzh.iot.device.interfaces.dto.DeviceDTO;
+import com.ruyuan.jiangzh.iot.device.interfaces.dto.DeviceDetailDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +37,8 @@ public class DeviceController extends BaseController {
 
     @Autowired
     private DeviceDomainService deviceDomainService;
+
+    private static final String DEVICE_ID_IS_NULL = "device.device_id_is_null";
 
     /*
         http://localhost:8082/api/v1/device?ruyuan_name=ruyuan_00
@@ -107,6 +113,73 @@ public class DeviceController extends BaseController {
         result.put("deviceInfo", deviceInfo);
 
         return RespDTO.success(result);
+    }
+
+    /*
+        获取设备详情
+     */
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
+    @RequestMapping(value = "/product/{productId}/device/{deviceId}", method = RequestMethod.GET)
+    public RespDTO findDeviceById(
+            @PathVariable("productId") String productIdStr,
+            @PathVariable("deviceId") String deviceIdStr){
+        checkParameter(deviceIdStr, DEVICE_ID_IS_NULL);
+        // 正常实现的时候， 应该再定义一个错误信息，在这里我们就不赘述了
+        checkParameter(productIdStr, DEVICE_ID_IS_NULL);
+        DeviceId deviceId = new DeviceId(toUUID(deviceIdStr));
+        ProductId productId = new ProductId(toUUID(productIdStr));
+        // 通过聚合根获取对应的聚合
+        // 如果做好的再好一点，应该传入tenantId， userId， productId
+        AggrDeviceEntity entity = deviceFactory.getDeviceById(deviceId);
+
+        IoTSecurityUser currentUser = getCurrentUser();
+        if(!entity.getProductId().equals(productId)){
+            // 应该给一个权限不足， 或者没有数据的提示
+        }
+        if(currentUser.getAuthorityRole().equals(AuthorityRole.TENANT_ADMIN)){
+            if(!entity.getTenantId().equals(currentUser.getTenantId())){
+                // 应该给一个权限不足， 或者没有数据的提示
+            }
+        }else if(currentUser.getAuthorityRole().equals(AuthorityRole.USER)){
+            // 应该给一个权限不足， 或者没有数据的提示
+        }
+        // 拼装返回结果
+        DeviceDetailDTO detailDTO = DeviceDetailDTO.entityToDTO(entity);
+
+        return RespDTO.success(checkNotNull(detailDTO));
+    }
+
+    /*
+        获取设备详情
+     */
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
+    @RequestMapping(value = "/product/{productId}/device/{deviceId}", method = RequestMethod.DELETE)
+    public RespDTO delDevice(
+            @PathVariable("productId") String productIdStr,
+            @PathVariable("deviceId") String deviceIdStr){
+        checkParameter(deviceIdStr, DEVICE_ID_IS_NULL);
+        // 正常实现的时候， 应该再定义一个错误信息，在这里我们就不赘述了
+        checkParameter(productIdStr, DEVICE_ID_IS_NULL);
+        DeviceId deviceId = new DeviceId(toUUID(deviceIdStr));
+        ProductId productId = new ProductId(toUUID(productIdStr));
+        // 通过聚合根获取对应的聚合
+        AggrDeviceEntity deviceEntity = deviceFactory.getDeviceById(deviceId);
+
+        IoTSecurityUser currentUser = getCurrentUser();
+        if(!deviceEntity.getProductId().equals(productId)){
+            // 应该给一个权限不足， 或者没有数据的提示[AppException]
+        }
+        if(currentUser.getAuthorityRole().equals(AuthorityRole.TENANT_ADMIN)){
+            if(!deviceEntity.getTenantId().equals(currentUser.getTenantId())){
+                // 应该给一个权限不足， 或者没有数据的提示[AppException]
+            }
+        }else if(currentUser.getAuthorityRole().equals(AuthorityRole.USER)){
+            // 应该给一个权限不足， 或者没有数据的提示[AppException]
+        }
+
+        deviceEntity.delDeviceEntity();
+
+        return RespDTO.success();
     }
 
 }
