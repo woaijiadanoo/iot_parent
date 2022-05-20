@@ -1,5 +1,6 @@
 package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.factory;
 
+import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceSercetEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceRepository;
@@ -33,6 +34,24 @@ public class AggrDeviceFactory {
         DevicePO devicePO = deviceRepository.findDeviceById(deviceId);
         DeviceSercetInfoPO deviceSercetInfoPO = deviceSercetRepository.findDeviceSercetById(deviceId);
 
+        AggrDeviceSercetEntity deviceSercetEntity = new AggrDeviceSercetEntity();
+        deviceSercetEntity.poToEntity(deviceSercetInfoPO);
+
+        AggrDeviceEntity deviceEntity = new AggrDeviceEntity(deviceRepository, deviceSercetRepository);
+        deviceEntity.poToEntity(devicePO);
+
+        deviceEntity.setDeviceSercetEntity(deviceSercetEntity);
+
+        return deviceEntity;
+    }
+
+
+    public AggrDeviceEntity getDeviceBySercet(String productKey, String deviceName, String deviceSercet){
+
+        DeviceSercetInfoPO deviceSercetInfoPO = deviceSercetRepository.findDeviceSercetByInfo(productKey, deviceName, deviceSercet);
+
+        DeviceId deviceId = new DeviceId(UUIDHelper.fromStringId(deviceSercetInfoPO.getUuid()));
+        DevicePO devicePO = deviceRepository.findDeviceById(deviceId);
         AggrDeviceSercetEntity deviceSercetEntity = new AggrDeviceSercetEntity();
         deviceSercetEntity.poToEntity(deviceSercetInfoPO);
 

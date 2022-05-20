@@ -22,7 +22,7 @@ public interface AggrDeviceSercetRepository {
         通过三元组信息查询设备连接所需的信息
      */
     DeviceSercetInfoPO findDeviceSercetByInfo(
-            String productSercet,String deviceName,String deviceSercet);
+            String productKey,String deviceName,String deviceSercet);
 
     /*
             修改设备启用/禁用状态

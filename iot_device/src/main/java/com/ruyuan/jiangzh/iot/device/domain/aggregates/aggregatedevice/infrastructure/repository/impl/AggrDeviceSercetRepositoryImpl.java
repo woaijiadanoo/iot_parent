@@ -46,7 +46,7 @@ public class AggrDeviceSercetRepositoryImpl implements AggrDeviceSercetRepositor
     @Override
     public DeviceSercetInfoPO findDeviceSercetByInfo(String productSercet, String deviceName, String deviceSercet) {
         QueryWrapper<DeviceSercetInfoPO> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("product_secret", productSercet);
+        queryWrapper.eq("product_key", productSercet);
         queryWrapper.eq("device_name", deviceName);
         queryWrapper.eq("device_secret", deviceSercet);
         queryWrapper.eq("device_status", DeviceStatusEnums.CLOSE.getCode());
