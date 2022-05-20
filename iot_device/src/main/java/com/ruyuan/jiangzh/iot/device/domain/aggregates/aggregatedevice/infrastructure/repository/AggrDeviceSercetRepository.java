@@ -1,6 +1,5 @@
 package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository;
 
-import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DevicePO;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
 import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
@@ -34,5 +33,8 @@ public interface AggrDeviceSercetRepository {
         修改自动注册状态
      */
     boolean updateAutoActive(DeviceId deviceId, boolean autoActive);
+
+
+    boolean updateAutoActiveByProductKey(String productKey, boolean autoActive);
 
 }

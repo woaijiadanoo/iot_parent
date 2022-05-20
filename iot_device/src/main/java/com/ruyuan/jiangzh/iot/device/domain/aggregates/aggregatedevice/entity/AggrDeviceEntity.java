@@ -1,13 +1,10 @@
 package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity;
-import java.time.LocalDateTime;
 
-import com.ruyuan.jiangzh.iot.base.exception.AppException;
 import com.ruyuan.jiangzh.iot.base.uuid.CreateTimeIdBase;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.common.DateUtils;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
-import com.ruyuan.jiangzh.iot.common.JWTUtils;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceSercetRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DevicePO;
@@ -17,7 +14,6 @@ import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnu
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
 import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
 import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -198,9 +194,9 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         修改设备状态
      */
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateDeviceStatus(DeviceId deviceId, DeviceStatusEnums deviceStatusEnums){
-        boolean updateDeviceSercetStatus = deviceSercetRepository.updateDeviceStatus(deviceId, deviceStatusEnums);
-        boolean updateDeviceStatus = deviceRepository.updateDeviceStatus(deviceId, deviceStatusEnums);
+    public boolean updateDeviceStatus(DeviceStatusEnums deviceStatusEnums){
+        boolean updateDeviceSercetStatus = deviceSercetRepository.updateDeviceStatus(this.getId(), deviceStatusEnums);
+        boolean updateDeviceStatus = deviceRepository.updateDeviceStatus(this.getId(), deviceStatusEnums);
 
         if(updateDeviceSercetStatus && updateDeviceStatus){
             return true;
@@ -223,6 +219,19 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         }
     }
 
+    /*
+    修改自动激活状态
+ */
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateAutoActive(String productKey, boolean autoActive){
+        boolean updateDeviceSercetStatus = deviceSercetRepository.updateAutoActiveByProductKey(productKey, autoActive);
+
+        if(updateDeviceSercetStatus){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 
     public void poToEntity(DevicePO po){

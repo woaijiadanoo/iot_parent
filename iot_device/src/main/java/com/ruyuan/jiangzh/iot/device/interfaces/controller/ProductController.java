@@ -8,6 +8,7 @@ import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
+import com.ruyuan.jiangzh.iot.device.domain.domainservice.DeviceDomainService;
 import com.ruyuan.jiangzh.iot.device.domain.entity.ProductEntity;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.ProductStatusEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository.ProductRepository;
@@ -31,6 +32,9 @@ public class ProductController extends BaseController {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private DeviceDomainService deviceDomainService;
 
     private static final String PRODUCT_NAME_NOT_EXISTS="product.product_name_not_exists";
 
@@ -188,11 +192,11 @@ public class ProductController extends BaseController {
             IoTSecurityUser currentUser = getCurrentUser();
             if(entity.getTenantId().equals(currentUser.getTenantId())){
                 if(currentUser.getAuthorityRole().equals(AuthorityRole.TENANT_ADMIN)){
-                    productRepository.updateAutoActive(productId, autoAcitve);
+                    deviceDomainService.updateAutoActive(productId, autoAcitve);
                     return RespDTO.success();
                 }else if(currentUser.getAuthorityRole().equals(AuthorityRole.USER)){
                     if(entity.getUserId().equals(currentUser.getUserId())){
-                        productRepository.updateAutoActive(productId, autoAcitve);
+                        deviceDomainService.updateAutoActive(productId, autoAcitve);
                         return RespDTO.success();
                     }
                 }

@@ -1,6 +1,7 @@
 package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceSercetEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceSercetRepository;
@@ -78,4 +79,18 @@ public class AggrDeviceSercetRepositoryImpl implements AggrDeviceSercetRepositor
 
         return true;
     }
+
+    @Override
+    public boolean updateAutoActiveByProductKey(String productKey, boolean autoActive){
+        UpdateWrapper<DeviceSercetInfoPO> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("product_key", productKey);
+
+        // 根据条件修改数据库信息
+        DeviceSercetInfoPO deviceSercetInfoPO = new DeviceSercetInfoPO();
+        deviceSercetInfoPO.setAutoActive(autoActive);
+        deviceSercetInfoMapper.update(deviceSercetInfoPO, updateWrapper);
+
+        return true;
+    }
+
 }

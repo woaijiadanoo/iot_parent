@@ -20,6 +20,7 @@ import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.Ag
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.factory.AggrDeviceFactory;
 import com.ruyuan.jiangzh.iot.device.interfaces.dto.DeviceDTO;
 import com.ruyuan.jiangzh.iot.device.interfaces.dto.DeviceDetailDTO;
+import com.ruyuan.jiangzh.iot.device.interfaces.dto.DeviceStatusDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -178,6 +179,28 @@ public class DeviceController extends BaseController {
         }
 
         deviceEntity.delDeviceEntity();
+
+        return RespDTO.success();
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
+    @RequestMapping(value = "/product/{productId}/device/{deviceId}:updateDeviceStatus", method = RequestMethod.PUT)
+    public RespDTO updateDeviceStatus(
+            @PathVariable("productId") String productIdStr,
+            @PathVariable("deviceId") String deviceIdStr,
+            @RequestBody DeviceStatusDTO deviceStatusDTO
+            ) {
+        checkParameter(deviceIdStr, DEVICE_ID_IS_NULL);
+        // 正常实现的时候， 应该再定义一个错误信息，在这里我们就不赘述了
+        checkParameter(productIdStr, DEVICE_ID_IS_NULL);
+        DeviceId deviceId = new DeviceId(toUUID(deviceIdStr));
+        ProductId productId = new ProductId(toUUID(productIdStr));
+
+        // 根据DeviceId获取Device
+        AggrDeviceEntity deviceEntity = deviceFactory.getDeviceById(deviceId);
+        // 然后根据用户的tenant和user编号+productId， 判断是否有权限处理这个设备
+        deviceEntity.updateDeviceStatus(DeviceStatusEnums.getByCode(deviceStatusDTO.getDeviceStatus()));
 
         return RespDTO.success();
     }
