@@ -59,8 +59,15 @@ public class AggrDeviceRepositoryImpl implements AggrDeviceRepository {
 
     @Override
     public DeviceInfosVO findDeviceInfos(ProductId productId) {
-        // TODO 补一个sql语句
-        return null;
+        String productIdStr = null;
+        if(productId != null){
+            productIdStr = UUIDHelper.fromTimeUUID(productId.getUuid());
+        }
+
+        // 在线设备其实是从redis中进行获取的
+
+        DeviceInfosVO deviceInfos = deviceMapper.findDeviceInfos(productIdStr);
+        return deviceInfos;
     }
 
     @Override

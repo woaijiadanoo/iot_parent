@@ -22,4 +22,16 @@
         <result column="sdk_type" property="sdkType" />
         <result column="sdk_version" property="sdkVersion" />
     </resultMap>
+
+    <select id="findDeviceInfos"
+            resultType="com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.vo.DeviceInfosVO">
+        select
+            count(*) AS totalDevices,
+            SUM(CASE d.device_status WHEN 3 THEN 1 ELSE 0 END) AS onlineDevices,
+            SUM(CASE d.device_status WHEN 1 THEN 1 WHEN 2 THEN 1 WHEN 3 THEN 1 ELSE 0 END) AS activeDevices
+        from device d
+        <if test=" productId !=null and productId != '' ">
+            where product_id = ${productId}
+        </if>
+    </select>
 </mapper>
