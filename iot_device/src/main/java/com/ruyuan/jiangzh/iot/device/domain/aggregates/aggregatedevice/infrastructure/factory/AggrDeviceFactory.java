@@ -49,7 +49,7 @@ public class AggrDeviceFactory {
     public AggrDeviceEntity getDeviceBySercet(String productKey, String deviceName, String deviceSercet){
 
         DeviceSercetInfoPO deviceSercetInfoPO = deviceSercetRepository.findDeviceSercetByInfo(productKey, deviceName, deviceSercet);
-
+        // TODO 记得加非空验证
         DeviceId deviceId = new DeviceId(UUIDHelper.fromStringId(deviceSercetInfoPO.getUuid()));
         DevicePO devicePO = deviceRepository.findDeviceById(deviceId);
         AggrDeviceSercetEntity deviceSercetEntity = new AggrDeviceSercetEntity();

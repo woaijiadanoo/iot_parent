@@ -49,7 +49,12 @@ public class AggrDeviceSercetRepositoryImpl implements AggrDeviceSercetRepositor
         queryWrapper.eq("product_key", productSercet);
         queryWrapper.eq("device_name", deviceName);
         queryWrapper.eq("device_secret", deviceSercet);
-        queryWrapper.eq("device_status", DeviceStatusEnums.CLOSE.getCode());
+        queryWrapper.in("device_status",
+                DeviceStatusEnums.NOT_ACTIVE.getCode()
+                ,DeviceStatusEnums.ACTIVED.getCode()
+                ,DeviceStatusEnums.OFFLINE.getCode()
+                ,DeviceStatusEnums.ONLINE.getCode()
+        );
 
         List<DeviceSercetInfoPO> deviceSercetInfoPOS = deviceSercetInfoMapper.selectList(queryWrapper);
         if(deviceSercetInfoPOS != null && deviceSercetInfoPOS.size() > 0){

@@ -1,6 +1,8 @@
 package com.ruyuan.jiangzh.service.dto;
 
-public class DeviceSercetDTO {
+import java.io.Serializable;
+
+public class DeviceSercetDTO implements Serializable {
 
     private String deviceId;
     private String productId;

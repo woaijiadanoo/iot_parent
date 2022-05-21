@@ -18,4 +18,7 @@
             interface="com.ruyuan.jiangzh.service.sdk.UserServiceAPI"
                    ref="userServiceImpl" />
 
+    <dubbo:reference check="false"
+            interface="com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI"/>
+
 </beans>
