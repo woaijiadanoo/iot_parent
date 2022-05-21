@@ -16,7 +16,9 @@ public class DeviceDTO {
     private String cnName;
 
     public static void dtoToEntity(AggrDeviceEntity entity, DeviceDTO deviceDTO){
-        entity.setId(new DeviceId(IoTStringUtils.toUUID(deviceDTO.getDeviceId())));
+        if(IoTStringUtils.isNotBlank(deviceDTO.getDeviceId())){
+            entity.setId(new DeviceId(IoTStringUtils.toUUID(deviceDTO.getDeviceId())));
+        }
         entity.setDeviceName(deviceDTO.getDeviceName());
         entity.setCnName(deviceDTO.getCnName());
         entity.setProductId(new ProductId(IoTStringUtils.toUUID(deviceDTO.getProductId())));

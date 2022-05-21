@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
+
 /**
  * <p>
  * 
@@ -42,9 +43,9 @@ public class DevicePO extends Model<DevicePO> {
 
     private String fwVersion;
 
-    private LocalDateTime activeTime;
+    private Date activeTime;
 
-    private LocalDateTime lastOnlineTime;
+    private Date lastOnlineTime;
 
     private Integer deviceStatus;
 
@@ -148,19 +149,19 @@ public class DevicePO extends Model<DevicePO> {
         this.fwVersion = fwVersion;
     }
 
-    public LocalDateTime getActiveTime() {
+    public Date getActiveTime() {
         return activeTime;
     }
 
-    public void setActiveTime(LocalDateTime activeTime) {
+    public void setActiveTime(Date activeTime) {
         this.activeTime = activeTime;
     }
 
-    public LocalDateTime getLastOnlineTime() {
+    public Date getLastOnlineTime() {
         return lastOnlineTime;
     }
 
-    public void setLastOnlineTime(LocalDateTime lastOnlineTime) {
+    public void setLastOnlineTime(Date lastOnlineTime) {
         this.lastOnlineTime = lastOnlineTime;
     }
 

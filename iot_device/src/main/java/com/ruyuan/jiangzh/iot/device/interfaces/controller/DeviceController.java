@@ -61,6 +61,9 @@ public class DeviceController extends BaseController {
         AggrDeviceEntity deviceEntity = deviceFactory.getDevice();
         DeviceDTO.dtoToEntity(deviceEntity, deviceDTO);
 
+        deviceEntity.setTenantId(currentUser.getTenantId());
+        deviceEntity.setUserId(currentUser.getUserId());
+
         // 直接进行保存操作【domainService的一个最主要的用法，就是同一个限界上下文的不同实体的操作】
         deviceDomainService.saveDeviceEntity(deviceEntity);
 
@@ -89,10 +92,10 @@ public class DeviceController extends BaseController {
             pId = new ProductId(toUUID(productId));
         }
         if(IoTStringUtils.isNotBlank(deviceName)){
-            pageDTO.spellCondition("deviceName", productId);
+            pageDTO.spellCondition("deviceName", deviceName);
         }
         if(IoTStringUtils.isNotBlank(cnName)){
-            pageDTO.spellCondition("cnName", productId);
+            pageDTO.spellCondition("cnName", cnName);
         }
 
         // 获取设备列表【带条件带翻页】
@@ -118,6 +121,8 @@ public class DeviceController extends BaseController {
 
     /*
         获取设备详情
+
+        http://localhost:8082/api/v1/product/{productId}/device/{deviceId}?ruyuan_name=ruyuan_00
      */
     @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
     @RequestMapping(value = "/product/{productId}/device/{deviceId}", method = RequestMethod.GET)
@@ -151,7 +156,8 @@ public class DeviceController extends BaseController {
     }
 
     /*
-        获取设备详情
+        删除设备
+        http://localhost:8082/api/v1/product/{productId}/device/{deviceId}?ruyuan_name=ruyuan_00
      */
     @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
     @RequestMapping(value = "/product/{productId}/device/{deviceId}", method = RequestMethod.DELETE)
@@ -184,6 +190,15 @@ public class DeviceController extends BaseController {
     }
 
 
+    /*
+        修改设备状态， 尤其是开启/关闭设备
+
+        http://localhost:8082/api/v1/product/{productId}/device/{deviceId}:updateDeviceStatus?ruyuan_name=ruyuan_00
+
+        {
+            "deviceStatus":"5"
+        }
+     */
     @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
     @RequestMapping(value = "/product/{productId}/device/{deviceId}:updateDeviceStatus", method = RequestMethod.PUT)
     public RespDTO updateDeviceStatus(

@@ -252,9 +252,12 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         this.setSdkVersion(po.getSdkVersion());
         // po转entity的时候，别忘了转三元组对象
 //        this.setDeviceSercetEntity();
-
-        this.setActiveTime(DateUtils.getTimestampByLocalDateTime(po.getActiveTime()));
-        this.setLastOnlineTime(DateUtils.getTimestampByLocalDateTime(po.getLastOnlineTime()));
+        if(po.getActiveTime() != null){
+            this.setActiveTime(DateUtils.getTimestampByDate(po.getActiveTime()));
+        }
+        if(po.getLastOnlineTime() != null){
+            this.setLastOnlineTime(DateUtils.getTimestampByDate(po.getLastOnlineTime()));
+        }
     }
 
     public DevicePO entityToPO(){
@@ -272,10 +275,10 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         devicePO.setIpAddr(this.getIpAddr());
         devicePO.setFwVersion(this.getFwVersion());
         if(this.getActiveTime() != null && this.getActiveTime() != 0L){
-            devicePO.setActiveTime(DateUtils.getLocalDateTimebyTimestamp(this.getActiveTime()));
+            devicePO.setActiveTime(DateUtils.getDateByTimestamp(this.getActiveTime()));
         }
         if(this.getLastOnlineTime() != null && this.getLastOnlineTime() != 0L){
-            devicePO.setLastOnlineTime(DateUtils.getLocalDateTimebyTimestamp(this.getLastOnlineTime()));
+            devicePO.setLastOnlineTime(DateUtils.getDateByTimestamp(this.getLastOnlineTime()));
         }
 
         devicePO.setDeviceStatus(this.getDeviceStatus().getCode());
