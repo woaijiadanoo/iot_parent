@@ -65,7 +65,7 @@ public class JWTController {
     }
 
     /*
-        http://localhost:8082/api/auth/test
+        http://localhost:9999/api/auth/test
 
         header:
             jwt :

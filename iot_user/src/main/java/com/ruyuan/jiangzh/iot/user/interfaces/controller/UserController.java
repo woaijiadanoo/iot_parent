@@ -15,6 +15,8 @@ import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.UserReposito
 import com.ruyuan.jiangzh.iot.user.domain.vo.UserId;
 import com.ruyuan.jiangzh.iot.user.infrastructure.utils.UserUtils;
 import com.ruyuan.jiangzh.iot.user.interfaces.dto.UserDTO;
+import com.ruyuan.jiangzh.service.dto.DeviceSercetDTO;
+import com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /*
     TODO 将返回值里的UserEntity 转换为 UserDTO做返回，体会一下非贫血模型的转换，并且相互讨论
@@ -149,5 +153,26 @@ public class UserController extends BaseController {
 
         return RespDTO.success(users);
     }
+
+
+    @Resource
+    private DeviceServiceAPI deviceServiceAPI;
+
+    /*
+        http://localhost:8081/api/v1/user/device?ruyuan_name=ruyuan_00
+     */
+    @RequestMapping(value = "/user/device", method = RequestMethod.GET)
+    public RespDTO getDevice(){
+        String productKey = "i4g423najn";
+        String deviceName = "ry_device_02";
+        String deviceSercet = "vvu317";
+
+        DeviceSercetDTO deviceBySercet = deviceServiceAPI.findDeviceBySercet(productKey, deviceName, deviceSercet);
+
+        System.out.println("deviceBySercet = " + deviceBySercet);
+
+        return RespDTO.success(deviceBySercet);
+    }
+
 
 }

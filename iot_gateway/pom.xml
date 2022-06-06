@@ -37,6 +37,12 @@
         <dependency>
             <groupId>com.ruyuan.jiangzh</groupId>
             <artifactId>iot_common</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-security</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.ruyuan.jiangzh</groupId>

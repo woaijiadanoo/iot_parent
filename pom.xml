@@ -36,6 +36,7 @@
 
     <modules>
         <module>iot_user</module>
+        <module>iot_device</module>
         <module>iot_gateway</module>
         <module>iot_common</module>
         <module>iot_service_sdk</module>

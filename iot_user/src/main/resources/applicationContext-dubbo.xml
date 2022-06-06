@@ -8,7 +8,7 @@
             http://dubbo.apache.org/schema/dubbo
             http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
-    <dubbo:protocol name="dubbo" port="20880" />
+    <dubbo:protocol name="dubbo" port="20881" />
     
     <dubbo:application name="hello-world-producer"/>
 
@@ -17,5 +17,8 @@
     <dubbo:service
             interface="com.ruyuan.jiangzh.service.sdk.UserServiceAPI"
                    ref="userServiceImpl" />
+
+    <dubbo:reference check="false"
+            interface="com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI"/>
 
 </beans>

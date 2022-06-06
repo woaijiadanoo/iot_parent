@@ -148,14 +148,14 @@ public class TenantController  extends BaseController {
         // 是否为空或者合法
         validateId(tenantId, VALIDATE_TENANT_ID_MSG_ID);
         // 检查当前用户与待查询的tenantId是否匹配
-        SecurityUser securityUser = getCurrentUser();
+        SecurityUser securityUser = currentUser();
 //        if(securityUser.getTenantId() == null || !securityUser.getTenantId().equals(tenantId)){
 //            throw new AppException(RespCodeEnum.PERMISSION_DENIED.getCode(), PREMISSION_DENIED);
 //        }
     }
 
     // 获取当前用户
-    private SecurityUser getCurrentUser(){
+    private SecurityUser currentUser(){
         SecurityUser securityUser = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null && authentication.getPrincipal() instanceof SecurityUser){

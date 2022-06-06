@@ -2,9 +2,10 @@ package com.ruyuan.jiangzh.service.dto;
 
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class SecurityUserDTO {
+public class SecurityUserDTO implements Serializable {
 
     private UUID tenantId;
     private UUID userId;

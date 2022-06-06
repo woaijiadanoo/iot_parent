@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.impl.mapper.DeviceSercetInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO">
+        <id column="uuid" property="uuid" />
+        <result column="device_name" property="deviceName" />
+        <result column="product_key" property="productKey" />
+        <result column="product_secret" property="productSecret" />
+        <result column="device_secret" property="deviceSecret" />
+        <result column="device_status" property="deviceStatus" />
+        <result column="auto_active" property="autoActive" />
+    </resultMap>
+</mapper>
