@@ -5,11 +5,11 @@ import com.ruyuan.jiangzh.iot.actors.ContextAwareActor;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 
-public class TenantActor extends ContextAwareActor {
+public class TenantTemplateActor extends ContextAwareActor {
 
     private final TenantId tenantId;
 
-    public TenantActor(ActorSystemContext actorSystemContext, TenantId tenantId){
+    public TenantTemplateActor(ActorSystemContext actorSystemContext, TenantId tenantId){
         super(actorSystemContext);
         this.tenantId = tenantId;
     }
@@ -19,7 +19,7 @@ public class TenantActor extends ContextAwareActor {
 
     }
 
-    public final class ActorCreator extends ContextBaseCreator<TenantActor>{
+    public final class ActorCreator extends ContextBaseCreator<TenantTemplateActor>{
 
         private final TenantId tenantId;
 
@@ -29,8 +29,8 @@ public class TenantActor extends ContextAwareActor {
         }
 
         @Override
-        public TenantActor create() throws Exception {
-            return new TenantActor(actorSystemContext, tenantId);
+        public TenantTemplateActor create() throws Exception {
+            return new TenantTemplateActor(actorSystemContext, tenantId);
         }
     }
 

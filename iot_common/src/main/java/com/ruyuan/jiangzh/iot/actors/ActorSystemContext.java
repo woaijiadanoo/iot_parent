@@ -1,5 +1,6 @@
 package com.ruyuan.jiangzh.iot.actors;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Scheduler;
 import com.typesafe.config.Config;
@@ -14,6 +15,10 @@ public class ActorSystemContext {
     private ActorSystem actorSystem;
 
     private final Config config;
+
+    // 相关的ActorRef
+    private ActorRef appActor;
+    private ActorRef tenantActor;
 
     public ActorSystemContext(){
         config = ConfigFactory
@@ -42,5 +47,21 @@ public class ActorSystemContext {
 
     public Config getConfig() {
         return config;
+    }
+
+    public ActorRef getAppActor() {
+        return appActor;
+    }
+
+    public void setAppActor(ActorRef appActor) {
+        this.appActor = appActor;
+    }
+
+    public ActorRef getTenantActor() {
+        return tenantActor;
+    }
+
+    public void setTenantActor(ActorRef tenantActor) {
+        this.tenantActor = tenantActor;
     }
 }
