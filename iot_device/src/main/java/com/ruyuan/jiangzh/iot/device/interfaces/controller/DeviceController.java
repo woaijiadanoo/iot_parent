@@ -1,16 +1,13 @@
 package com.ruyuan.jiangzh.iot.device.interfaces.controller;
 
 import com.google.common.collect.Maps;
-import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
-import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceSercetEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.vo.DeviceInfosVO;
 import com.ruyuan.jiangzh.iot.device.domain.domainservice.DeviceDomainService;
-import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
-import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
-import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
+import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.ProductId;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
 
 import com.ruyuan.jiangzh.iot.base.web.BaseController;

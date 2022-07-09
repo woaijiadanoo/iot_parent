@@ -7,7 +7,7 @@ import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastru
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceSercetRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DevicePO;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
-import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

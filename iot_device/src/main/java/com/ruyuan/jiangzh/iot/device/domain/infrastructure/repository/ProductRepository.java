@@ -3,7 +3,7 @@ package com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.device.domain.entity.ProductEntity;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.ProductStatusEnums;
-import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.ProductId;
 
 public interface ProductRepository {
 

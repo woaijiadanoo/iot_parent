@@ -1,6 +1,5 @@
 package com.ruyuan.jiangzh.iot.user.interfaces.controller;
 
-import com.google.gson.Gson;
 import com.ruyuan.jiangzh.iot.base.exception.AppException;
 import com.ruyuan.jiangzh.iot.base.web.BaseController;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
@@ -12,7 +11,7 @@ import com.ruyuan.jiangzh.iot.user.application.appservice.UserAppService;
 import com.ruyuan.jiangzh.iot.user.domain.entity.SecurityUser;
 import com.ruyuan.jiangzh.iot.user.domain.entity.UserEntity;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.UserRepository;
-import com.ruyuan.jiangzh.iot.user.domain.vo.UserId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 import com.ruyuan.jiangzh.iot.user.infrastructure.utils.UserUtils;
 import com.ruyuan.jiangzh.iot.user.interfaces.dto.UserDTO;
 import com.ruyuan.jiangzh.service.dto.DeviceSercetDTO;
@@ -21,8 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

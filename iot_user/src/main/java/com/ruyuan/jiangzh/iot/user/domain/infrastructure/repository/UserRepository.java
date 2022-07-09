@@ -1,9 +1,8 @@
 package com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository;
 
-import com.ruyuan.jiangzh.iot.base.uuid.UUIDBased;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.user.domain.entity.UserEntity;
-import com.ruyuan.jiangzh.iot.user.domain.vo.UserId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 
 public interface UserRepository {
 

@@ -1,12 +1,11 @@
 package com.ruyuan.jiangzh.iot.device.interfaces.dto;
 
-import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.device.domain.entity.ProductEntity;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.NetTypeEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.ProductStatusEnums;
-import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.ProductId;
 
 import java.util.UUID;
 

@@ -3,11 +3,9 @@ package com.ruyuan.jiangzh.iot.device.domain.domainservice;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceSercetEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.factory.AggrDeviceFactory;
-import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceRepository;
 import com.ruyuan.jiangzh.iot.device.domain.entity.ProductEntity;
-import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository.ProductRepository;
-import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.ProductId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -13,7 +13,7 @@ import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.ProductStatusEn
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository.ProductRepository;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository.impl.mapper.ProductMapper;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository.po.ProductPO;
-import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.ProductId;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

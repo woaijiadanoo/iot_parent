@@ -2,8 +2,8 @@ package com.ruyuan.jiangzh.iot.device.interfaces.dto;
 
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceEntity;
-import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
-import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.ProductId;
 
 public class DeviceDTO {
 

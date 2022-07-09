@@ -12,7 +12,7 @@ import com.ruyuan.jiangzh.iot.user.domain.entity.UserEntity;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.UserRepository;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.impl.mapper.UserMapper;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.po.UserPO;
-import com.ruyuan.jiangzh.iot.user.domain.vo.UserId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

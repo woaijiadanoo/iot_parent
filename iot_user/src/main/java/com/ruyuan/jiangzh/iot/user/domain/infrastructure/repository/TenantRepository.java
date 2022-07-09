@@ -1,11 +1,8 @@
 package com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.user.domain.entity.Tenant;
-import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.po.TenantPO;
-import com.ruyuan.jiangzh.iot.user.domain.vo.TenantId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 
 public interface TenantRepository {
 
