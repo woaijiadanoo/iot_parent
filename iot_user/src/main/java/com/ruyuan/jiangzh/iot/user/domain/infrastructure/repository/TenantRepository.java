@@ -4,6 +4,8 @@ import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.user.domain.entity.Tenant;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 
+import java.util.List;
+
 public interface TenantRepository {
 
     // 根据TenantId获取Tenant对象
@@ -17,5 +19,7 @@ public interface TenantRepository {
 
     // 列表查询
     PageDTO<Tenant> tenants(PageDTO<Tenant> pageDTO);
+
+    List<TenantId> queryTenantIds();
 
 }

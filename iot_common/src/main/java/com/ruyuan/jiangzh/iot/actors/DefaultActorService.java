@@ -13,20 +13,17 @@ public class DefaultActorService implements ActorService{
 
     private ActorRef appActor;
 
-    private ActorRef tenantActor;
-
-    @PostConstruct
     public void initActorSystem(ActorSystemContext systemContext){
         systemContext.setActorService(this);
-
-        // 初始化ActorRef
-        appActor = systemContext.getAppActor();
-        tenantActor = systemContext.getTenantActor();
-
         // 初始化ActorSystem
         actorSystem = ActorSystem.create(ACTOR_SYSTEM_NAME, systemContext.getConfig());
 
         systemContext.setActorSystem(actorSystem);
+    }
+
+    public void initActor(ActorSystemContext systemContext){
+        // 初始化ActorRef
+        appActor = systemContext.getAppActor();
     }
 
 }

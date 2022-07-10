@@ -18,7 +18,6 @@ public class ActorSystemContext {
 
     // 相关的ActorRef
     private ActorRef appActor;
-    private ActorRef tenantActor;
 
     public ActorSystemContext(){
         config = ConfigFactory
@@ -57,11 +56,4 @@ public class ActorSystemContext {
         this.appActor = appActor;
     }
 
-    public ActorRef getTenantActor() {
-        return tenantActor;
-    }
-
-    public void setTenantActor(ActorRef tenantActor) {
-        this.tenantActor = tenantActor;
-    }
 }

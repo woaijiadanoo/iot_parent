@@ -20,11 +20,16 @@ public class DeviceTenantActor extends ContextAwareActor {
     }
 
     @Override
+    public void preStart() throws Exception {
+        System.out.println("DeviceTenantActor preStart tenantId = " + tenantId);
+    }
+
+    @Override
     public void onReceive(Object o) throws Exception {
 
     }
 
-    public final class ActorCreator extends ContextBaseCreator<DeviceTenantActor>{
+    public static class ActorCreator extends ContextBaseCreator<DeviceTenantActor>{
 
         private final TenantId tenantId;
 
