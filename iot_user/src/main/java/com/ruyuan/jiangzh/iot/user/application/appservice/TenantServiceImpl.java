@@ -16,6 +16,6 @@ public class TenantServiceImpl implements TenantServiceAPI {
 
     @Override
     public List<TenantId> describeAllTenans() {
-        return null;
+        return tenantRepository.queryTenantIds();
     }
 }
