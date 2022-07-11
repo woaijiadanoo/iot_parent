@@ -14,10 +14,17 @@
 
     <dubbo:registry address="zookeeper://localhost:2181" client="curator"/>
 
+    <!-- services -->
     <dubbo:service
             interface="com.ruyuan.jiangzh.service.sdk.UserServiceAPI"
                    ref="userServiceImpl" />
 
+    <dubbo:service
+            interface="com.ruyuan.jiangzh.service.sdk.TenantServiceAPI"
+            ref="tenantServiceImpl" />
+
+
+    <!-- references -->
     <dubbo:reference check="false"
             interface="com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI"/>
 

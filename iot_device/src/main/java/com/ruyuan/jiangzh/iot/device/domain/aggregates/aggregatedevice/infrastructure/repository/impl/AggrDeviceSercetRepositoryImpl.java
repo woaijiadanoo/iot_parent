@@ -3,12 +3,11 @@ package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastr
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
-import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceSercetEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceSercetRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.impl.mapper.DeviceSercetInfoMapper;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
-import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

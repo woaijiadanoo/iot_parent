@@ -1,5 +1,6 @@
 package com.ruyuan.jiangzh.iot.actors;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 
 import javax.annotation.PostConstruct;
@@ -10,14 +11,19 @@ public class DefaultActorService implements ActorService{
 
     private ActorSystem actorSystem;
 
-    @PostConstruct
+    private ActorRef appActor;
+
     public void initActorSystem(ActorSystemContext systemContext){
         systemContext.setActorService(this);
-
         // 初始化ActorSystem
         actorSystem = ActorSystem.create(ACTOR_SYSTEM_NAME, systemContext.getConfig());
 
         systemContext.setActorSystem(actorSystem);
+    }
+
+    public void initActor(ActorSystemContext systemContext){
+        // 初始化ActorRef
+        appActor = systemContext.getAppActor();
     }
 
 }

@@ -1,6 +1,5 @@
 package com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,13 +9,13 @@ import com.ruyuan.jiangzh.iot.user.domain.entity.Tenant;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.TenantRepository;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.impl.mapper.TenantMapper;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.po.TenantPO;
-import com.ruyuan.jiangzh.iot.user.domain.vo.TenantId;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -85,6 +84,17 @@ public class TenantRepositoryImpl implements TenantRepository {
         page.setResult(output.getTotal(), output.getPages(), result);
 
         return page;
+    }
+
+    @Override
+    public List<TenantId> queryTenantIds() {
+        List<String> dataIds = tenantMapper.queryAllTenantIds();
+        List<TenantId> result =
+                dataIds.stream().map(dataId -> {
+                    UUID uuid = UUIDHelper.fromStringId(dataId);
+                    return new TenantId(uuid);
+                }).collect(Collectors.toList());
+        return result;
     }
 
     private void spellCondition(QueryWrapper queryWrapper, String fieldName, Object fieldValue){

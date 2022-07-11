@@ -9,4 +9,9 @@
         <result column="phone" property="phone" />
         <result column="name" property="name" />
     </resultMap>
+
+    <select id="queryAllTenantIds" resultType="java.lang.String">
+        select uuid from tenant
+    </select>
+
 </mapper>

@@ -12,8 +12,8 @@ import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastru
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.vo.DeviceInfosVO;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
-import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
-import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.ProductId;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;

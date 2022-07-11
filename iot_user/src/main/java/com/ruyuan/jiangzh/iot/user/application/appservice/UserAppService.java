@@ -2,7 +2,7 @@ package com.ruyuan.jiangzh.iot.user.application.appservice;
 
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.user.domain.entity.UserEntity;
-import com.ruyuan.jiangzh.iot.user.domain.vo.UserId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 
 public interface UserAppService {
 

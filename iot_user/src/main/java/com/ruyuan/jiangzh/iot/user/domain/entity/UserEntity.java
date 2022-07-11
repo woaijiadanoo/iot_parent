@@ -3,10 +3,9 @@ package com.ruyuan.jiangzh.iot.user.domain.entity;
 import com.ruyuan.jiangzh.iot.base.uuid.CreateTimeIdBase;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
-import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.po.TenantPO;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.po.UserPO;
-import com.ruyuan.jiangzh.iot.user.domain.vo.TenantId;
-import com.ruyuan.jiangzh.iot.user.domain.vo.UserId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 
 import java.io.Serializable;
 

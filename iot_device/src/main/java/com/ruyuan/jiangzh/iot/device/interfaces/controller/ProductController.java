@@ -12,7 +12,7 @@ import com.ruyuan.jiangzh.iot.device.domain.domainservice.DeviceDomainService;
 import com.ruyuan.jiangzh.iot.device.domain.entity.ProductEntity;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.ProductStatusEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.repository.ProductRepository;
-import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.ProductId;
 import com.ruyuan.jiangzh.iot.device.interfaces.dto.ProductDTO;
 import com.ruyuan.jiangzh.iot.device.interfaces.dto.ProductDetailDTO;
 import org.slf4j.Logger;

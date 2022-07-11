@@ -1,12 +1,6 @@
 package com.ruyuan.jiangzh.iot.device.interfaces.dto;
 
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceEntity;
-import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
-import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
-import com.ruyuan.jiangzh.iot.device.domain.vo.ProductId;
-import jnr.ffi.annotations.In;
-
-import java.util.UUID;
 
 public class DeviceDetailDTO {
 

@@ -4,7 +4,7 @@ import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.user.domain.entity.SecurityUser;
 import com.ruyuan.jiangzh.iot.user.domain.entity.UserEntity;
 import com.ruyuan.jiangzh.iot.user.domain.infrastructure.repository.UserRepository;
-import com.ruyuan.jiangzh.iot.user.domain.vo.UserId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 import com.ruyuan.jiangzh.iot.user.infrastructure.utils.UserUtils;
 import com.ruyuan.jiangzh.service.dto.SecurityUserDTO;
 import com.ruyuan.jiangzh.service.sdk.UserServiceAPI;

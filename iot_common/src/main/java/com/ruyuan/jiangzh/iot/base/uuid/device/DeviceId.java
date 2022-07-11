@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.iot.user.domain.vo;
+package com.ruyuan.jiangzh.iot.base.uuid.device;
 
 import com.ruyuan.jiangzh.iot.base.uuid.EntityType;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDBased;
@@ -7,16 +7,16 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.util.UUID;
 
-public class UserId  extends UUIDBased {
+public class DeviceId  extends UUIDBased {
 
     @JsonCreator
-    public UserId(UUID id){
+    public DeviceId(UUID id){
         super(id);
     }
 
     @JsonIgnore
     public EntityType getEntityType(){
-        return EntityType.USER;
+        return EntityType.DEVICE;
     }
 
 }

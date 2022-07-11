@@ -2,7 +2,7 @@ package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastr
 
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
-import com.ruyuan.jiangzh.iot.device.domain.vo.DeviceId;
+import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 
 public interface AggrDeviceSercetRepository {
 

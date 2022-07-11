@@ -2,12 +2,11 @@ package com.ruyuan.jiangzh.iot.user.interfaces.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.user.domain.entity.UserEntity;
-import com.ruyuan.jiangzh.iot.user.domain.vo.TenantId;
-import com.ruyuan.jiangzh.iot.user.domain.vo.UserId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 
 public class UserDTO {
 
