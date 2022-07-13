@@ -54,6 +54,8 @@ public class DeviceTenantActor extends ContextAwareActor {
     public void onReceive(Object msg) throws Exception {
         if(msg instanceof ToDeviceActorMsg){
             onToDeviceActorMsg((ToDeviceActorMsg)msg);
+        }else{
+            unhandled(msg);
         }
     }
 

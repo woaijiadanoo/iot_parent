@@ -5,6 +5,8 @@ import akka.actor.Props;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.app.AppActor;
+import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceActorMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.test.DeviceMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.device.infrastructure.configs.ActorConfigs;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
@@ -33,6 +35,15 @@ public class DeviceAppActor extends AppActor {
                     getOrCreateTenants(tenantId);
                 }
         );
+
+//        System.out.println("发送Device消息 --- start");
+//
+//        ToDeviceActorMsg toDeviceActorMsg = DeviceMsg.getToDeviceActorMsg();
+//        ActorRef tenantActor = getOrCreateTenants(toDeviceActorMsg.getTenantId());
+//        tenantActor.tell(toDeviceActorMsg, getSelf());
+//
+//        System.out.println("发送Device消息 --- end");
+
     }
 
     public ActorRef getOrCreateTenants(TenantId tenantId){
@@ -54,7 +65,17 @@ public class DeviceAppActor extends AppActor {
 
     @Override
     public void doReceive(Object msg) {
-
+        System.out.println("msg = " + msg);
+        if(msg instanceof ToDeviceActorMsg){
+            ToDeviceActorMsg toDeviceActorMsg = (ToDeviceActorMsg)msg;
+            System.out.println("msg.tenantId = " + toDeviceActorMsg.getTenantId());
+            System.out.println("msg.deviceId = " + toDeviceActorMsg.getDeviceId());
+            // 将ToDeviceActorMsg 交给tenantActor进行处理
+            ActorRef tenantActor = getOrCreateTenants(toDeviceActorMsg.getTenantId());
+            tenantActor.tell(msg, getSelf());
+        }else{
+            unhandled(msg);
+        }
     }
 
     public static class ActorCreator extends ContextBaseCreator<DeviceAppActor>{

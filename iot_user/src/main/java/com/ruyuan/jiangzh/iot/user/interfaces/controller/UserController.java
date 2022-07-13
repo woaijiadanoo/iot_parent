@@ -1,5 +1,8 @@
 package com.ruyuan.jiangzh.iot.user.interfaces.controller;
 
+import com.ruyuan.jiangzh.iot.actors.ActorService;
+import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceActorMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.test.DeviceMsg;
 import com.ruyuan.jiangzh.iot.base.exception.AppException;
 import com.ruyuan.jiangzh.iot.base.web.BaseController;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
@@ -16,6 +19,9 @@ import com.ruyuan.jiangzh.iot.user.infrastructure.utils.UserUtils;
 import com.ruyuan.jiangzh.iot.user.interfaces.dto.UserDTO;
 import com.ruyuan.jiangzh.service.dto.DeviceSercetDTO;
 import com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI;
+import org.apache.dubbo.common.config.ReferenceCache;
+import org.apache.dubbo.config.ReferenceConfig;
+import org.apache.dubbo.config.utils.SimpleReferenceCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,5 +177,27 @@ public class UserController extends BaseController {
         return RespDTO.success(deviceBySercet);
     }
 
+    /*
+        http://localhost:8081/api/v1/user/test?ruyuan_name=ruyuan_00
+     */
+    @RequestMapping(value = "/user/test", method = RequestMethod.GET)
+    public RespDTO toDeviceTest(){
+        ToDeviceActorMsg toDeviceActorMsg = DeviceMsg.getToDeviceActorMsg();
+        getActorService("device").onMsg(toDeviceActorMsg);
+
+        return RespDTO.success();
+    }
+
+    private final ReferenceCache referenceCache = SimpleReferenceCache.getCache();
+
+    public ActorService getActorService(String groupName){
+        ReferenceConfig<ActorService> referenceConfig = new ReferenceConfig<>();
+        referenceConfig.setInterface(ActorService.class);
+        referenceConfig.setGroup(groupName);
+
+        ActorService actorService = referenceCache.get(referenceConfig);
+
+        return actorService;
+    }
 
 }
