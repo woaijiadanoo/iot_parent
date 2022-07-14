@@ -28,4 +28,8 @@
     <dubbo:reference check="false"
             interface="com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI"/>
 
+    <dubbo:reference check="false"
+                     group="device"
+                     interface="com.ruyuan.jiangzh.iot.actors.ActorService"/>
+
 </beans>

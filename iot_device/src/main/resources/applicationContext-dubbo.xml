@@ -18,6 +18,10 @@
     <dubbo:service ref="deviceServiceImpl"
                    interface="com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI"/>
 
+    <dubbo:service ref="actorService"
+                   group="device"
+                   interface="com.ruyuan.jiangzh.iot.actors.ActorService"/>
+
     <!-- references -->
     <dubbo:reference check="false"
             interface="com.ruyuan.jiangzh.service.sdk.UserServiceAPI"/>

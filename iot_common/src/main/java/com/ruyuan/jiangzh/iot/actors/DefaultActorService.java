@@ -2,8 +2,7 @@ package com.ruyuan.jiangzh.iot.actors;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-
-import javax.annotation.PostConstruct;
+import com.ruyuan.jiangzh.iot.actors.msg.BaseMessage;
 
 public class DefaultActorService implements ActorService{
 
@@ -26,4 +25,8 @@ public class DefaultActorService implements ActorService{
         appActor = systemContext.getAppActor();
     }
 
+    @Override
+    public void onMsg(BaseMessage msg) {
+        appActor.tell(msg, ActorRef.noSender());
+    }
 }

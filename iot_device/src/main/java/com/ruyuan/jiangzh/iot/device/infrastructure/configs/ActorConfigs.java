@@ -8,7 +8,6 @@ import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.DefaultActorService;
 import com.ruyuan.jiangzh.iot.device.infrastructure.actors.DeviceAppActor;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,7 +22,7 @@ public class ActorConfigs {
     private static final String APP_DISPATCHER_NAME = "app-dispatcher";
     public static final String TENANT_DISPATCHER_NAME = "app-dispatcher";
 
-    @Bean
+    @Bean(name = "actorService")
     public ActorService actorService(){
         DefaultActorService actorService = new DefaultActorService();
         ActorSystemContext actorSystemContext = new ActorSystemContext();
