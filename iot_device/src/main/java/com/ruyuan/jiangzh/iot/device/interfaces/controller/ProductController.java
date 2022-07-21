@@ -91,10 +91,10 @@ public class ProductController extends BaseController {
          */
         IoTSecurityUser currentUser = getCurrentUser();
         if(currentUser.getAuthorityRole().equals(AuthorityRole.TENANT_ADMIN)){
-            input.spellCondition("tenantId",  UUIDHelper.fromTimeUUID(currentUser.getTenantId()));
+            input.spellCondition("tenantId",  UUIDHelper.fromTimeUUID(currentUser.getTenantId().getUuid()));
         }else if(currentUser.getAuthorityRole().equals(AuthorityRole.USER)){
-            input.spellCondition("tenantId",  UUIDHelper.fromTimeUUID(currentUser.getTenantId()));
-            input.spellCondition("userId",  UUIDHelper.fromTimeUUID(currentUser.getUserId()));
+            input.spellCondition("tenantId",  UUIDHelper.fromTimeUUID(currentUser.getTenantId().getUuid()));
+            input.spellCondition("userId",  UUIDHelper.fromTimeUUID(currentUser.getUserId().getUuid()));
         }
 
         // 访问repository，并获取返回值

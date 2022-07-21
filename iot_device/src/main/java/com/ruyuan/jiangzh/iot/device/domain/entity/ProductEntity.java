@@ -2,6 +2,8 @@ package com.ruyuan.jiangzh.iot.device.domain.entity;
 
 import com.ruyuan.jiangzh.iot.base.uuid.CreateTimeIdBase;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.NetTypeEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.ProductStatusEnums;
@@ -13,9 +15,9 @@ import java.util.UUID;
 
 public class ProductEntity  extends CreateTimeIdBase<ProductId> implements Serializable {
     // 租户信息
-    private UUID tenantId;
+    private TenantId tenantId;
     // 用户信息
-    private UUID userId;
+    private UserId userId;
     // 产品名称
     private String productName;
     // 产品类型
@@ -43,8 +45,8 @@ public class ProductEntity  extends CreateTimeIdBase<ProductId> implements Seria
     public ProductEntity(ProductId productId){super(productId);}
     public ProductEntity(ProductPO productPO){
         super(new ProductId(UUIDHelper.fromStringId(productPO.getUuid())));
-        this.tenantId = UUIDHelper.fromStringId(productPO.getTenantId());
-        this.userId = UUIDHelper.fromStringId(productPO.getUserId());
+        this.tenantId = new TenantId(UUIDHelper.fromStringId(productPO.getTenantId()));
+        this.userId = new UserId(UUIDHelper.fromStringId(productPO.getUserId()));
         this.productStatus = ProductStatusEnums.getByCode(productPO.getProductStatus());
         this.productType = productPO.getProductType();
         this.productSecret = productPO.getProductSecret();
@@ -62,8 +64,8 @@ public class ProductEntity  extends CreateTimeIdBase<ProductId> implements Seria
     public static ProductPO entityToPo(ProductEntity product){
         ProductPO productPO = new ProductPO();
         productPO.setUuid(UUIDHelper.fromTimeUUID(product.getId().getUuid()));
-        productPO.setUserId(UUIDHelper.fromTimeUUID(product.getUserId()));
-        productPO.setTenantId(UUIDHelper.fromTimeUUID(product.getTenantId()));
+        productPO.setUserId(UUIDHelper.fromTimeUUID(product.getUserId().getUuid()));
+        productPO.setTenantId(UUIDHelper.fromTimeUUID(product.getTenantId().getUuid()));
         productPO.setProductStatus(product.getProductStatus().getCode());
         productPO.setNetType(product.getNetType().getCode());
         productPO.setDeviceType(product.getDeviceType().getCode());
@@ -80,19 +82,19 @@ public class ProductEntity  extends CreateTimeIdBase<ProductId> implements Seria
         return productPO;
     }
 
-    public UUID getTenantId() {
+    public TenantId getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(UUID tenantId) {
+    public void setTenantId(TenantId tenantId) {
         this.tenantId = tenantId;
     }
 
-    public UUID getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
+    public void setUserId(UserId userId) {
         this.userId = userId;
     }
 
