@@ -75,3 +75,12 @@ CREATE TABLE IF NOT EXISTS `device_sercet_info`(
 ) ENGINE = INNODB DEFAULT CHARSET = utf8 COLLATE = utf8_bin;
 
 
+CREATE TABLE IF NOT EXISTS `rule_chain`(
+       `uuid`  VARCHAR(31) PRIMARY KEY NOT NULL,
+       `tenant_id`  VARCHAR(31) NOT NULL,
+       `user_id`  VARCHAR(31) NOT NULL,
+       `rule_chain_name` VARCHAR(100) NOT NULL,
+       `first_rule_node_id`  VARCHAR(31)
+) ENGINE = INNODB DEFAULT CHARSET = utf8 COLLATE = utf8_bin;
+
+
