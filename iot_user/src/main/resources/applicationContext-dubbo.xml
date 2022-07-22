@@ -10,7 +10,7 @@
 
     <dubbo:protocol name="dubbo" port="20881" />
     
-    <dubbo:application name="hello-world-producer"/>
+    <dubbo:application name="iot-user"/>
 
     <dubbo:registry address="zookeeper://localhost:2181" client="curator"/>
 

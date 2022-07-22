@@ -2,6 +2,8 @@ package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity;
 
 import com.ruyuan.jiangzh.iot.base.uuid.CreateTimeIdBase;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.common.DateUtils;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
@@ -27,9 +29,9 @@ import java.util.stream.Collectors;
 public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Serializable {
 
     // tenant信息
-    private UUID tenantId;
+    private TenantId tenantId;
     // 用户信息
-    private UUID userId;
+    private UserId userId;
     // 产品信息
     private ProductId productId;
 
@@ -236,8 +238,8 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
 
     public void poToEntity(DevicePO po){
         this.setId(new DeviceId(UUIDHelper.fromStringId(po.getUuid())));
-        this.setTenantId(UUIDHelper.fromStringId(po.getTenantId()));
-        this.setUserId(UUIDHelper.fromStringId(po.getUserId()));
+        this.setTenantId(new TenantId(UUIDHelper.fromStringId(po.getTenantId())));
+        this.setUserId(new UserId(UUIDHelper.fromStringId(po.getUserId())));
         this.setProductId(new ProductId(UUIDHelper.fromStringId(po.getProductId())));
         this.setProductName(po.getProductName());
         this.setDeviceType(DeviceTypeEnums.getByCode(po.getDeviceType()));
@@ -263,8 +265,8 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
     public DevicePO entityToPO(){
         DevicePO devicePO = new DevicePO();
         devicePO.setUuid(UUIDHelper.fromTimeUUID(this.getId().getUuid()));
-        devicePO.setUserId(UUIDHelper.fromTimeUUID(this.getUserId()));
-        devicePO.setTenantId(UUIDHelper.fromTimeUUID(this.getTenantId()));
+        devicePO.setUserId(UUIDHelper.fromTimeUUID(this.getUserId().getUuid()));
+        devicePO.setTenantId(UUIDHelper.fromTimeUUID(this.getTenantId().getUuid()));
         devicePO.setProductId(UUIDHelper.fromTimeUUID(this.getProductId().getUuid()));
         devicePO.setProductName(this.getProductName());
         devicePO.setDeviceType(this.getDeviceType().getCode());
@@ -315,19 +317,19 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
 
     public AggrDeviceEntity(DeviceId deviceId){super(deviceId);}
 
-    public UUID getTenantId() {
+    public TenantId getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(UUID tenantId) {
+    public void setTenantId(TenantId tenantId) {
         this.tenantId = tenantId;
     }
 
-    public UUID getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
+    public void setUserId(UserId userId) {
         this.userId = userId;
     }
 

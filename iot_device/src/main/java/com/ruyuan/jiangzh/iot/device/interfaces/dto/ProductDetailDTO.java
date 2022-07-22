@@ -1,5 +1,7 @@
 package com.ruyuan.jiangzh.iot.device.interfaces.dto;
 
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.device.domain.entity.ProductEntity;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
@@ -46,7 +48,7 @@ public class ProductDetailDTO {
         return detail;
     }
 
-    public ProductEntity dtoToEntity(UUID tenantId, UUID userId){
+    public ProductEntity dtoToEntity(TenantId tenantId, UserId userId){
         ProductEntity product = new ProductEntity();
         if(!IoTStringUtils.isBlank(this.getUuid())){
             product.setId(new ProductId(IoTStringUtils.toUUID(this.getUuid())));

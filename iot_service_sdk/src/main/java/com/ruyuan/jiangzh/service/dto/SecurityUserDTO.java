@@ -1,5 +1,7 @@
 package com.ruyuan.jiangzh.service.dto;
 
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 
 import java.io.Serializable;
@@ -7,8 +9,8 @@ import java.util.UUID;
 
 public class SecurityUserDTO implements Serializable {
 
-    private UUID tenantId;
-    private UUID userId;
+    private TenantId tenantId;
+    private UserId userId;
     private String username;
     private AuthorityRole authorityRole;
     private String email;
@@ -30,19 +32,19 @@ public class SecurityUserDTO implements Serializable {
         this.phone = phone;
     }
 
-    public UUID getTenantId() {
+    public TenantId getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(UUID tenantId) {
+    public void setTenantId(TenantId tenantId) {
         this.tenantId = tenantId;
     }
 
-    public UUID getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
+    public void setUserId(UserId userId) {
         this.userId = userId;
     }
 

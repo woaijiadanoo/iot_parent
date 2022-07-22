@@ -23,8 +23,8 @@ public class UserServiceImpl implements UserServiceAPI, UserAppService {
 
         SecurityUserDTO securityUserDTO = new SecurityUserDTO();
 
-        securityUserDTO.setTenantId(userEntity.getTenantId().getUuid());
-        securityUserDTO.setUserId(userEntity.getId().getUuid());
+        securityUserDTO.setTenantId(userEntity.getTenantId());
+        securityUserDTO.setUserId(userEntity.getId());
         securityUserDTO.setUsername(userEntity.getUsername());
         securityUserDTO.setAuthorityRole(userEntity.getAuthorityRole());
         securityUserDTO.setEmail(userEntity.getEmail());

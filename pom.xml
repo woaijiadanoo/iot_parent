@@ -44,6 +44,7 @@
         <module>iot_user</module>
         <module>iot_device</module>
         <module>iot_gateway</module>
+        <module>iot_rule_engine</module>
         <module>iot_common</module>
         <module>iot_service_sdk</module>
         <module>iot_db_config</module>
