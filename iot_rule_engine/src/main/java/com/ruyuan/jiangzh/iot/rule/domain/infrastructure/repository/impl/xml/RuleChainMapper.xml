@@ -10,4 +10,8 @@
         <result column="rule_chain_name" property="ruleChainName" />
         <result column="first_rule_node_id" property="firstRuleNodeId" />
     </resultMap>
+
+    <select id="findRuleChainById" resultMap="BaseResultMap">
+        select * from rule_chain where tenant_id = #{tenantId} and uuid = #{ruleChainId}
+    </select>
 </mapper>
