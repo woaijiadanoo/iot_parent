@@ -86,7 +86,7 @@ public class RuleChainRepositoryImpl implements RuleChainRepository {
     private void spellCondition(QueryWrapper<RuleChainPO> queryWrapper, String fieldName, Object fieldValue) {
         if(ConsistContext.RULE_CHAIN_QUERY_PARAM_NAME.equalsIgnoreCase(fieldName)){
             queryWrapper.eq("rule_chain_name", fieldValue);
-        } else if("tenantId".equalsIgnoreCase(fieldName)){
+        } else if(ConsistContext.TENANT_ID.equalsIgnoreCase(fieldName)){
             queryWrapper.eq("tenant_id", fieldValue);
         }
     }
