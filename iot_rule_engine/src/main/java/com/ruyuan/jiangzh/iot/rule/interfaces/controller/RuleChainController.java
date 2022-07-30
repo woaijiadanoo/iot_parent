@@ -25,6 +25,32 @@ public class RuleChainController extends BaseController {
     @Autowired
     private RuleChainRepository ruleChainRepository;
 
+    /*
+        http://localhost:8083/api/v1/ruleChains?ruyuan_name=ruyuan_00
+        http://localhost:8083/api/v1/ruleChains?ruyuan_name=ruyuan_00&ruleChainName=ry_rc_01
+
+{
+    "code": 200,
+    "requestId": "8fcab462050a4dee91047cd365deb204",
+    "message": "",
+    "state": "",
+    "data": {
+        "nowPage": 1,
+        "pageSize": 10,
+        "totals": 1,
+        "totalPages": 1,
+        "records": [
+            {
+                "ruleChainId": "f3dfd360-0fdb-11ed-8010-1de00285059b",
+                "tenantId": "f20cc080-c89f-11ec-989e-8b76480d43cf",
+                "userId": "f20cc080-c89f-11ec-989e-8b76480d43cf",
+                "ruleChainName": "ry_rc_01",
+                "firstRuleNodeId": null
+            }
+        ]
+    }
+}
+     */
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN')")
     @RequestMapping(value = "/ruleChains", method = RequestMethod.GET)
     public RespDTO ruleChains(
@@ -58,6 +84,29 @@ public class RuleChainController extends BaseController {
         return RespDTO.success(result);
     }
 
+    /*
+        http://localhost:8083/api/v1/ruleChain?ruyuan_name=ruyuan_00
+        request:
+            {
+                "ruleChainName":"ry_rc_01"
+            }
+
+        response:
+
+            {
+                "code": 200,
+                "requestId": null,
+                "message": "",
+                "state": "",
+                "data": {
+                    "ruleChainId": "f3dfd360-0fdb-11ed-8010-1de00285059b",
+                    "tenantId": "f20cc080-c89f-11ec-989e-8b76480d43cf",
+                    "userId": "f20cc080-c89f-11ec-989e-8b76480d43cf",
+                    "ruleChainName": "ry_rc_01",
+                    "firstRuleNodeId": null
+                }
+            }
+     */
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN')")
     @RequestMapping(value = "/ruleChain", method = RequestMethod.POST)
     public RespDTO saveRuleChain(@RequestBody RuleChainDTO dto){
@@ -76,6 +125,24 @@ public class RuleChainController extends BaseController {
         return RespDTO.success(result);
     }
 
+
+    /*
+        http://localhost:8083/api/v1/ruleChain/f3dfd360-0fdb-11ed-8010-1de00285059b?ruyuan_name=ruyuan_00
+
+        {
+            "code": 200,
+            "requestId": "cf6976f51eeb4320951853fff331bf47",
+            "message": "",
+            "state": "",
+            "data": {
+                "ruleChainId": "f3dfd360-0fdb-11ed-8010-1de00285059b",
+                "tenantId": "f20cc080-c89f-11ec-989e-8b76480d43cf",
+                "userId": "f20cc080-c89f-11ec-989e-8b76480d43cf",
+                "ruleChainName": "ry_rc_01",
+                "firstRuleNodeId": null
+            }
+        }
+     */
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN')")
     @RequestMapping(value = "/ruleChain/{ruleChainId}", method = RequestMethod.GET)
     public RespDTO findRuleChainById(@PathVariable("ruleChainId") String ruleChainIdStr){
@@ -90,6 +157,9 @@ public class RuleChainController extends BaseController {
         return RespDTO.success(result);
     }
 
+    /*
+        http://localhost:8083/api/v1/ruleChain/f3dfd360-0fdb-11ed-8010-1de00285059b?ruyuan_name=ruyuan_00
+     */
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN')")
     @RequestMapping(value = "/ruleChain/{ruleChainId}", method = RequestMethod.DELETE)
     public RespDTO deleteRuleChainById(@PathVariable("ruleChainId") String ruleChainIdStr){
