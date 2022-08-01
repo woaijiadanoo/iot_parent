@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.iot.rule;
+package com.ruyuan.jiangzh.iot;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
