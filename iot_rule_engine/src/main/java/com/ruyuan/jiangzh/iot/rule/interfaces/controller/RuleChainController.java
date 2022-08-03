@@ -1,5 +1,7 @@
 package com.ruyuan.jiangzh.iot.rule.interfaces.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.Gson;
 import com.ruyuan.jiangzh.iot.base.security.IoTSecurityUser;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
@@ -11,6 +13,7 @@ import com.ruyuan.jiangzh.iot.rule.domain.entity.RuleChainEntity;
 import com.ruyuan.jiangzh.iot.rule.domain.infrastructure.repository.RuleChainRepository;
 import com.ruyuan.jiangzh.iot.rule.domain.infrastructure.utils.ConsistContext;
 import com.ruyuan.jiangzh.iot.rule.interfaces.dto.RuleChainDTO;
+import com.ruyuan.jiangzh.iot.rule.interfaces.dto.RuleChainMetaDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -171,6 +174,38 @@ public class RuleChainController extends BaseController {
         boolean success = ruleChainRepository.deleteRuleChainById(currentUser.getTenantId(), ruleChainId);
 
         return success ? RespDTO.success() : RespDTO.failture(500, ConsistContext.RESOURCE_NOT_EXISTS);
+    }
+
+
+    /*
+        http://localhost:8083/api/v1/ruleChain/metadata?ruyuan_name=ruyuan_00
+
+
+     */
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN')")
+    @RequestMapping(value = "/ruleChain/metadata", method = RequestMethod.POST)
+    public RespDTO saveRuleChainMetaData(@RequestBody RuleChainMetaDataDTO ruleChainMetaDataDTO){
+        System.out.println("ruleChainMetaDataDTO = " + ruleChainMetaDataDTO);
+
+        for(JsonNode node : ruleChainMetaDataDTO.getNodes()){
+            System.out.println("nodeType = " + node.get("nodeType").asText());
+            System.out.println("nodeName = " + node.get("nodeName").asText());
+            System.out.println("nodeId = " + node.get("nodeId").asText());
+            System.out.println("configuration = " + node.get("configuration"));
+        }
+
+
+        return RespDTO.success();
+    }
+
+    @PreAuthorize("hasAnyAuthority('TENANT_ADMIN')")
+    @RequestMapping(value = "/ruleChain/metadata/{ruleChainId}", method = RequestMethod.GET)
+    public RespDTO queryRuleChainMetaData(@PathVariable("ruleChainId") String ruleChainIdStr){
+
+
+
+
+        return RespDTO.success();
     }
 
 }
