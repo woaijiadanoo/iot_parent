@@ -187,13 +187,6 @@ public class RuleChainController extends BaseController {
     public RespDTO saveRuleChainMetaData(@RequestBody RuleChainMetaDataDTO ruleChainMetaDataDTO){
         System.out.println("ruleChainMetaDataDTO = " + ruleChainMetaDataDTO);
 
-        for(JsonNode node : ruleChainMetaDataDTO.getNodes()){
-            System.out.println("nodeType = " + node.get("nodeType").asText());
-            System.out.println("nodeName = " + node.get("nodeName").asText());
-            System.out.println("nodeId = " + node.get("nodeId").asText());
-            System.out.println("configuration = " + node.get("configuration"));
-        }
-
 
         return RespDTO.success();
     }
