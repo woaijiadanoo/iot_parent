@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.infrastructure.repository.impl.mapper.RuleNodeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.infrastructure.repository.po.RuleNodePO">
+        <id column="uuid" property="uuid" />
+        <result column="rule_chain_id" property="ruleChainId" />
+        <result column="configuration" property="configuration" />
+        <result column="node_type" property="nodeType" />
+        <result column="node_name" property="nodeName" />
+    </resultMap>
+</mapper>

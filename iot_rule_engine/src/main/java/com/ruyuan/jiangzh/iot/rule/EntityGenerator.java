@@ -34,7 +34,7 @@ public class EntityGenerator {
 
     static{
         tableNames = new String[]{
-                "rule_chain"
+                "rule_node","rule_node_relation"
         };
     }
 

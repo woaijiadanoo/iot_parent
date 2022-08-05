@@ -86,6 +86,8 @@ public class RuleChainMetaDataEntity  extends CreateTimeIdBase<RuleChainId> impl
             objectNode.put(RULE_NODE_TYPE_KEY, node.getNodeType());
 
             objectNode.set(RULE_NODE_CONFIGURATION_KEY, node.getConfiguration());
+
+            arrayNode.add(objectNode);
         }
         return arrayNode;
     }
