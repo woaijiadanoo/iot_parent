@@ -105,6 +105,27 @@ public class RuleChainMetaDataEntity  extends CreateTimeIdBase<RuleChainId> impl
         return arrayNode;
     }
 
+    /*
+        service ================================================>
+     */
+
+    /**
+     * RuleNodeId : firstRuleNodeId -> 用来判断RuleChainEntity里的firstRuleNodeId与新保存的是否一致
+     * @return
+     */
+    public RuleNodeId saveRuleChainMetaData(){
+
+        return null;
+    }
+
+    public RuleChainMetaDataEntity loadRuleChainMetaData(RuleChainId ruleChainId, RuleNodeId firstRuleNodeId){
+
+        return null;
+    }
+
+    /*
+        getter & setter ==========================================>
+     */
 
     public Integer getFirstNodeIndex() {
         return firstNodeIndex;
