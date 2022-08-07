@@ -71,7 +71,7 @@ public class RuleNodeRelationRepositoryImpl implements RuleNodeRelationRepositor
 
     private RuleNodeRelationPO queryRuleNodeRelation(EntityRelationVO relation){
         List<RuleNodeRelationPO> result =
-                relationMapper.selectList(getRuleNodeRelationQueryWrapper(new EntityRelationVO()));
+                relationMapper.selectList(getRuleNodeRelationQueryWrapper(relation));
 
         return (result != null && result.size() > 0) ? result.get(0) : null;
     }

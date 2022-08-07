@@ -65,7 +65,9 @@ public class RuleChainMetaDataEntity  extends CreateTimeIdBase<RuleChainId> impl
         ruleNodeEntity.setRuleChainId(this.getId());
         // 防止新增没有NodeId
         if (jvNotEmpty(ruleNodeJson, RULE_NODE_ID_KEY)) {
-            ruleNodeEntity.setId(new RuleNodeId(IoTStringUtils.toUUID(ruleNodeJson.get(RULE_NODE_ID_KEY).asText())));
+            if(IoTStringUtils.isNotBlank(ruleNodeJson.get(RULE_NODE_ID_KEY).asText())){
+                ruleNodeEntity.setId(new RuleNodeId(IoTStringUtils.toUUID(ruleNodeJson.get(RULE_NODE_ID_KEY).asText())));
+            }
         }
         ruleNodeEntity.setNodeName(ruleNodeJson.get(RULE_NODE_NAME_KEY).asText());
         ruleNodeEntity.setNodeType(ruleNodeJson.get(RULE_NODE_TYPE_KEY).asText());

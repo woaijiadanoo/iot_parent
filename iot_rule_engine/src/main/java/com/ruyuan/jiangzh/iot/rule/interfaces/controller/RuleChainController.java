@@ -205,6 +205,9 @@ public class RuleChainController extends BaseController {
         return RespDTO.success(RuleChainMetaDataDTO.entity2Dto(resultEntity));
     }
 
+    /*
+        http://localhost:8083/api/v1/ruleChain/metadata/07941380-0fdc-11ed-8010-1de00285059b?ruyuan_name=ruyuan_00
+     */
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN')")
     @RequestMapping(value = "/ruleChain/metadata/{ruleChainId}", method = RequestMethod.GET)
     public RespDTO queryRuleChainMetaData(@PathVariable("ruleChainId") String ruleChainIdStr){
