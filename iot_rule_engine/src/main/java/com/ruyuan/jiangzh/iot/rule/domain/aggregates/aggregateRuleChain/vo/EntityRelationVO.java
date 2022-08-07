@@ -9,6 +9,8 @@ import com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.infrastr
 
 public class EntityRelationVO {
 
+    public static final String CONTAINS_TYPE = "contains";
+
     private EntityId from;
     private EntityId to;
     private String type;
