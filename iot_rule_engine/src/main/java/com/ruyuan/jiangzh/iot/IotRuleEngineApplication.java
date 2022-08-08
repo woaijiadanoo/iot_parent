@@ -5,7 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
 
-@MapperScan(basePackages = {"com.ruyuan.jiangzh.iot.rule.domain.infrastructure.repository.impl.mapper"})
+@MapperScan(basePackages = {
+        "com.ruyuan.jiangzh.iot.rule.domain.infrastructure.repository.impl.mapper",
+        "com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.infrastructure.repository.impl.mapper"})
 @ImportResource(locations = {"classpath:applicationContext-dubbo.xml"})
 @SpringBootApplication
 public class IotRuleEngineApplication {

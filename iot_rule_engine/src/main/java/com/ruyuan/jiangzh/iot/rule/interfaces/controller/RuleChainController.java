@@ -9,6 +9,9 @@ import com.ruyuan.jiangzh.iot.base.web.BaseController;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
+import com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.entity.RuleChainMetaDataEntity;
+import com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.infrastructure.factory.AggrRuleChainMetaDataFactory;
+import com.ruyuan.jiangzh.iot.rule.domain.domainservice.RuleChainDomainService;
 import com.ruyuan.jiangzh.iot.rule.domain.entity.RuleChainEntity;
 import com.ruyuan.jiangzh.iot.rule.domain.infrastructure.repository.RuleChainRepository;
 import com.ruyuan.jiangzh.iot.rule.domain.infrastructure.utils.ConsistContext;
@@ -27,6 +30,13 @@ public class RuleChainController extends BaseController {
 
     @Autowired
     private RuleChainRepository ruleChainRepository;
+
+    @Autowired
+    private AggrRuleChainMetaDataFactory ruleChainMetaDataFactory;
+
+    @Autowired
+    private RuleChainDomainService ruleChainDomainService;
+
 
     /*
         http://localhost:8083/api/v1/ruleChains?ruyuan_name=ruyuan_00
@@ -185,20 +195,29 @@ public class RuleChainController extends BaseController {
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN')")
     @RequestMapping(value = "/ruleChain/metadata", method = RequestMethod.POST)
     public RespDTO saveRuleChainMetaData(@RequestBody RuleChainMetaDataDTO ruleChainMetaDataDTO){
-        System.out.println("ruleChainMetaDataDTO = " + ruleChainMetaDataDTO);
+        IoTSecurityUser currentUser = getCurrentUser();
+        RuleChainMetaDataEntity metaDataEntity = ruleChainMetaDataFactory.emptyMetaDataEntity();
 
+        RuleChainMetaDataDTO.dtoToEntity(ruleChainMetaDataDTO, metaDataEntity);
 
-        return RespDTO.success();
+        RuleChainMetaDataEntity resultEntity = ruleChainDomainService.saveRuleChainMetaData(currentUser.getTenantId(), metaDataEntity);
+
+        return RespDTO.success(RuleChainMetaDataDTO.entity2Dto(resultEntity));
     }
 
+    /*
+        http://localhost:8083/api/v1/ruleChain/metadata/07941380-0fdc-11ed-8010-1de00285059b?ruyuan_name=ruyuan_00
+     */
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN')")
     @RequestMapping(value = "/ruleChain/metadata/{ruleChainId}", method = RequestMethod.GET)
     public RespDTO queryRuleChainMetaData(@PathVariable("ruleChainId") String ruleChainIdStr){
+        IoTSecurityUser currentUser = getCurrentUser();
+        RuleChainId ruleChainId = new RuleChainId(toUUID(ruleChainIdStr));
 
+        RuleChainMetaDataEntity metaDataEntity =
+                ruleChainDomainService.loadRuleChainMetaData(currentUser.getTenantId(), ruleChainId);
 
-
-
-        return RespDTO.success();
+        return RespDTO.success(RuleChainMetaDataDTO.entity2Dto(metaDataEntity));
     }
 
 }
