@@ -14,7 +14,7 @@ public interface RuleNodeRelationRepository {
     List<EntityRelationVO> findByFrom(EntityId entityId, RelationTypeGroup typeGroup);
 
     // 按组合条件进行删除
-    void deleteRelation(EntityRelationVO relation);
+    boolean deleteRelation(EntityRelationVO relation);
 
     /*
         删除所有跟entityId有关的内容
