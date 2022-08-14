@@ -32,7 +32,7 @@ public class RuleChainDomainService {
         RuleNodeId firstRuleNodeId = metaDataEntity.saveRuleChainMetaData();
 
         // 如果firstRoleNode出现变化，则应该更新RuleChainEntity
-        if((ruleChainEntity.getFirstRuleNodeId() != null && ruleChainEntity.getFirstRuleNodeId().equals(firstRuleNodeId))
+        if((ruleChainEntity.getFirstRuleNodeId() != null && !ruleChainEntity.getFirstRuleNodeId().equals(firstRuleNodeId))
                 || (ruleChainEntity.getFirstRuleNodeId() == null && firstRuleNodeId != null)){
             ruleChainEntity.setFirstRuleNodeId(firstRuleNodeId);
             ruleChainRepository.saveRuleChain(ruleChainEntity);
