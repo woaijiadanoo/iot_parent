@@ -22,12 +22,8 @@ public class RuleEngineAppActor  extends AppActor {
     }
 
     public static class ActorCreator extends ContextBaseCreator<RuleEngineAppActor> {
-
-        private TenantServiceAPI tenantService;
-
-        public ActorCreator(ActorSystemContext actorSystemContext,TenantServiceAPI tenantService){
+        public ActorCreator(ActorSystemContext actorSystemContext){
             super(actorSystemContext);
-            this.tenantService = tenantService;
         }
 
         @Override

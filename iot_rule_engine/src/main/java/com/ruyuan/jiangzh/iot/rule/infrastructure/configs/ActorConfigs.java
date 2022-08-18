@@ -6,6 +6,8 @@ import akka.actor.Props;
 import com.ruyuan.jiangzh.iot.actors.ActorService;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.DefaultActorService;
+import com.ruyuan.jiangzh.iot.rule.domain.domainservice.RuleChainDomainService;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleEngineActorSystemContext;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleEngineAppActor;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,9 @@ public class ActorConfigs {
     @Resource
     private TenantServiceAPI tenantServiceAPI;
 
+    @Resource
+    private RuleChainDomainService ruleChainDomainService;
+
     private static final String APP_DISPATCHER_NAME = "app-dispatcher";
     public static final String TENANT_DISPATCHER_NAME = "app-dispatcher";
 
@@ -27,7 +32,7 @@ public class ActorConfigs {
     @Bean(name = "actorService")
     public ActorService actorService(){
         DefaultActorService actorService = new DefaultActorService();
-        ActorSystemContext actorSystemContext = new ActorSystemContext();
+        ActorSystemContext actorSystemContext  =new RuleEngineActorSystemContext(ruleChainDomainService,tenantServiceAPI);
         // 初始化ActorSystem和ActorSystemContext
         actorService.initActorSystem(actorSystemContext);
 
@@ -35,7 +40,7 @@ public class ActorConfigs {
         // 获取AppActor
         ActorRef deviceAppActor = actorSystem.actorOf(
                 Props.create(
-                        new RuleEngineAppActor.ActorCreator(actorSystemContext, tenantServiceAPI)).withDispatcher(APP_DISPATCHER_NAME),
+                        new RuleEngineAppActor.ActorCreator(actorSystemContext)).withDispatcher(APP_DISPATCHER_NAME),
                         APP_ACTOR_NAME
         );
         actorSystemContext.setAppActor(deviceAppActor);
