@@ -34,9 +34,6 @@ public class RuleChainMsgProcessor extends ComponentMsgProcessor<RuleChainId>{
     private RuleNodeContext firstNode;
     private boolean started;
     private String ruleChainName;
-
-    private ComponentState state;
-
     private final ActorRef parent;
     private final ActorRef self;
 

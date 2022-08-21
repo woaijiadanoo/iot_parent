@@ -34,4 +34,8 @@ public class RuleNodeContext {
     public RuleNodeEntity getSelf() {
         return self;
     }
+
+    public void setSelf(RuleNodeEntity self) {
+        this.self = self;
+    }
 }

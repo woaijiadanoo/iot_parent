@@ -5,16 +5,16 @@ import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleNodeId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
-import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.process.RuleChainMsgProcessor;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.process.RuleNodeMsgProcessor;
 
-public class RuleNodeActor extends ComponentActor<RuleNodeId, RuleChainMsgProcessor>{
+public class RuleNodeActor extends ComponentActor<RuleNodeId, RuleNodeMsgProcessor>{
 
     private final RuleChainId ruleChainId;
 
     public RuleNodeActor(ActorSystemContext actorSystemContext, TenantId tenantId, RuleChainId ruleChainId, RuleNodeId ruleNodeId) {
         super(actorSystemContext, tenantId, ruleNodeId);
         this.ruleChainId = ruleChainId;
-        setProcessor(null);
+        setProcessor(new RuleNodeMsgProcessor(actorSystemContext,tenantId,ruleNodeId, context().parent(), context().self()));
     }
 
     @Override
