@@ -3,14 +3,18 @@ package com.ruyuan.jiangzh.iot.rule.infrastructure.actors;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
+import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleNodeId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.process.RuleChainMsgProcessor;
 
-public class RuleChainActor extends ComponentActor<RuleChainId, RuleChainMsgProcessor>{
+public class RuleNodeActor extends ComponentActor<RuleNodeId, RuleChainMsgProcessor>{
 
-    public RuleChainActor(ActorSystemContext actorSystemContext, TenantId tenantId, RuleChainId ruleChainId) {
-        super(actorSystemContext, tenantId, ruleChainId);
-        setProcessor(new RuleChainMsgProcessor(actorSystemContext, tenantId, ruleChainId, context().parent(), context().self()));
+    private final RuleChainId ruleChainId;
+
+    public RuleNodeActor(ActorSystemContext actorSystemContext, TenantId tenantId, RuleChainId ruleChainId, RuleNodeId ruleNodeId) {
+        super(actorSystemContext, tenantId, ruleNodeId);
+        this.ruleChainId = ruleChainId;
+        setProcessor(null);
     }
 
     @Override
@@ -32,20 +36,22 @@ public class RuleChainActor extends ComponentActor<RuleChainId, RuleChainMsgProc
 
     }
 
-    public static class ActorCreator extends ContextBaseCreator<RuleChainActor> {
+    public static class ActorCreator extends ContextBaseCreator<RuleNodeActor> {
 
         private final TenantId tenantId;
         private final RuleChainId ruleChainId;
+        private final RuleNodeId ruleNodeId;
 
-        public ActorCreator(ActorSystemContext actorSystemContext, TenantId tenantId, RuleChainId ruleChainId){
+        public ActorCreator(ActorSystemContext actorSystemContext,TenantId tenantId,RuleChainId ruleChainId,RuleNodeId ruleNodeId){
             super(actorSystemContext);
             this.tenantId = tenantId;
             this.ruleChainId = ruleChainId;
+            this.ruleNodeId = ruleNodeId;
         }
 
         @Override
-        public RuleChainActor create() throws Exception {
-            return new RuleChainActor(actorSystemContext, tenantId, ruleChainId);
+        public RuleNodeActor create() throws Exception {
+            return new RuleNodeActor(actorSystemContext, tenantId, ruleChainId, ruleNodeId);
         }
     }
 }

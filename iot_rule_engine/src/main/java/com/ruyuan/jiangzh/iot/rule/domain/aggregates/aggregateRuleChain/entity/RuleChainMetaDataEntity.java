@@ -287,7 +287,7 @@ public class RuleChainMetaDataEntity  extends CreateTimeIdBase<RuleChainId> impl
     /*
         以ruleNodeId为from节点的所有relation数据
      */
-    private List<EntityRelationVO> getRuleNodeRelations(RuleNodeId ruleNodeId){
+    public List<EntityRelationVO> getRuleNodeRelations(RuleNodeId ruleNodeId){
         List<EntityRelationVO> relations =
                 ruleNodeRelationRepository.findByFrom(ruleNodeId, RelationTypeGroup.RULE_NODE);
         List<EntityRelationVO> validRelations = Lists.newArrayList();
