@@ -111,4 +111,16 @@ public class RuleChainRepositoryImpl implements RuleChainRepository {
 
         return delete >= 0;
     }
+
+    @Override
+    public List<RuleChainEntity> findRuleChains(TenantId tenantId) {
+        QueryWrapper<RuleChainPO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("tenant_id", UUIDHelper.fromTimeUUID(tenantId.getUuid()));
+
+        List<RuleChainPO> poList = ruleChainMapper.selectList(queryWrapper);
+
+        List<RuleChainEntity> entities = poList.stream().map(po -> new RuleChainEntity(po)).collect(Collectors.toList());
+
+        return entities;
+    }
 }

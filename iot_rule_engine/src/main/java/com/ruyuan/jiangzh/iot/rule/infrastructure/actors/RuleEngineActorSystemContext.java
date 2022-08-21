@@ -19,4 +19,8 @@ public class RuleEngineActorSystemContext extends ActorSystemContext {
     public RuleChainDomainService getRuleChainService() {
         return ruleChainService;
     }
+
+    public TenantServiceAPI getTenantService() {
+        return tenantService;
+    }
 }

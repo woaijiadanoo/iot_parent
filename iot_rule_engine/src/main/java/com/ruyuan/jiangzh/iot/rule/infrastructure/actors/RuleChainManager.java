@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.rule.domain.domainservice.RuleChainDomainService;
 import com.ruyuan.jiangzh.iot.rule.domain.entity.RuleChainEntity;
 
 import java.util.List;
@@ -20,33 +21,31 @@ public class RuleChainManager {
 
     private final Map<RuleChainId, ActorRef> ruleChainActors;
 
+    private final RuleChainDomainService ruleChainDomainService;
+
     public RuleChainManager(ActorSystemContext systemContext){
         this.systemContext = systemContext;
         ruleChainActors = Maps.newHashMap();
+        if(systemContext instanceof RuleEngineActorSystemContext){
+            RuleEngineActorSystemContext actorSystemContext = (RuleEngineActorSystemContext) systemContext;
+            this.ruleChainDomainService = actorSystemContext.getRuleChainService();
+        }else{
+            this.ruleChainDomainService = null;
+        }
     }
 
-    public void init(ActorContext actorContext){
-        for(RuleChainEntity entity : findRuleChains()){
+    public void init(ActorContext actorContext,TenantId tenantId){
+        for(RuleChainEntity entity : findRuleChains(tenantId)){
             RuleChainId ruleChainId = entity.getId();
-            ActorRef ruleChainActor = getOrCreateActor(actorContext, ruleChainId);
-            visit(entity, ruleChainActor);
+            getOrCreateActor(actorContext, ruleChainId);
         }
     }
 
     /*
         获取单个Tenant下的所有的RuleChains
      */
-    private List<RuleChainEntity> findRuleChains(){
-        return null;
-    }
-
-    /*
-        设置ruleChainActors列表
-     */
-    private void visit(RuleChainEntity entity, ActorRef ruleChainActor){
-        if(entity != null){
-
-        }
+    private List<RuleChainEntity> findRuleChains(TenantId tenantId){
+        return ruleChainDomainService.findRuleChains(tenantId);
     }
 
     public ActorRef getOrCreateActor(ActorContext context, RuleChainId ruleChainId) {

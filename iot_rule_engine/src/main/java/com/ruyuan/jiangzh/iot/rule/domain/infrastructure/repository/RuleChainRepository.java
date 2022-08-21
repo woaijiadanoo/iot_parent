@@ -5,6 +5,8 @@ import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.rule.domain.entity.RuleChainEntity;
 
+import java.util.List;
+
 public interface RuleChainRepository {
     // 新增和修改
     RuleChainEntity saveRuleChain(RuleChainEntity entity);
@@ -17,4 +19,6 @@ public interface RuleChainRepository {
 
     // 删除
     boolean deleteRuleChainById(TenantId tenantId, RuleChainId ruleChainId);
+
+    List<RuleChainEntity> findRuleChains(TenantId tenantId);
 }

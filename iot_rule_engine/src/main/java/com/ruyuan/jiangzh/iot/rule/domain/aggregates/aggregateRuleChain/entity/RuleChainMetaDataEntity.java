@@ -244,8 +244,6 @@ public class RuleChainMetaDataEntity  extends CreateTimeIdBase<RuleChainId> impl
     }
 
     public RuleChainMetaDataEntity loadRuleChainMetaData(RuleChainId ruleChainId, RuleNodeId firstRuleNodeId){
-        RuleChainMetaDataEntity ruleChainMetaData = new RuleChainMetaDataEntity(ruleChainId);
-
         // 组装nodes属性
         List<RuleNodeEntity> ruleNodes = getRuleChainNodes(ruleChainId);
         Map<RuleNodeId, Integer> ruleNodeIndexMap = Maps.newHashMap();
@@ -253,9 +251,9 @@ public class RuleChainMetaDataEntity  extends CreateTimeIdBase<RuleChainId> impl
             ruleNodeIndexMap.put(node.getId(), ruleNodes.indexOf(node));
         }
 
-        ruleChainMetaData.setNodes(ruleNodes);
+        this.setNodes(ruleNodes);
         if(firstRuleNodeId != null){
-            ruleChainMetaData.setFirstNodeIndex(ruleNodeIndexMap.get(firstRuleNodeId));
+            this.setFirstNodeIndex(ruleNodeIndexMap.get(firstRuleNodeId));
         }
 
         // 组装connections属性
@@ -268,12 +266,12 @@ public class RuleChainMetaDataEntity  extends CreateTimeIdBase<RuleChainId> impl
                     RuleNodeId toNodeId = new RuleNodeId(relation.getTo().getUuid());
                     Integer toIndex = ruleNodeIndexMap.get(toNodeId);
                     // 将EntityRelationVO 转换为 RuleNodeRelationVO
-                    ruleChainMetaData.addConnection(ruleChainId, fromIndex, toIndex, type);
+                    this.addConnection(ruleChainId, fromIndex, toIndex, type);
                 }
             }
         }
 
-        return ruleChainMetaData;
+        return this;
     }
 
     public void addConnection(RuleChainId ruleChainId, int fromIndex, int toIndex, String relationType){
@@ -312,6 +310,10 @@ public class RuleChainMetaDataEntity  extends CreateTimeIdBase<RuleChainId> impl
         }
 
         return validRelations;
+    }
+
+    public RuleNodeEntity findRuleNodeById(RuleNodeId ruleNodeId) {
+        return ruleNodeRepository.findById(ruleNodeId);
     }
 
     /*
@@ -362,4 +364,5 @@ public class RuleChainMetaDataEntity  extends CreateTimeIdBase<RuleChainId> impl
                 ", connections=" + connections +
                 '}';
     }
+
 }
