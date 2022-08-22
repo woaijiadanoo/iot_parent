@@ -4,11 +4,14 @@ import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleNodeId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.entity.RuleChainMetaDataEntity;
+import com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.entity.RuleNodeEntity;
 import com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.infrastructure.factory.AggrRuleChainMetaDataFactory;
 import com.ruyuan.jiangzh.iot.rule.domain.entity.RuleChainEntity;
 import com.ruyuan.jiangzh.iot.rule.domain.infrastructure.repository.RuleChainRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class RuleChainDomainService {
@@ -68,6 +71,20 @@ public class RuleChainDomainService {
         RuleChainMetaDataEntity metaDataEntity = entity.loadRuleChainMetaData(ruleChainId, firstRuleNodeId);
 
         return metaDataEntity;
+    }
+
+    public List<RuleChainEntity> findRuleChains(TenantId tenantId) {
+        return ruleChainRepository.findRuleChains(tenantId);
+    }
+
+    public RuleChainEntity findRuleChainById(TenantId tenantId, RuleChainId ruleChainId){
+        return ruleChainRepository.findRuleChainById(tenantId, ruleChainId);
+    }
+
+    public RuleNodeEntity findRuleNodeById(TenantId tenantId, RuleNodeId ruleNodeId){
+        RuleChainMetaDataEntity metaDataEntity = ruleChainMetaDataFactory.emptyMetaDataEntity();
+        RuleNodeEntity ruleNode = metaDataEntity.findRuleNodeById(ruleNodeId);
+        return ruleNode;
     }
 
 }

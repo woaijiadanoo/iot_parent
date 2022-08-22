@@ -34,7 +34,7 @@ public class ExtensionKafkaNode implements RuleEngineNode {
         this.kafkaConfig = RuleEngineNodeUtils.convert(configuration, ExtensionKafkaNodeConfiguration.class);
         // 生成KafkaProducer所需的Properties配置
         Properties properties = new Properties();
-        properties.put(ProducerConfig.CLIENT_ID_CONFIG, "producer-tb-kafka-node-" + ctx.getSelfId().getUuid().toString() + "-" + ctx.getNodeId());
+        properties.put(ProducerConfig.CLIENT_ID_CONFIG, "producer-kafka-node-" + ctx.getSelfId().getUuid().toString() + "-" + ctx.getNodeId());
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getBootstrapServers());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, kafkaConfig.getValueSerializer());
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, kafkaConfig.getKeySerializer());

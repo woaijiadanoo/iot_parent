@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextAwareActor;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 
 public abstract class RuleChainManagerActor extends ContextAwareActor {
 
@@ -17,8 +18,8 @@ public abstract class RuleChainManagerActor extends ContextAwareActor {
     /*
         进行ruleChains列表的初始化
      */
-    protected void initRuleChains(){
-        ruleChainManager.init(this.context());
+    protected void initRuleChains(TenantId tenantId){
+        ruleChainManager.init(this.context(),tenantId);
     }
 
     protected ActorRef getRuleChainActorRef(RuleChainId ruleChainId){
