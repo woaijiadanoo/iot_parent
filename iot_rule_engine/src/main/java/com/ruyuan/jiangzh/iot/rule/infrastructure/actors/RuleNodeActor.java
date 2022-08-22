@@ -2,6 +2,7 @@ package com.ruyuan.jiangzh.iot.rule.infrastructure.actors;
 
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
+import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleNodeId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
@@ -23,7 +24,7 @@ public class RuleNodeActor extends ComponentActor<RuleNodeId, RuleNodeMsgProcess
     }
 
     @Override
-    public void aroundPostStop() {
+    public void postStop() throws Exception {
         try {
             getProcessor().stop(getContext());
         } catch (Exception e) {
@@ -34,6 +35,11 @@ public class RuleNodeActor extends ComponentActor<RuleNodeId, RuleNodeMsgProcess
     @Override
     public void onReceive(Object o) throws Exception {
 
+    }
+
+    @Override
+    protected boolean process(IoTActorMessage msg) {
+        return false;
     }
 
     public static class ActorCreator extends ContextBaseCreator<RuleNodeActor> {

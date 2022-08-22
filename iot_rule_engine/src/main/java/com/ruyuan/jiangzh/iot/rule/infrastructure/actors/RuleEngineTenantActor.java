@@ -2,6 +2,7 @@ package com.ruyuan.jiangzh.iot.rule.infrastructure.actors;
 
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
+import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 
 public class RuleEngineTenantActor extends RuleChainManagerActor{
@@ -17,10 +18,9 @@ public class RuleEngineTenantActor extends RuleChainManagerActor{
     }
 
     @Override
-    public void onReceive(Object o) throws Exception {
-
+    protected boolean process(IoTActorMessage msg) {
+        return false;
     }
-
 
     public static class ActorCreator extends ContextBaseCreator<RuleEngineTenantActor> {
         private final TenantId tenantId;

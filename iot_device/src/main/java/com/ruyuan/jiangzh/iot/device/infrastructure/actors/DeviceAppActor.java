@@ -5,8 +5,7 @@ import akka.actor.Props;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.app.AppActor;
-import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceActorMsg;
-import com.ruyuan.jiangzh.iot.actors.msg.test.DeviceMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.device.infrastructure.configs.ActorConfigs;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
@@ -64,18 +63,8 @@ public class DeviceAppActor extends AppActor {
     }
 
     @Override
-    public void doReceive(Object msg) {
-        System.out.println("msg = " + msg);
-        if(msg instanceof ToDeviceActorMsg){
-            ToDeviceActorMsg toDeviceActorMsg = (ToDeviceActorMsg)msg;
-            System.out.println("msg.tenantId = " + toDeviceActorMsg.getTenantId());
-            System.out.println("msg.deviceId = " + toDeviceActorMsg.getDeviceId());
-            // 将ToDeviceActorMsg 交给tenantActor进行处理
-            ActorRef tenantActor = getOrCreateTenants(toDeviceActorMsg.getTenantId());
-            tenantActor.tell(msg, getSelf());
-        }else{
-            unhandled(msg);
-        }
+    protected boolean process(IoTActorMessage msg) {
+        return false;
     }
 
     public static class ActorCreator extends ContextBaseCreator<DeviceAppActor>{

@@ -2,20 +2,7 @@ package com.ruyuan.jiangzh.iot.actors.msg;
 
 public enum MsgType {
 
-    GET_ATTRIBUTE_REQUEST(true);
+    // 服务调用规则引擎
+    SERVICE_TO_RULE_ENGINE_MSG;
 
-    private final boolean requireRulesProcessing;
-
-    // 默认的情况下不需要处理
-    MsgType(){
-        this(false);
-    }
-
-    MsgType(boolean requireRulesProcessing){
-        this.requireRulesProcessing = requireRulesProcessing;
-    }
-
-    public boolean requireRulesProcessing() {
-        return requireRulesProcessing;
-    }
 }

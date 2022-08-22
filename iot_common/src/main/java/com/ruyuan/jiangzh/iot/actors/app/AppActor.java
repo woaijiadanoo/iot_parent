@@ -14,12 +14,6 @@ public abstract class AppActor extends ContextAwareActor {
         doStart();
     }
 
-    @Override
-    public void onReceive(Object msg) throws Exception {
-        doReceive(msg);
-    }
-
     public abstract void doStart();
-    public abstract void doReceive(Object msg);
 
 }

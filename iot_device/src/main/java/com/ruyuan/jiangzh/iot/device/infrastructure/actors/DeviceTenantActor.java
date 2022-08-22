@@ -5,6 +5,7 @@ import akka.actor.Props;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextAwareActor;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
+import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceActorMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
@@ -51,12 +52,8 @@ public class DeviceTenantActor extends ContextAwareActor {
     }
 
     @Override
-    public void onReceive(Object msg) throws Exception {
-        if(msg instanceof ToDeviceActorMsg){
-            onToDeviceActorMsg((ToDeviceActorMsg)msg);
-        }else{
-            unhandled(msg);
-        }
+    protected boolean process(IoTActorMessage msg) {
+        return false;
     }
 
     private void onToDeviceActorMsg(ToDeviceActorMsg msg) {
