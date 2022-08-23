@@ -32,12 +32,12 @@ public class RuleNodeMsgProcessor extends ComponentMsgProcessor<RuleNodeId> {
         super(systemContext, tenantId, ruleNodeId);
         this.parent = parent;
         this.self = self;
-        this.ruleNode = ruleChainDomainService.findRuleNodeById(tenantId, ruleNodeId);
-        this.ruleEngineCtx = new DefaultRuleEngineContext(systemContext, new RuleNodeContext(tenantId, parent, self, ruleNode));
 
         if(systemContext instanceof RuleEngineActorSystemContext){
             RuleEngineActorSystemContext actorSystemContext = (RuleEngineActorSystemContext) systemContext;
             this.ruleChainDomainService = actorSystemContext.getRuleChainService();
+            this.ruleNode = ruleChainDomainService.findRuleNodeById(tenantId, ruleNodeId);
+            this.ruleEngineCtx = new DefaultRuleEngineContext(systemContext, new RuleNodeContext(tenantId, parent, self, ruleNode));
         }else{
             this.ruleChainDomainService = null;
         }

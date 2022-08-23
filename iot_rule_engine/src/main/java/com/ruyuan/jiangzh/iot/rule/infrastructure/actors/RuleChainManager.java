@@ -23,6 +23,8 @@ public class RuleChainManager {
 
     private final RuleChainDomainService ruleChainDomainService;
 
+    private TenantId tenantId;
+
     public RuleChainManager(ActorSystemContext systemContext){
         this.systemContext = systemContext;
         ruleChainActors = Maps.newHashMap();
@@ -35,6 +37,9 @@ public class RuleChainManager {
     }
 
     public void init(ActorContext actorContext,TenantId tenantId){
+        if (tenantId != null) {
+            this.tenantId = tenantId;
+        }
         for(RuleChainEntity entity : findRuleChains(tenantId)){
             RuleChainId ruleChainId = entity.getId();
             getOrCreateActor(actorContext, ruleChainId);
@@ -56,7 +61,7 @@ public class RuleChainManager {
     }
 
     private TenantId getTenantId(){
-        return null;
+        return tenantId;
     }
 
     private Creator<RuleChainActor> creator(RuleChainId ruleChainId){

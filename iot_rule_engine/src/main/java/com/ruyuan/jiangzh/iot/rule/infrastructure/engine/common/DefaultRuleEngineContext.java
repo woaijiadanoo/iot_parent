@@ -11,8 +11,6 @@ public class DefaultRuleEngineContext implements RuleEngineContext{
     private final RuleNodeContext ruleNodeCtx;
     private final ActorSystemContext systemContext;
 
-    private RuleNodeEntity self;
-
     public DefaultRuleEngineContext(ActorSystemContext systemContext, RuleNodeContext ruleNodeContext) {
         this.ruleNodeCtx = ruleNodeContext;
         this.systemContext = systemContext;

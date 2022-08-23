@@ -3,6 +3,7 @@ package com.ruyuan.jiangzh.iot.actors.tenant;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextAwareActor;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
+import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 
 public class TenantTemplateActor extends ContextAwareActor {
@@ -15,8 +16,8 @@ public class TenantTemplateActor extends ContextAwareActor {
     }
 
     @Override
-    public void onReceive(Object o) throws Exception {
-
+    protected boolean process(IoTActorMessage msg) {
+        return false;
     }
 
     public final class ActorCreator extends ContextBaseCreator<TenantTemplateActor>{

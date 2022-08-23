@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.app.AppActor;
+import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.configs.ActorConfigs;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
@@ -28,6 +29,11 @@ public class RuleEngineAppActor  extends AppActor {
             this.tenantService = null;
         }
         tenantActos = Maps.newHashMap();
+    }
+
+    @Override
+    protected boolean process(IoTActorMessage msg) {
+        return false;
     }
 
     @Override
@@ -56,11 +62,6 @@ public class RuleEngineAppActor  extends AppActor {
         tenantActos.put(tenantId, tenantActor);
 
         return tenantActor;
-    }
-
-    @Override
-    public void doReceive(Object msg) {
-
     }
 
     public static class ActorCreator extends ContextBaseCreator<RuleEngineAppActor> {
