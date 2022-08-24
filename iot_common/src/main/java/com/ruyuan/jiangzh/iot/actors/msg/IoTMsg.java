@@ -15,15 +15,18 @@ public class IoTMsg implements Serializable {
 
     private final String data;
 
+    private final IoTMsgMetaData metaData;
+
     private final RuleChainId ruleChainId;
     private final RuleNodeId ruleNodeId;
 
-    public IoTMsg(UUID id, String type, EntityId originator, String data,
+    public IoTMsg(UUID id, String type, EntityId originator, String data, IoTMsgMetaData metaData,
                   RuleChainId ruleChainId, RuleNodeId ruleNodeId) {
         this.id = id;
         this.type = type;
         this.originator = originator;
         this.data = data;
+        this.metaData = metaData;
         this.ruleChainId = ruleChainId;
         this.ruleNodeId = ruleNodeId;
     }
@@ -32,7 +35,7 @@ public class IoTMsg implements Serializable {
         拷贝对象
      */
     public IoTMsg copy(UUID newId,RuleChainId ruleChainId,RuleNodeId ruleNodeId){
-        return new IoTMsg(newId, getType(), getOriginator(), getData(), ruleChainId, ruleNodeId);
+        return new IoTMsg(newId, getType(), getOriginator(), getData(),metaData.copy(), ruleChainId, ruleNodeId);
     }
 
     public UUID getId() {
@@ -57,5 +60,9 @@ public class IoTMsg implements Serializable {
 
     public RuleNodeId getRuleNodeId() {
         return ruleNodeId;
+    }
+
+    public IoTMsgMetaData getMetaData() {
+        return metaData;
     }
 }
