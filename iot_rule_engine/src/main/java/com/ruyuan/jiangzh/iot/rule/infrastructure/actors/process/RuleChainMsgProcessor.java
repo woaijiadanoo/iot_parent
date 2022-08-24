@@ -5,6 +5,8 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import com.google.common.collect.Maps;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
+import com.ruyuan.jiangzh.iot.actors.msg.IoTMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.ServiceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.EntityType;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleNodeId;
@@ -17,6 +19,9 @@ import com.ruyuan.jiangzh.iot.rule.domain.entity.RuleChainEntity;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.ComponentState;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleEngineActorSystemContext;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleNodeActor;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.RuleChainToRuleNodeMsg;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.DefaultRuleEngineContext;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.RuleEngineContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,4 +136,30 @@ public class RuleChainMsgProcessor extends ComponentMsgProcessor<RuleChainId>{
     public String componentName() throws Exception {
         return this.ruleChainName;
     }
+
+    public void onServiceToRuleEngineMsg(ServiceToRuleEngineMsg msg) {
+        checkActive();
+        if(firstNode != null){
+            pushMsgToNode(firstNode, getIoTMsgByRuleChain(msg.getMsg()),  "");
+        }
+    }
+
+    /*
+        获取一个新的IoTMsg， 避免引用原始对象
+     */
+    private IoTMsg getIoTMsgByRuleChain(IoTMsg msg) {
+        return new IoTMsg(msg.getId(), msg.getType(), msg.getOriginator(), msg.getData(), entityId, null);
+    }
+
+    /*
+        将消息推送给RuleNodeActor
+     */
+    private void pushMsgToNode(RuleNodeContext nodeCtx, IoTMsg msg, String fromRelationType){
+        if(nodeCtx != null){
+            RuleEngineContext ruleEngineCtx = new DefaultRuleEngineContext(systemContext, nodeCtx);
+            // 给nodeActor投递消息
+            nodeCtx.getSelfActor().tell(new RuleChainToRuleNodeMsg(ruleEngineCtx, msg, fromRelationType), self);
+        }
+    }
+
 }

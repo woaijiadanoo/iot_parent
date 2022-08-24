@@ -1,5 +1,6 @@
 package com.ruyuan.jiangzh.iot.actors.msg;
 
+import com.google.common.collect.Maps;
 import com.ruyuan.jiangzh.iot.base.uuid.EntityId;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleNodeId;
@@ -19,6 +20,11 @@ public class IoTMsg implements Serializable {
 
     private final RuleChainId ruleChainId;
     private final RuleNodeId ruleNodeId;
+
+    public IoTMsg(UUID id, String type, EntityId originator, String data,
+                  RuleChainId ruleChainId, RuleNodeId ruleNodeId){
+        this(id,type,originator,data, new IoTMsgMetaData(Maps.newHashMap()), ruleChainId, ruleNodeId);
+    }
 
     public IoTMsg(UUID id, String type, EntityId originator, String data, IoTMsgMetaData metaData,
                   RuleChainId ruleChainId, RuleNodeId ruleNodeId) {
