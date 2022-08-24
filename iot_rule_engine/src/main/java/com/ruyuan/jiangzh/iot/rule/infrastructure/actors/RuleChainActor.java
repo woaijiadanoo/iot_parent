@@ -6,6 +6,7 @@ import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ServiceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.RuleNodeToRuleChainTellNextMsg;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.process.RuleChainMsgProcessor;
 
 public class RuleChainActor extends ComponentActor<RuleChainId, RuleChainMsgProcessor>{
@@ -35,10 +36,17 @@ public class RuleChainActor extends ComponentActor<RuleChainId, RuleChainMsgProc
             case SERVICE_TO_RULE_ENGINE_MSG:
                 onServiceToRuleEngineMsg((ServiceToRuleEngineMsg)msg);
                 break;
+            case RULE_NODE_TO_RULE_CHAIN_TELL_NEXT_MSG:
+                onRuleNodeToRuleChainTellNextMsg((RuleNodeToRuleChainTellNextMsg)msg);
+                break;
             default:
                 return false;
         }
         return true;
+    }
+
+    private void onRuleNodeToRuleChainTellNextMsg(RuleNodeToRuleChainTellNextMsg msg){
+        getProcessor().onRuleNodeToRuleChainTellNextMsg(msg);
     }
 
     private void onServiceToRuleEngineMsg(ServiceToRuleEngineMsg msg){

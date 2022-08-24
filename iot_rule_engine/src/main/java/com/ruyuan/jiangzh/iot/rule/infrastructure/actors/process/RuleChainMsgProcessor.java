@@ -7,7 +7,9 @@ import com.google.common.collect.Maps;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ServiceToRuleEngineMsg;
+import com.ruyuan.jiangzh.iot.base.uuid.EntityId;
 import com.ruyuan.jiangzh.iot.base.uuid.EntityType;
+import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleNodeId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
@@ -20,13 +22,12 @@ import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.ComponentState;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleEngineActorSystemContext;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleNodeActor;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.RuleChainToRuleNodeMsg;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.RuleNodeToRuleChainTellNextMsg;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.DefaultRuleEngineContext;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.RuleEngineContext;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RuleChainMsgProcessor extends ComponentMsgProcessor<RuleChainId>{
 
@@ -161,5 +162,78 @@ public class RuleChainMsgProcessor extends ComponentMsgProcessor<RuleChainId>{
             nodeCtx.getSelfActor().tell(new RuleChainToRuleNodeMsg(ruleEngineCtx, msg, fromRelationType), self);
         }
     }
+
+    public void onRuleNodeToRuleChainTellNextMsg(RuleNodeToRuleChainTellNextMsg msg) {
+        checkActive();
+
+        onLocalTellNext(msg);
+    }
+
+    /*
+        ry_kafka_input
+            success -> ry_kafka_success_01
+            success -> ry_kafka_success_02
+            failture -> ry_kafka_failture
+     */
+    private void onLocalTellNext(RuleNodeToRuleChainTellNextMsg tellNextMsg) {
+        IoTMsg msg = tellNextMsg.getMsg();
+        RuleNodeId originatorNodeId = tellNextMsg.getOriginator();
+        // 筛选需要的relationType
+        List<RuleNodeRelation> relations = nodeRoutes.get(originatorNodeId).stream()
+                .filter(r -> sameRelationType(tellNextMsg.getRelationTypes(), r.getType()))
+                .collect(Collectors.toList());
+
+        int relationsCount = relations.size();
+        if(relationsCount == 0){
+            // 这个流程到这就截止了
+        } else if (relationsCount == 1) {
+            for(RuleNodeRelation relation : relations){
+                pushToTarget(msg, relation.getOut(), relation.getType());
+            }
+        } else {
+            for(RuleNodeRelation relation : relations){
+                EntityId target = relation.getOut();
+                switch (target.getEntityType()){
+                    case RULE_NODE:
+                        copyMsgToNode(msg, target, relation.getType());
+                        break;
+                    default:
+                        // 目前没有什么处理的内容
+                }
+            }
+        }
+
+    }
+
+    private void copyMsgToNode(IoTMsg msg, EntityId target, String fromRelationType) {
+        RuleNodeId targetId = new RuleNodeId(target.getUuid());
+        RuleNodeContext targetNodeCtx = nodeActors.get(targetId);
+        // 主要怕多个ruleNode之间的消息修改会影响其他的ruleNode
+        IoTMsg targetMsg = msg.copy(UUIDHelper.genUuid(), entityId, targetId);
+        pushMsgToNode(targetNodeCtx, targetMsg, fromRelationType);
+    }
+
+    private void pushToTarget(IoTMsg msg, EntityId target, String fromRelationType) {
+        switch (target.getEntityType()){
+            case RULE_NODE:
+                pushMsgToNode(nodeActors.get(new RuleNodeId(target.getUuid())), msg, fromRelationType);
+                break;
+            default:
+                // 目前没有什么处理的内容
+        }
+    }
+
+    private boolean sameRelationType(Set<String> relationTypes, String type) {
+        if(relationTypes == null){
+            return true;
+        }
+        for(String relationType : relationTypes){
+            if(relationType.equalsIgnoreCase(type)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }
