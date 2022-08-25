@@ -2,9 +2,13 @@ package com.ruyuan.jiangzh.iot.rule.interfaces.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
+import com.ruyuan.jiangzh.iot.actors.ActorService;
+import com.ruyuan.jiangzh.iot.actors.msg.IoTMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.ServiceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.base.security.IoTSecurityUser;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.base.web.BaseController;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
@@ -36,6 +40,9 @@ public class RuleChainController extends BaseController {
 
     @Autowired
     private RuleChainDomainService ruleChainDomainService;
+
+    @Autowired
+    private ActorService actorService;
 
 
     /*
@@ -218,6 +225,28 @@ public class RuleChainController extends BaseController {
                 ruleChainDomainService.loadRuleChainMetaData(currentUser.getTenantId(), ruleChainId);
 
         return RespDTO.success(RuleChainMetaDataDTO.entity2Dto(metaDataEntity));
+    }
+
+
+    /*
+        http://localhost:8083/api/v1/ruleChain/script/test?ruyuan_name=ruyuan_00
+
+        {
+            "name":"ruyuan",
+            "age":"10000",
+            "debug":"true"
+        }
+     */
+    @RequestMapping(value = "/ruleChain/script/test", method = RequestMethod.POST)
+    public RespDTO scriptTest(@RequestBody String data){
+        // 组织ServiceToRuleEngineMsg
+        TenantId tenantId = getCurrentUser().getTenantId();
+        IoTMsg ioTMsg = new IoTMsg(UUIDHelper.genUuid(), "", data);
+        ServiceToRuleEngineMsg serviceToRuleEngineMsg = new ServiceToRuleEngineMsg(tenantId, ioTMsg);
+        // 传递给ActorService
+        actorService.onMsg(serviceToRuleEngineMsg);
+        // 返回值
+        return RespDTO.success();
     }
 
 }

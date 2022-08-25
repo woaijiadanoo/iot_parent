@@ -64,7 +64,7 @@ public class DefaultRuleEngineContext implements RuleEngineContext{
 
     @Override
     public IoTMsg transformMsg(IoTMsg origMsg, String type, EntityId originator, IoTMsgMetaData metaData, String data) {
-        return null;
+        return new IoTMsg(origMsg.getId(), type, originator, data, metaData.copy(), origMsg.getRuleChainId(), origMsg.getRuleNodeId());
     }
 
     @Override
