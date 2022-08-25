@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common;
+package com.ruyuan.jiangzh.iot.actors.msg;
 
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 
@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RuleEngineMsgMetaData implements Serializable {
+public class IoTMsgMetaData implements Serializable {
 
     private final Map<String, String> data = new ConcurrentHashMap<>();
 
-    public RuleEngineMsgMetaData(Map<String, String> data) {
+    public IoTMsgMetaData(Map<String, String> data) {
         data.forEach((key,val) -> putValue(key , val));
     }
 
@@ -30,8 +30,8 @@ public class RuleEngineMsgMetaData implements Serializable {
     }
 
     // 拷贝
-    public RuleEngineMsgMetaData copy(){
-        return new RuleEngineMsgMetaData(new ConcurrentHashMap<>(data));
+    public IoTMsgMetaData copy(){
+        return new IoTMsgMetaData(new ConcurrentHashMap<>(data));
     }
 
 }

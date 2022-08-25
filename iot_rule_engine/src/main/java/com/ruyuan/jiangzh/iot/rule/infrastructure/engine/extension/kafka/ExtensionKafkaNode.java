@@ -1,12 +1,12 @@
 package com.ruyuan.jiangzh.iot.rule.infrastructure.engine.extension.kafka;
 
+import com.ruyuan.jiangzh.iot.actors.msg.IoTMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.IoTMsgMetaData;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.RuleEngineNode;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.RuleEngineNodeConfiguration;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.RuleEngineNodeUtils;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.RuleEngineRelationTypes;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.RuleEngineContext;
-import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.RuleEngineMsg;
-import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.RuleEngineMsgMetaData;
 import org.apache.kafka.clients.producer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +59,7 @@ public class ExtensionKafkaNode implements RuleEngineNode {
     }
 
     @Override
-    public void onMsg(RuleEngineContext ctx, RuleEngineMsg msg) {
+    public void onMsg(RuleEngineContext ctx, IoTMsg msg) {
         // 确定topic [  ry_topic |  ${name}_topic ]
         String topic = RuleEngineNodeUtils.processPattern(kafkaConfig.getTopicPattern(), msg.getMetaData());
         try {
@@ -67,11 +67,11 @@ public class ExtensionKafkaNode implements RuleEngineNode {
             producer.send(new ProducerRecord<>(topic, msg.getData()), (metadata, e) -> {
                 if(metadata != null){
                     // 成功的下一步处理
-                    RuleEngineMsg nextMsg = processResponse(ctx, msg, metadata);
+                    IoTMsg nextMsg = processResponse(ctx, msg, metadata);
                     ctx.tellNext(nextMsg, RuleEngineRelationTypes.SUCCESS);
                 } else {
                     // 失败的下一步处理
-                    RuleEngineMsg nextMsg = processException(ctx, msg, e);
+                    IoTMsg nextMsg = processException(ctx, msg, e);
                     ctx.tellFailure(nextMsg, e);
                 }
             });
@@ -82,8 +82,8 @@ public class ExtensionKafkaNode implements RuleEngineNode {
         }
     }
 
-    private RuleEngineMsg processResponse(RuleEngineContext ctx, RuleEngineMsg origMsg, RecordMetadata recordMetadata){
-        RuleEngineMsgMetaData metaData = origMsg.getMetaData().copy();
+    private IoTMsg processResponse(RuleEngineContext ctx, IoTMsg origMsg, RecordMetadata recordMetadata){
+        IoTMsgMetaData metaData = origMsg.getMetaData().copy();
         metaData.putValue(OFFSET, recordMetadata.offset()+"");
         metaData.putValue(PARTITION, recordMetadata.partition()+"");
         metaData.putValue(TOPIC, recordMetadata.topic());
@@ -91,8 +91,8 @@ public class ExtensionKafkaNode implements RuleEngineNode {
         return ctx.transformMsg(origMsg, origMsg.getType(), origMsg.getOriginator(), metaData, origMsg.getData());
     }
 
-    private RuleEngineMsg processException(RuleEngineContext ctx, RuleEngineMsg origMsg, Exception e){
-        RuleEngineMsgMetaData metaData = origMsg.getMetaData().copy();
+    private IoTMsg processException(RuleEngineContext ctx, IoTMsg origMsg, Exception e){
+        IoTMsgMetaData metaData = origMsg.getMetaData().copy();
 
         metaData.putValue(ERROR, e.getClass() + " : " + e.getMessage());
 

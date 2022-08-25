@@ -7,6 +7,7 @@ import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.app.AppActor;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.ServiceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.configs.ActorConfigs;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
@@ -33,7 +34,19 @@ public class RuleEngineAppActor  extends AppActor {
 
     @Override
     protected boolean process(IoTActorMessage msg) {
-        return false;
+        switch (msg.getMsgType()){
+            case SERVICE_TO_RULE_ENGINE_MSG:
+                onServiceToRuleEngineMsg((ServiceToRuleEngineMsg)msg);
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
+    private void onServiceToRuleEngineMsg(ServiceToRuleEngineMsg msg) {
+        ActorRef tenantActor = getOrCreateTenants(msg.getTenantId());
+        tenantActor.tell(msg, self());
     }
 
     @Override

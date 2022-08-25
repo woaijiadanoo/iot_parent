@@ -2,7 +2,7 @@ package com.ruyuan.jiangzh.iot.rule.infrastructure.engine;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.RuleEngineMsgMetaData;
+import com.ruyuan.jiangzh.iot.actors.msg.IoTMsgMetaData;
 
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class RuleEngineNodeUtils {
     /*
         pattern : Hi，${name}， What‘s up?
      */
-    public static String processPattern(String pattern, RuleEngineMsgMetaData metaData){
+    public static String processPattern(String pattern, IoTMsgMetaData metaData){
         String result = new String(pattern);
         for(Map.Entry<String,String> entry :  metaData.values().entrySet()){
             result = processVar(result, entry.getKey(), entry.getValue());

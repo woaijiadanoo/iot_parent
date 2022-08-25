@@ -3,9 +3,11 @@ package com.ruyuan.jiangzh.iot.rule.infrastructure.actors;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.ServiceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleNodeId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.RuleChainToRuleNodeMsg;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.process.RuleNodeMsgProcessor;
 
 public class RuleNodeActor extends ComponentActor<RuleNodeId, RuleNodeMsgProcessor>{
@@ -33,13 +35,19 @@ public class RuleNodeActor extends ComponentActor<RuleNodeId, RuleNodeMsgProcess
     }
 
     @Override
-    public void onReceive(Object o) throws Exception {
-
+    protected boolean process(IoTActorMessage msg) {
+        switch (msg.getMsgType()) {
+            case RULE_CHAIN_TO_RULE_NODE_MSG:
+                onRuleChainToRuleNodeMsg((RuleChainToRuleNodeMsg)msg);
+                break;
+            default:
+                return false;
+        }
+        return true;
     }
 
-    @Override
-    protected boolean process(IoTActorMessage msg) {
-        return false;
+    private void onRuleChainToRuleNodeMsg(RuleChainToRuleNodeMsg msg){
+        getProcessor().onRuleChainToRuleNodeMsg(msg);
     }
 
     public static class ActorCreator extends ContextBaseCreator<RuleNodeActor> {

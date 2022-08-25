@@ -9,6 +9,7 @@ import com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.entity.R
 import com.ruyuan.jiangzh.iot.rule.domain.domainservice.RuleChainDomainService;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.ComponentState;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleEngineActorSystemContext;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.RuleChainToRuleNodeMsg;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.RuleEngineNode;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.RuleEngineNodeConfiguration;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.DefaultRuleEngineContext;
@@ -96,5 +97,16 @@ public class RuleNodeMsgProcessor extends ComponentMsgProcessor<RuleNodeId> {
     @Override
     public String componentName() throws Exception {
         return ruleNode.getNodeName();
+    }
+
+    public void onRuleChainToRuleNodeMsg(RuleChainToRuleNodeMsg msg) {
+        checkActive();
+        try {
+            ruleEngineNode.onMsg(msg.getRuleEngineCtx(), msg.getMsg());
+        } catch (Exception e) {
+            // 比如producer为空，则不会进入业务处理
+            msg.getRuleEngineCtx().tellFailure(msg.getMsg(), e);
+        }
+
     }
 }

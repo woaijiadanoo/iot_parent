@@ -28,4 +28,10 @@ public abstract class ComponentMsgProcessor<T extends EntityId> extends Abstract
     // processor componentName
     public abstract String componentName() throws Exception;
 
+    protected void checkActive(){
+        if(state != ComponentState.ACTIVE){
+            throw new RuntimeException("Rule Chain is not active ! entityId :"+entityId + " , tenantId : "+ tenantId);
+        }
+    }
+
 }
