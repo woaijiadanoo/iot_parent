@@ -129,11 +129,6 @@ public class RuleChainMsgProcessor extends ComponentMsgProcessor<RuleChainId>{
     }
 
     @Override
-    public void onUpdate(ActorContext context) throws Exception {
-
-    }
-
-    @Override
     public String componentName() throws Exception {
         return this.ruleChainName;
     }
