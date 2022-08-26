@@ -9,7 +9,10 @@ public enum MsgType {
     RULE_CHAIN_TO_RULE_NODE_MSG,
 
     // ruleNode向ruleChain发送消息
-    RULE_NODE_TO_RULE_CHAIN_TELL_NEXT_MSG
+    RULE_NODE_TO_RULE_CHAIN_TELL_NEXT_MSG,
+
+    // 通知节点变更事件的消息
+    COMPONENT_EVENT_MSG
     ;
 
 }

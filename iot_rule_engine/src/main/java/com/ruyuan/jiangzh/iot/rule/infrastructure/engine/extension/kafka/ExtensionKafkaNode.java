@@ -1,5 +1,7 @@
 package com.ruyuan.jiangzh.iot.rule.infrastructure.engine.extension.kafka;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTMsgMetaData;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.RuleEngineNode;
@@ -63,6 +65,7 @@ public class ExtensionKafkaNode implements RuleEngineNode {
         // 确定topic [  ry_topic |  ${name}_topic ]
         String topic = RuleEngineNodeUtils.processPattern(kafkaConfig.getTopicPattern(), msg.getMetaData());
         try {
+
             // 通过producer.send推送消息至Kafka
             producer.send(new ProducerRecord<>(topic, msg.getData()), (metadata, e) -> {
                 if(metadata != null){
@@ -75,7 +78,6 @@ public class ExtensionKafkaNode implements RuleEngineNode {
                     ctx.tellFailure(nextMsg, e);
                 }
             });
-
         } catch (Exception e){
             // 如果失败了，应该像办法处理失败
             ctx.tellFailure(msg, e);

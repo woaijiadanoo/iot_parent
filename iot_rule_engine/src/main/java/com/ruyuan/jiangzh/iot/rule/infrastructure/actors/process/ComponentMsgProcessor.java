@@ -22,8 +22,7 @@ public abstract class ComponentMsgProcessor<T extends EntityId> extends Abstract
     public abstract void start(ActorContext context) throws Exception;
     // processor停止
     public abstract void stop(ActorContext context) throws Exception;
-    // processor 修改时的触发动作
-    public abstract void onUpdate(ActorContext context) throws Exception;
+
 
     // processor componentName
     public abstract String componentName() throws Exception;
@@ -32,6 +31,20 @@ public abstract class ComponentMsgProcessor<T extends EntityId> extends Abstract
         if(state != ComponentState.ACTIVE){
             throw new RuntimeException("Rule Chain is not active ! entityId :"+entityId + " , tenantId : "+ tenantId);
         }
+    }
+
+    public  void onCreated(ActorContext context) throws Exception {
+        start(context);
+    }
+
+    public void onStop(ActorContext context) throws Exception {
+        stop(context);
+    }
+
+    // processor 修改时的触发动作
+    public void onUpdate(ActorContext context) throws Exception {
+        stop(context);
+        start(context);
     }
 
 }

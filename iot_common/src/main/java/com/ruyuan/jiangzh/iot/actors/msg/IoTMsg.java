@@ -21,6 +21,10 @@ public class IoTMsg implements Serializable {
     private final RuleChainId ruleChainId;
     private final RuleNodeId ruleNodeId;
 
+    public IoTMsg(UUID id, String type, String data){
+        this(id,type, null ,data, new IoTMsgMetaData(Maps.newHashMap()), null, null);
+    }
+
     public IoTMsg(UUID id, String type, EntityId originator, String data,
                   RuleChainId ruleChainId, RuleNodeId ruleNodeId){
         this(id,type,originator,data, new IoTMsgMetaData(Maps.newHashMap()), ruleChainId, ruleNodeId);

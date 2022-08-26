@@ -3,6 +3,7 @@ package com.ruyuan.jiangzh.iot.actors;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import com.ruyuan.jiangzh.iot.actors.msg.BaseMessage;
+import com.ruyuan.jiangzh.iot.actors.msg.ToAllNodesMsg;
 
 public class DefaultActorService implements ActorService{
 
@@ -28,5 +29,13 @@ public class DefaultActorService implements ActorService{
     @Override
     public void onMsg(BaseMessage msg) {
         appActor.tell(msg, ActorRef.noSender());
+    }
+
+    @Override
+    public void broadcast(ToAllNodesMsg msg) {
+        // 通知当前JVM进行处理
+        appActor.tell(msg, ActorRef.noSender());
+
+        // 通知其他所有的同类型节点进行处理
     }
 }
