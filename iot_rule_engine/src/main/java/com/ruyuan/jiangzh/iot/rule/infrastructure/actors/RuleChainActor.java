@@ -19,11 +19,12 @@ public class RuleChainActor extends ComponentActor<RuleChainId, RuleChainMsgProc
 
     @Override
     public void preStart() throws Exception {
+        System.err.println("ruleChain start id = "+getEntityId());
         getProcessor().start(getContext());
     }
 
     @Override
-    public void aroundPostStop() {
+    public void postStop() {
         try {
             getProcessor().stop(getContext());
         } catch (Exception e) {

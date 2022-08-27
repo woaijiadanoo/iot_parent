@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.ruyuan.jiangzh.iot.actors.ActorService;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.ComponentEventEnum;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.ComponentEventMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ServiceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.base.security.IoTSecurityUser;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
@@ -19,6 +21,7 @@ import com.ruyuan.jiangzh.iot.rule.domain.domainservice.RuleChainDomainService;
 import com.ruyuan.jiangzh.iot.rule.domain.entity.RuleChainEntity;
 import com.ruyuan.jiangzh.iot.rule.domain.infrastructure.repository.RuleChainRepository;
 import com.ruyuan.jiangzh.iot.rule.domain.infrastructure.utils.ConsistContext;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.ComponentState;
 import com.ruyuan.jiangzh.iot.rule.interfaces.dto.RuleChainDTO;
 import com.ruyuan.jiangzh.iot.rule.interfaces.dto.RuleChainMetaDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,12 +135,28 @@ public class RuleChainController extends BaseController {
     public RespDTO saveRuleChain(@RequestBody RuleChainDTO dto){
         IoTSecurityUser currentUser = getCurrentUser();
 
+        // 判断是新增还是修改
+        boolean isCreate = dto.getRuleChainId() == null ? true : false;
+
         // dto 转entity
         RuleChainEntity ruleChainEntity =
                 RuleChainDTO.dtoToEntity(dto, currentUser.getTenantId(), currentUser.getUserId());
 
         // 进行插入或者修改操作
         RuleChainEntity resultEntity = checkNotNull(ruleChainRepository.saveRuleChain(ruleChainEntity));
+
+        // 修改actor的动作
+        ComponentEventEnum event = null;
+        if(isCreate){
+            event = ComponentEventEnum.CREATED;
+        }else{
+            event = ComponentEventEnum.UPDATED;
+        }
+
+        TenantId tenantId  = getCurrentUser().getTenantId();
+        RuleChainId ruleChainId = resultEntity.getId();
+
+        actorService.broadcast(new ComponentEventMsg(tenantId, ruleChainId, event));
 
         // 转换返回值
         RuleChainDTO result = RuleChainDTO.entityToDto(resultEntity);
@@ -190,6 +209,11 @@ public class RuleChainController extends BaseController {
         // 业务处理
         boolean success = ruleChainRepository.deleteRuleChainById(currentUser.getTenantId(), ruleChainId);
 
+        // 修改Actor的状态
+        if(success){
+            actorService.broadcast(new ComponentEventMsg(currentUser.getTenantId(), ruleChainId, ComponentEventEnum.DELETED));
+        }
+
         return success ? RespDTO.success() : RespDTO.failture(500, ConsistContext.RESOURCE_NOT_EXISTS);
     }
 
@@ -208,6 +232,9 @@ public class RuleChainController extends BaseController {
         RuleChainMetaDataDTO.dtoToEntity(ruleChainMetaDataDTO, metaDataEntity);
 
         RuleChainMetaDataEntity resultEntity = ruleChainDomainService.saveRuleChainMetaData(currentUser.getTenantId(), metaDataEntity);
+
+        // 修改actor状态
+        actorService.broadcast(new ComponentEventMsg(currentUser.getTenantId(), resultEntity.getId(), ComponentEventEnum.UPDATED));
 
         return RespDTO.success(RuleChainMetaDataDTO.entity2Dto(resultEntity));
     }

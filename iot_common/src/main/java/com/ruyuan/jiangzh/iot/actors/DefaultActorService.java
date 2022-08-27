@@ -11,6 +11,8 @@ public class DefaultActorService implements ActorService{
 
     private ActorSystem actorSystem;
 
+    private RpcManager rpcManager;
+
     private ActorRef appActor;
 
     public void initActorSystem(ActorSystemContext systemContext){
@@ -33,9 +35,20 @@ public class DefaultActorService implements ActorService{
 
     @Override
     public void broadcast(ToAllNodesMsg msg) {
+        // 通知其他所有的同类型节点进行处理
+        rpcManager.broadcast(msg);
+    }
+
+    @Override
+    public void onBroadcast(ToAllNodesMsg msg) {
+        System.err.println("onBroadcast msg ="+msg);
         // 通知当前JVM进行处理
         appActor.tell(msg, ActorRef.noSender());
-
-        // 通知其他所有的同类型节点进行处理
     }
+
+    @Override
+    public void setRpcManager(RpcManager rpcManager) {
+        this.rpcManager = rpcManager;
+    }
+
 }
