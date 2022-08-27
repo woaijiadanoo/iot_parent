@@ -8,8 +8,9 @@
             http://dubbo.apache.org/schema/dubbo
             http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
-    <dubbo:protocol name="dubbo" port="20883" />
-    
+<!--    <dubbo:protocol name="dubbo" port="20883" />-->
+    <dubbo:protocol name="dubbo" port="-1" />
+
     <dubbo:application name="iot-rule-engine"/>
 
     <dubbo:registry address="zookeeper://localhost:2181" client="curator"/>
