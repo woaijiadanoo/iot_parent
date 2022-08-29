@@ -22,6 +22,7 @@ public class RuleNodeActor extends ComponentActor<RuleNodeId, RuleNodeMsgProcess
 
     @Override
     public void preStart() throws Exception {
+        System.err.println("ruleNode start id = "+getEntityId());
         getProcessor().start(getContext());
     }
 

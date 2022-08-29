@@ -6,9 +6,11 @@ import akka.actor.Props;
 import com.ruyuan.jiangzh.iot.actors.ActorService;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.DefaultActorService;
+import com.ruyuan.jiangzh.iot.actors.RpcManager;
 import com.ruyuan.jiangzh.iot.rule.domain.domainservice.RuleChainDomainService;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleEngineActorSystemContext;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleEngineAppActor;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.rpc.RuleEngineRpcManager;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +49,10 @@ public class ActorConfigs {
 
         // 完成根结构的Actor初始化
         actorService.initActor(actorSystemContext);
+
+        // 初始化RpcManager
+        RpcManager rpcManager = new RuleEngineRpcManager();
+        actorService.setRpcManager(rpcManager);
 
         return actorService;
     }

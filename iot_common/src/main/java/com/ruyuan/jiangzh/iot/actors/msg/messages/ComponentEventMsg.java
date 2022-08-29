@@ -36,4 +36,13 @@ public class ComponentEventMsg implements IoTActorMessage, ToAllNodesMsg {
     public ComponentEventEnum getEvent() {
         return event;
     }
+
+    @Override
+    public String toString() {
+        return "ComponentEventMsg{" +
+                "tenantId=" + tenantId +
+                ", ruleChainId=" + ruleChainId +
+                ", event=" + event +
+                '}';
+    }
 }

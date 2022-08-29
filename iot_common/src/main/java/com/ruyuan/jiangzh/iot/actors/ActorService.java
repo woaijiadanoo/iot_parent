@@ -9,4 +9,7 @@ public interface ActorService {
 
     void broadcast(ToAllNodesMsg msg);
 
+    void setRpcManager(RpcManager rpcManager);
+
+    void onBroadcast(ToAllNodesMsg msg);
 }
