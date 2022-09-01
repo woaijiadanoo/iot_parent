@@ -34,4 +34,8 @@ public class IoTMsgMetaData implements Serializable {
         return new IoTMsgMetaData(new ConcurrentHashMap<>(data));
     }
 
+
+    public Map<String, String> getData() {
+        return data;
+    }
 }
