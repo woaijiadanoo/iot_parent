@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common;
+package com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.script;
 
 public class RuleNodeScriptFactory {
 

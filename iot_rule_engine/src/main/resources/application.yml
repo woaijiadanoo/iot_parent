@@ -5,6 +5,11 @@ filters:
   traceId: true
   jwt: false
 
+js:
+  executor:
+    threadpools: 50
+
+
 mybatis-plus:
   mapper-locations: classpath*:com/ruyuan/jiangzh/iot/rule/**/xml/*Mapper.xml
   global-config:
