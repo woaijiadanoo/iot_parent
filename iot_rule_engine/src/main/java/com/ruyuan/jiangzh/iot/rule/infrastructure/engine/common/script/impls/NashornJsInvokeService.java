@@ -7,6 +7,7 @@ import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.script.JsInvokeService;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.script.JsScriptType;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.script.RuleNodeScriptFactory;
+import com.sun.org.apache.xpath.internal.functions.FuncTrue;
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.util.Map;
@@ -31,20 +33,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class NashornJsInvokeService implements JsInvokeService {
 
+    // 记录ScriptId与functionName的映射关系
     private Map<UUID, String> scriptIdToNameMap = new ConcurrentHashMap<>();
 
+    // 记录ScriptId对应的失败次数，如果超过一定限制， 则直接进入黑名单，不再执行
     private Map<UUID, AtomicInteger> blackListedFunctions = new ConcurrentHashMap<>();
 
-    private boolean useSandbox = true;
 
+    // JS引擎实现
     private NashornSandbox sandbox;
-
+    // JS引擎实现
     private ScriptEngine engine;
 
     private ExecutorService executorService;
+
+    // 以下几项可以修改到配置文件里
     private int threadPoolSize = 4;
     private long maxCpuTime = 100;
-
+    private boolean useSandbox = true;
     private int maxErrors = 3;
 
     @Override
@@ -112,9 +118,50 @@ public class NashornJsInvokeService implements JsInvokeService {
 
     @Override
     public ListenableFuture<Object> invokeFunction(UUID scriptId, Object... args) {
-        return null;
+        String functionName = scriptIdToNameMap.get(scriptId);
+        if (IoTStringUtils.isBlank(functionName)){
+            return Futures.immediateFailedFuture(new RuntimeException("No compiled script found ! scriptId : "+scriptId));
+        }
+        // 判断有没有被使用
+        if (!isBlackListed(scriptId)){
+            // 如果没有被使用， 则进行处理
+            return doInvokeFunction(scriptId, functionName, args);
+        } else {
+            return Futures.immediateFailedFuture(new RuntimeException("Script is blacklisted errors : " + getMaxErrors()));
+        }
     }
 
+    private boolean isBlackListed(UUID scriptId) {
+        if(blackListedFunctions.containsKey(scriptId)){
+            AtomicInteger errorCount = blackListedFunctions.get(scriptId);
+            // 判断失败次数
+            return errorCount.get() >= getMaxErrors();
+        } else {
+            return false;
+        }
+    }
+
+
+    private ListenableFuture<Object> doInvokeFunction(UUID scriptId, String functionName, Object... args) {
+        try {
+            Object result;
+            if(useSandbox){
+                // 执行已经编译好的脚本
+                result = sandbox.getSandboxedInvocable().invokeFunction(functionName, args);
+            } else {
+                result = ((Invocable)engine).invokeFunction(functionName, args);
+            }
+            return Futures.immediateFuture(result);
+        } catch (Exception e) {
+            onScriptExecutionError(scriptId);
+            return Futures.immediateFailedFuture(e);
+        }
+    }
+
+    private void onScriptExecutionError(UUID scriptId) {
+        // 记录当前ScriptId对应的function的失败次数
+        blackListedFunctions.computeIfAbsent(scriptId, key -> (new AtomicInteger(0))).incrementAndGet();
+    }
 
 
     @PostConstruct
