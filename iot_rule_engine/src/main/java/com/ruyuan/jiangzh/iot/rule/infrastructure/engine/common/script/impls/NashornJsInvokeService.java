@@ -11,10 +11,12 @@ import com.sun.org.apache.xpath.internal.functions.FuncTrue;
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.management.RuntimeMBeanException;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -33,25 +35,36 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class NashornJsInvokeService implements JsInvokeService {
 
-    // 记录ScriptId与functionName的映射关系
+    // 记录ScriptId对应的functionName
     private Map<UUID, String> scriptIdToNameMap = new ConcurrentHashMap<>();
 
-    // 记录ScriptId对应的失败次数，如果超过一定限制， 则直接进入黑名单，不再执行
+    // 记录每个ScriptId的失败次数，如果超过阈值， 则不会执行，直接返回错误信息
     private Map<UUID, AtomicInteger> blackListedFunctions = new ConcurrentHashMap<>();
 
-
-    // JS引擎实现
+    // 两种scriptEngine之一
     private NashornSandbox sandbox;
-    // JS引擎实现
+
+    // 两种scriptEngine之一
     private ScriptEngine engine;
 
+    // 线程池种类
     private ExecutorService executorService;
 
-    // 以下几项可以修改到配置文件里
-    private int threadPoolSize = 4;
-    private long maxCpuTime = 100;
-    private boolean useSandbox = true;
-    private int maxErrors = 3;
+    // 使用哪种scriptEngine， sandbox 或者原生
+    @Value("${js.js-invoker.use-sandbox}")
+    private boolean useSandbox;
+
+    // 线程池数量
+    @Value("${js.js-invoker.threadpools}")
+    private int threadPoolSize;
+
+    // 最大CPU时间
+    @Value("${js.js-invoker.max-cpu-time}")
+    private long maxCpuTime;
+
+    // 最大失败次数
+    @Value("${js.js-invoker.max-errors}")
+    private int maxErrors;
 
     @Override
     public ListenableFuture<UUID> eval(JsScriptType scriptType, String scriptBody, String... argNames) {
@@ -118,49 +131,59 @@ public class NashornJsInvokeService implements JsInvokeService {
 
     @Override
     public ListenableFuture<Object> invokeFunction(UUID scriptId, Object... args) {
+        // 1、通过ScriptId来获取functionName，以备后续使用
         String functionName = scriptIdToNameMap.get(scriptId);
-        if (IoTStringUtils.isBlank(functionName)){
-            return Futures.immediateFailedFuture(new RuntimeException("No compiled script found ! scriptId : "+scriptId));
+        // 1.1、如果functionName不存在，抛出异常
+        if(IoTStringUtils.isBlank(functionName)){
+            return Futures.immediateFailedFuture(new RuntimeException("No compiled script found scriptId : "+scriptId));
         }
-        // 判断有没有被使用
-        if (!isBlackListed(scriptId)){
-            // 如果没有被使用， 则进行处理
-            return doInvokeFunction(scriptId, functionName, args);
+        // 1.2、如果functionName存在
+        // 1.2.1、判断function的失败次数是不是超过阈值
+        if(!isBlackList(scriptId)){
+            // 1.2.1.2、如果没有超过， 则执行function
+            return doInvokerFunction(scriptId, functionName, args);
         } else {
-            return Futures.immediateFailedFuture(new RuntimeException("Script is blacklisted errors : " + getMaxErrors()));
+            // 1.2.1.1、如果超过，则直接返回错误信息
+            return Futures.immediateFailedFuture(new RuntimeException("scriptId : "+scriptId + " is blacklist, max error count : "+getMaxErrors() ));
         }
     }
 
-    private boolean isBlackListed(UUID scriptId) {
+    /*
+        判断scriptId对应的script有没有超过最大失败次数
+     */
+    private boolean isBlackList(UUID scriptId) {
         if(blackListedFunctions.containsKey(scriptId)){
-            AtomicInteger errorCount = blackListedFunctions.get(scriptId);
-            // 判断失败次数
-            return errorCount.get() >= getMaxErrors();
+            AtomicInteger errors = blackListedFunctions.get(scriptId);
+            return errors.get() >= getMaxErrors();
         } else {
             return false;
         }
     }
 
+    /*
+        执行real的script脚本
+     */
+    private ListenableFuture<Object> doInvokerFunction(UUID scriptId, String functionName, Object[] args) {
 
-    private ListenableFuture<Object> doInvokeFunction(UUID scriptId, String functionName, Object... args) {
         try {
+            // 执行function
             Object result;
             if(useSandbox){
-                // 执行已经编译好的脚本
                 result = sandbox.getSandboxedInvocable().invokeFunction(functionName, args);
             } else {
                 result = ((Invocable)engine).invokeFunction(functionName, args);
             }
+            // 如果执行成功，直接返回
             return Futures.immediateFuture(result);
         } catch (Exception e) {
-            onScriptExecutionError(scriptId);
+            // 如果执行不成功， 则返回错误信息，并增加黑名单中的次数
+            onScriptExecuteError(scriptId);
             return Futures.immediateFailedFuture(e);
         }
     }
 
-    private void onScriptExecutionError(UUID scriptId) {
-        // 记录当前ScriptId对应的function的失败次数
-        blackListedFunctions.computeIfAbsent(scriptId, key -> (new AtomicInteger(0))).incrementAndGet();
+    private void onScriptExecuteError(UUID scriptId) {
+        blackListedFunctions.computeIfAbsent(scriptId, key -> new AtomicInteger(0)).incrementAndGet();
     }
 
 

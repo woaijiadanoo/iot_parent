@@ -8,6 +8,11 @@ filters:
 js:
   executor:
     threadpools: 50
+  js-invoker:
+    use-sandbox: true
+    threadpools: 4
+    max-cpu-time: 100
+    max-errors: 3
 
 mybatis-plus:
   mapper-locations: classpath*:com/ruyuan/jiangzh/iot/rule/**/xml/*Mapper.xml
