@@ -11,7 +11,10 @@ import com.ruyuan.jiangzh.iot.rule.domain.domainservice.RuleChainDomainService;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleEngineActorSystemContext;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleEngineAppActor;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.rpc.RuleEngineRpcManager;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.script.JsInvokeService;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.script.impls.JsExecutorService;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,6 +29,12 @@ public class ActorConfigs {
     @Resource
     private RuleChainDomainService ruleChainDomainService;
 
+    @Autowired
+    private JsExecutorService jsExecutorService;
+
+    @Autowired
+    private JsInvokeService jsInvokeService;
+
     private static final String APP_DISPATCHER_NAME = "app-dispatcher";
     public static final String TENANT_DISPATCHER_NAME = "app-dispatcher";
 
@@ -34,7 +43,7 @@ public class ActorConfigs {
     @Bean(name = "actorService")
     public ActorService actorService(){
         DefaultActorService actorService = new DefaultActorService();
-        ActorSystemContext actorSystemContext  =new RuleEngineActorSystemContext(ruleChainDomainService,tenantServiceAPI);
+        RuleEngineActorSystemContext actorSystemContext  =new RuleEngineActorSystemContext(ruleChainDomainService,tenantServiceAPI);
         // 初始化ActorSystem和ActorSystemContext
         actorService.initActorSystem(actorSystemContext);
 
@@ -53,6 +62,10 @@ public class ActorConfigs {
         // 初始化RpcManager
         RpcManager rpcManager = new RuleEngineRpcManager();
         actorService.setRpcManager(rpcManager);
+
+        // 注入与JS Engine相关的内容
+        actorSystemContext.setJsExecutorService(jsExecutorService);
+        actorSystemContext.setJsInvokeService(jsInvokeService);
 
         return actorService;
     }

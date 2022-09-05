@@ -6,6 +6,8 @@ import com.ruyuan.jiangzh.iot.base.uuid.EntityId;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleNodeId;
 import com.ruyuan.jiangzh.iot.rule.domain.aggregates.aggregateRuleChain.entity.RuleNodeEntity;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.RuleEngineNode;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.script.ListeningExecutor;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.script.RuleScriptEngine;
 
 public interface RuleEngineContext {
 
@@ -24,5 +26,9 @@ public interface RuleEngineContext {
             , IoTMsgMetaData metaData, String data);
 
     void updateSelf(RuleNodeEntity node);
+
+    ListeningExecutor getJsExecutor();
+
+    RuleScriptEngine createJsScriptEngine(String script, String ... argNames);
 
 }

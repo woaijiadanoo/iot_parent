@@ -6,4 +6,9 @@ public final class RuleEngineRelationTypes {
 
     public static String FAILURE = "failure";
 
+
+    public static String TRUE = "True";
+
+
+    public static String FALSE = "False";
 }
