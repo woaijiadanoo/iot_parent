@@ -263,6 +263,10 @@ public class RuleChainController extends BaseController {
             "age":"10000",
             "debug":"true"
         }
+
+        {
+            "temperature": 40
+        }
      */
     @RequestMapping(value = "/ruleChain/script/test", method = RequestMethod.POST)
     public RespDTO scriptTest(@RequestBody String data){
