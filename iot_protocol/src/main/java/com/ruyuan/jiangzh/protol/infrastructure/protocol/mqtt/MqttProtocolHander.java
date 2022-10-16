@@ -5,7 +5,9 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import jnr.ffi.Struct;
 
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 
 /**
@@ -45,11 +47,10 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         switch (msg.fixedHeader().messageType()) {
             // 处理连接请求
             case CONNECT:
-                System.out.println(" 这是一个connect请求 ");
-                processConnect(ctx, msg);
+                processConnect(ctx, (MqttConnectMessage) msg);
                 break;
             case DISCONNECT:
-                System.out.println(" 这是一个disConnect请求 ");
+
             default:
                 break;
         }
@@ -57,8 +58,25 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
     }
 
     // 处理连接请求
-    private void processConnect(ChannelHandlerContext ctx, MqttMessage msg) {
-        // 鉴权，是否有权限进行连接
+    private void processConnect(ChannelHandlerContext ctx, MqttConnectMessage msg) {
+        /*
+            鉴权，是否有权限进行连接
+            1、获取三元组信息【productKey，DeviceName，DeviceSerct】
+            2、通过三元组信息来获取设备详情
+         */
+        // 1、获取三元组信息【productKey，DeviceName，DeviceSerct】
+        String productKey = msg.payload().userName();
+        String deviceName = "";
+        try {
+            deviceName = new String(msg.payload().passwordInBytes(),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_AUTHENTICATION_METHOD));
+        }
+        String deviceSerct = msg.payload().clientIdentifier();
+
+        System.out.println("productKey : " + productKey + " ,deviceName : "+deviceName+" ,deviceSerct : "+deviceSerct);
+
+        // 2、通过三元组信息来获取设备详情
 
         // 返回connectAck
         ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_ACCEPTED));
