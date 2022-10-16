@@ -6,6 +6,11 @@ public class DeviceSercetDTO implements Serializable {
 
     private String deviceId;
     private String productId;
+
+    private String tenantId;
+
+    private String userId;
+
     // 三元组信息
     private String productKey;
     private String deviceName;
@@ -77,6 +82,22 @@ public class DeviceSercetDTO implements Serializable {
 
     public void setDeviceStatus(Integer deviceStatus) {
         this.deviceStatus = deviceStatus;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override

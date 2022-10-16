@@ -1,6 +1,8 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt;
 
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolApiService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +16,13 @@ public class MqttProtocolContext extends ProtocolContext {
 
     @Value("${protocol.mqtt.max_payload_size}")
     private Integer maxPayloadSize;
+
+    @Autowired
+    private ProtocolApiService protocolApiService;
+
+    public void init(){
+        setProtocolApiService(protocolApiService);
+    }
 
     public Integer getMaxPayloadSize() {
         return maxPayloadSize;

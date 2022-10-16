@@ -27,6 +27,9 @@ public class MqttProtoolServiceInitializer extends ChannelInitializer<SocketChan
         pipeline.addLast("decoder", new MqttDecoder(context.getMaxPayloadSize()));
         pipeline.addLast("encoder", MqttEncoder.INSTANCE);
 
+        // 初始化context的内容
+        context.init();
+
         MqttProtocolHander hander = new MqttProtocolHander(context);
 
         pipeline.addLast(hander);

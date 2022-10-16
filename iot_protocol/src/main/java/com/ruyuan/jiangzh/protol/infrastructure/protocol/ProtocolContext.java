@@ -18,6 +18,16 @@ public class ProtocolContext {
 
     private ExecutorService executor;
 
+    private ProtocolApiService protocolApiService;
+
+    public ProtocolApiService getProtocolApiService() {
+        return protocolApiService;
+    }
+
+    public void setProtocolApiService(ProtocolApiService protocolApiService) {
+        this.protocolApiService = protocolApiService;
+    }
+
     @PostConstruct
     public void init(){
         executor = Executors.newCachedThreadPool();

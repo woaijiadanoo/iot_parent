@@ -1,5 +1,10 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.ProtocolApiReqMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.ProtocolApiRespMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
+import com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.mqtt.*;
@@ -74,9 +79,10 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         }
         String deviceSerct = msg.payload().clientIdentifier();
 
-        System.out.println("productKey : " + productKey + " ,deviceName : "+deviceName+" ,deviceSerct : "+deviceSerct);
-
+        DeviceAuthReqMsg deviceAuthReqMsg = new DeviceAuthReqMsg(productKey,deviceName,deviceSerct);
+        ProtocolApiReqMsg reqMsg = new ProtocolApiReqMsg(deviceAuthReqMsg);
         // 2、通过三元组信息来获取设备详情
+        ListenableFuture<ProtocolApiRespMsg> respMsgFuture = context.getProtocolApiService().handle(reqMsg);
 
         // 返回connectAck
         ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_ACCEPTED));

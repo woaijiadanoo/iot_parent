@@ -21,6 +21,8 @@
                    interface="com.ruyuan.jiangzh.iot.actors.ActorService"/>
 
     <!-- references -->
-
+    <dubbo:reference
+            check="false"
+            interface="com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI" />
 
 </beans>

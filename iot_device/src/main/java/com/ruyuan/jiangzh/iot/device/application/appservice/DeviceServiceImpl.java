@@ -33,6 +33,9 @@ public class DeviceServiceImpl implements DeviceServiceAPI {
             deviceSercetDTO.setAutoActive(deviceEntity.getDeviceSercetEntity().getAutoActive());
             deviceSercetDTO.setDeviceStatus(deviceEntity.getDeviceStatus().getCode());
 
+            deviceSercetDTO.setTenantId(deviceEntity.getTenantId().getUuid().toString());
+            deviceSercetDTO.setUserId(deviceEntity.getUserId().getUuid().toString());
+
             return deviceSercetDTO;
         } catch (Exception e){
             e.printStackTrace();
