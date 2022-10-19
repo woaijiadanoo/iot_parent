@@ -17,12 +17,7 @@ public class MqttProtocolContext extends ProtocolContext {
     @Value("${protocol.mqtt.max_payload_size}")
     private Integer maxPayloadSize;
 
-    @Autowired
-    private ProtocolApiService protocolApiService;
-
-    public void init(){
-        setProtocolApiService(protocolApiService);
-    }
+    public void init(){}
 
     public Integer getMaxPayloadSize() {
         return maxPayloadSize;

@@ -1,9 +1,12 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.gson.Gson;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.ProtocolApiReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.ProtocolApiRespMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
 import com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -14,6 +17,7 @@ import jnr.ffi.Struct;
 
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author jiangzheng
@@ -80,13 +84,33 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         String deviceSerct = msg.payload().clientIdentifier();
 
         DeviceAuthReqMsg deviceAuthReqMsg = new DeviceAuthReqMsg(productKey,deviceName,deviceSerct);
-        ProtocolApiReqMsg reqMsg = new ProtocolApiReqMsg(deviceAuthReqMsg);
-        // 2、通过三元组信息来获取设备详情
-        ListenableFuture<ProtocolApiRespMsg> respMsgFuture = context.getProtocolApiService().handle(reqMsg);
 
-        // 返回connectAck
-        ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_ACCEPTED));
+        // 2、通过三元组信息来获取设备详情
+        context.getProtocolService().process(deviceAuthReqMsg, new ProtocolServiceCallback<DeviceAuthRespMsg>() {
+            @Override
+            public void onSuccess(DeviceAuthRespMsg msg) {
+                onValidateDeviceResponse(msg, ctx);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_REFUSED_SERVER_UNAVAILABLE));
+                ctx.close();
+            }
+        });
     }
+
+
+    private void onValidateDeviceResponse(DeviceAuthRespMsg msg, ChannelHandlerContext ctx) {
+        // 验证一下返回的device是否有效
+        if(msg.getDeviceId() == null){
+            ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED));
+            ctx.close();
+        }else{
+            ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_ACCEPTED));
+        }
+    }
+
 
     private MqttConnAckMessage createMqttConnAckMsg(MqttConnectReturnCode returnCode) {
         MqttFixedHeader mqttFixedHeader =

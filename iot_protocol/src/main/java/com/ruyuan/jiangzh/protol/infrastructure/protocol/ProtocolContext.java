@@ -1,6 +1,7 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -18,15 +19,8 @@ public class ProtocolContext {
 
     private ExecutorService executor;
 
-    private ProtocolApiService protocolApiService;
-
-    public ProtocolApiService getProtocolApiService() {
-        return protocolApiService;
-    }
-
-    public void setProtocolApiService(ProtocolApiService protocolApiService) {
-        this.protocolApiService = protocolApiService;
-    }
+    @Autowired
+    private ProtocolService protocolService;
 
     @PostConstruct
     public void init(){
@@ -40,6 +34,9 @@ public class ProtocolContext {
         }
     }
 
+    public ProtocolService getProtocolService() {
+        return protocolService;
+    }
 
     public ExecutorService getExecutor() {
         return executor;
