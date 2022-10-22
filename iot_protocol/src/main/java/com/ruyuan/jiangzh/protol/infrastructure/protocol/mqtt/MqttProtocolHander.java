@@ -1,23 +1,16 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.gson.Gson;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.ProtocolApiReqMsg;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.ProtocolApiRespMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
-import com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import jnr.ffi.Struct;
 
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author jiangzheng
