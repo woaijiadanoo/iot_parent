@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
+import com.ruyuan.jiangzh.iot.common.DateUtils;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.impl.mapper.DeviceMapper;
@@ -96,9 +97,17 @@ public class AggrDeviceRepositoryImpl implements AggrDeviceRepository {
     }
 
     @Override
-    public boolean activeDevice() {
-        // TODO 协议上下文或者物模型上下文
-        return false;
+    public boolean updateDeviceStatusAndOnlineTime(DeviceId deviceId, DeviceStatusEnums deviceStatusEnums, Long onlineTimestamp) {
+        DevicePO devicePO = new DevicePO();
+        devicePO.setUuid(UUIDHelper.fromTimeUUID(deviceId.getUuid()));
+        devicePO.setDeviceStatus(deviceStatusEnums.getCode());
+        if(onlineTimestamp != null){
+            devicePO.setLastOnlineTime(DateUtils.getDateByTimestamp(onlineTimestamp));
+        }
+
+        deviceMapper.updateById(devicePO);
+
+        return true;
     }
 
     private void spellCondition(QueryWrapper queryWrapper, String fieldKey, Object fieldValue){

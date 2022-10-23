@@ -40,8 +40,9 @@ public interface AggrDeviceRepository {
     boolean updateDeviceStatus(DeviceId deviceId, DeviceStatusEnums deviceStatusEnums);
 
     /*
-        TODO， 物模型模块时会处理这一部分。激活设备
+        修改状态及在线时间 - connect 和 disconnect
      */
-    boolean activeDevice();
+    boolean updateDeviceStatusAndOnlineTime(
+            DeviceId deviceId, DeviceStatusEnums deviceStatusEnums, Long onlineTimestamp);
 
 }

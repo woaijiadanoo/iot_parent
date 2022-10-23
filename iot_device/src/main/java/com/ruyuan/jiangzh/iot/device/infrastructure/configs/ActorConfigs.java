@@ -6,8 +6,11 @@ import akka.actor.Props;
 import com.ruyuan.jiangzh.iot.actors.ActorService;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.DefaultActorService;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.factory.AggrDeviceFactory;
+import com.ruyuan.jiangzh.iot.device.infrastructure.actors.DeviceActorSystemContext;
 import com.ruyuan.jiangzh.iot.device.infrastructure.actors.DeviceAppActor;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,13 +22,16 @@ public class ActorConfigs {
     @Resource
     private TenantServiceAPI tenantServiceAPI;
 
+    @Autowired
+    private AggrDeviceFactory deviceFactory;
+
     private static final String APP_DISPATCHER_NAME = "app-dispatcher";
     public static final String TENANT_DISPATCHER_NAME = "app-dispatcher";
 
     @Bean(name = "actorService")
     public ActorService actorService(){
         DefaultActorService actorService = new DefaultActorService();
-        ActorSystemContext actorSystemContext = new ActorSystemContext();
+        ActorSystemContext actorSystemContext = new DeviceActorSystemContext(deviceFactory);
         // 初始化ActorSystem和ActorSystemContext
         actorService.initActorSystem(actorSystemContext);
 

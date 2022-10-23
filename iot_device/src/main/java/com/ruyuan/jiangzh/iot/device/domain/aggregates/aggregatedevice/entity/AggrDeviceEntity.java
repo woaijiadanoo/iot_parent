@@ -236,6 +236,30 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
     }
 
 
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateDeviceStatusAndOnlineTime(DeviceStatusEnums deviceStatusEnums, Long onlineTimestamp){
+        /*
+            1、判断是否可以自动激活
+            2、如果可以自动激活
+                2.1 直接改成Online或者offline的状态
+            3、如果不能自动激活
+                3.1 检查是否是Active的状态
+                    3.1.1 如果不是， 则抛出异常
+                    3.1.2 如果是， 则直接修改为Online或者offline的状态
+         */
+        boolean updateDeviceSercetStatus = deviceSercetRepository.updateDeviceStatus(this.getId(), deviceStatusEnums);
+        boolean updateDeviceStatus =
+                deviceRepository.updateDeviceStatusAndOnlineTime(
+                        this.getId(), deviceStatusEnums, onlineTimestamp);
+
+        if(updateDeviceSercetStatus && updateDeviceStatus){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
     public void poToEntity(DevicePO po){
         this.setId(new DeviceId(UUIDHelper.fromStringId(po.getUuid())));
         this.setTenantId(new TenantId(UUIDHelper.fromStringId(po.getTenantId())));

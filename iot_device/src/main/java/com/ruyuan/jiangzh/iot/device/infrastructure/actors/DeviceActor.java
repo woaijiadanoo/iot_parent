@@ -9,6 +9,9 @@ import com.ruyuan.jiangzh.iot.actors.msg.ServerAddress;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceEntity;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.factory.AggrDeviceFactory;
+import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
 
 public class DeviceActor extends ContextAwareActor {
 
@@ -17,12 +20,18 @@ public class DeviceActor extends ContextAwareActor {
 
     private final ServerAddress serverAddress;
 
+    private AggrDeviceFactory deviceFactory;
+
     public DeviceActor(ActorSystemContext actorSystemContext,
                        TenantId tenantId,DeviceId deviceId,ServerAddress serverAddress) {
         super(actorSystemContext);
         this.tenantId = tenantId;
         this.deviceId = deviceId;
         this.serverAddress = serverAddress;
+        if(actorSystemContext instanceof DeviceActorSystemContext){
+            DeviceActorSystemContext deviceActorSystemContext = (DeviceActorSystemContext) actorSystemContext;
+            deviceFactory = deviceActorSystemContext.getDeviceFactory();
+        }
     }
 
     @Override
@@ -46,7 +55,13 @@ public class DeviceActor extends ContextAwareActor {
 
     // 设备上线处理
     private void onProtocolOnlineMsg(FromDeviceOnlineMsg msg) {
-        System.out.println("deviceActor msg : " + new Gson().toJson(msg));
+        // 修改设备的在线状态 & 修改设备的在线时间
+        if(deviceFactory != null){
+            AggrDeviceEntity deviceEntity = deviceFactory.getDeviceById(deviceId);
+            deviceEntity.updateDeviceStatusAndOnlineTime(DeviceStatusEnums.ONLINE, msg.getOnlineTime());
+        }
+
+        // 记录设备的连接记录
 
     }
 
