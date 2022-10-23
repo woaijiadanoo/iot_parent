@@ -1,21 +1,28 @@
 package com.ruyuan.jiangzh.iot.device.infrastructure.actors;
 
+import com.google.gson.Gson;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextAwareActor;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
+import com.ruyuan.jiangzh.iot.actors.msg.ServerAddress;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 
 public class DeviceActor extends ContextAwareActor {
 
-    private TenantId tenantId;
-    private DeviceId deviceId;
+    private final TenantId tenantId;
+    private final DeviceId deviceId;
 
-    public DeviceActor(ActorSystemContext actorSystemContext, TenantId tenantId,DeviceId deviceId) {
+    private final ServerAddress serverAddress;
+
+    public DeviceActor(ActorSystemContext actorSystemContext,
+                       TenantId tenantId,DeviceId deviceId,ServerAddress serverAddress) {
         super(actorSystemContext);
         this.tenantId = tenantId;
         this.deviceId = deviceId;
+        this.serverAddress = serverAddress;
     }
 
     @Override
@@ -25,24 +32,43 @@ public class DeviceActor extends ContextAwareActor {
 
     @Override
     protected boolean process(IoTActorMessage msg) {
-        return false;
+        switch (msg.getMsgType()) {
+            case PROTOCOL_ONLINE_MSG:
+                onProtocolOnlineMsg((FromDeviceOnlineMsg) msg);
+                break;
+
+            default:
+                return false;
+        }
+
+        return true;
+    }
+
+    // 设备上线处理
+    private void onProtocolOnlineMsg(FromDeviceOnlineMsg msg) {
+        System.out.println("deviceActor msg : " + new Gson().toJson(msg));
+
     }
 
     public static class ActorCreator extends ContextBaseCreator<DeviceActor>{
         private final TenantId tenantId;
         private final DeviceId deviceId;
 
-        public ActorCreator(ActorSystemContext actorSystemContext,TenantId tenantId,DeviceId deviceId) {
+        private final ServerAddress serverAddress;
+
+        public ActorCreator(ActorSystemContext actorSystemContext,
+                            TenantId tenantId,DeviceId deviceId,ServerAddress serverAddress) {
             super(actorSystemContext);
             this.tenantId = tenantId;
             this.deviceId = deviceId;
+            this.serverAddress = serverAddress;
         }
 
 
 
         @Override
         public DeviceActor create() throws Exception {
-            return new DeviceActor(actorSystemContext,tenantId,deviceId);
+            return new DeviceActor(actorSystemContext,tenantId,deviceId, serverAddress);
         }
     }
 

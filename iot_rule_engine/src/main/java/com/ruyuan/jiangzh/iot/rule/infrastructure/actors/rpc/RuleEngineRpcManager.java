@@ -3,6 +3,7 @@ package com.ruyuan.jiangzh.iot.rule.infrastructure.actors.rpc;
 import com.ruyuan.jiangzh.iot.actors.ActorService;
 import com.ruyuan.jiangzh.iot.actors.RpcManager;
 import com.ruyuan.jiangzh.iot.actors.msg.ToAllNodesMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
 import org.apache.dubbo.common.config.ReferenceCache;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.utils.SimpleReferenceCache;
@@ -18,6 +19,11 @@ public class RuleEngineRpcManager implements RpcManager {
         ActorService actorService = getActorService(GROUP_NAME);
         // 去进行一次广播
         actorService.onBroadcast(msg);
+    }
+
+    @Override
+    public void onMsg(FromDeviceMsg msg) {
+
     }
 
     /*

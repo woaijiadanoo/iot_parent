@@ -1,5 +1,6 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt;
 
+import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
@@ -82,7 +83,19 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         context.getProtocolService().process(deviceAuthReqMsg, new ProtocolServiceCallback<DeviceAuthRespMsg>() {
             @Override
             public void onSuccess(DeviceAuthRespMsg msg) {
+                // 鉴权流程
                 onValidateDeviceResponse(msg, ctx);
+
+                // 修改设备的激活状态以及在线时间
+                FromDeviceOnlineMsg onlineMsg = new FromDeviceOnlineMsg();
+                onlineMsg.setDeviceId(msg.getDeviceId());
+                onlineMsg.setTenantId(msg.getTenantId());
+                onlineMsg.setUserId(msg.getUserId());
+                onlineMsg.setProductId(msg.getProductId());
+                onlineMsg.setOnlineTime(System.currentTimeMillis());
+
+                context.getProtocolService().process(onlineMsg);
+
             }
 
             @Override

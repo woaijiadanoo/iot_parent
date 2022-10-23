@@ -6,7 +6,9 @@ import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextAwareActor;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
+import com.ruyuan.jiangzh.iot.actors.msg.ServerAddress;
 import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceActorMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 
@@ -31,12 +33,14 @@ public class DeviceTenantActor extends ContextAwareActor {
     /*
         获取或创建DeviceActor
      */
-    private ActorRef getOrCreateDeviceActor(DeviceId deviceId){
+    private ActorRef getOrCreateDeviceActor(DeviceId deviceId, ServerAddress serverAddress){
         ActorRef deviceActor = deviceActors.get(deviceId);
         if(deviceActor == null){
             deviceActor = getContext().actorOf(
                     Props.create(
-                            new DeviceActor.ActorCreator(actorSystemContext,tenantId,deviceId)).withDispatcher(DEVICE_DISPATCHER_NAME),
+                            new DeviceActor
+                                    .ActorCreator(actorSystemContext,tenantId,deviceId, serverAddress))
+                            .withDispatcher(DEVICE_DISPATCHER_NAME),
                             deviceId.toString()
             );
             deviceActors.put(deviceId, deviceActor);
@@ -53,13 +57,23 @@ public class DeviceTenantActor extends ContextAwareActor {
 
     @Override
     protected boolean process(IoTActorMessage msg) {
-        return false;
+        switch (msg.getMsgType()) {
+            case PROTOCOL_ONLINE_MSG:
+                // 设备上线通知消息
+                onProtocolOnlineMsg((FromDeviceOnlineMsg) msg);
+                break;
+
+            default:
+                return false;
+        }
+        return true;
     }
 
-    private void onToDeviceActorMsg(ToDeviceActorMsg msg) {
-        ActorRef deviceActor = getOrCreateDeviceActor(msg.getDeviceId());
-        // 剩下的业务处理就是后话了
-
+    private void onProtocolOnlineMsg(FromDeviceOnlineMsg msg) {
+        ActorRef deviceActor = getOrCreateDeviceActor(msg.getDeviceId(), msg.getServerAddress());
+        if(deviceActor != null){
+            deviceActor.tell(msg, getSelf());
+        }
     }
 
     public static class ActorCreator extends ContextBaseCreator<DeviceTenantActor>{

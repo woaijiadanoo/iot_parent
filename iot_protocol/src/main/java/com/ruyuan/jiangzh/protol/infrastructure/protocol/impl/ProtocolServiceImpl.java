@@ -1,5 +1,8 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol.impl;
 
+import com.ruyuan.jiangzh.iot.actors.RpcManager;
+import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.acl.RpcManagerService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.AbstractProtocolService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolApiService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.FutureCallbackUtils;
@@ -23,6 +26,9 @@ public class ProtocolServiceImpl extends AbstractProtocolService {
     @Autowired
     private ProtocolApiService protocolApiService;
 
+    @Autowired
+    private RpcManagerService rpcManagerService;
+
     /*
         实际业务处理的封装
      */
@@ -38,6 +44,11 @@ public class ProtocolServiceImpl extends AbstractProtocolService {
                 },
                 getThrowableConsumer(callback), protocolCallbackExecutor
         );
+    }
+
+    @Override
+    protected void doProcess(FromDeviceMsg msg) {
+        rpcManagerService.onMsg(msg);
     }
 
     /*

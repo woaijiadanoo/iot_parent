@@ -6,6 +6,7 @@ import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.app.AppActor;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.device.infrastructure.configs.ActorConfigs;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
@@ -34,15 +35,6 @@ public class DeviceAppActor extends AppActor {
                     getOrCreateTenants(tenantId);
                 }
         );
-
-//        System.out.println("发送Device消息 --- start");
-//
-//        ToDeviceActorMsg toDeviceActorMsg = DeviceMsg.getToDeviceActorMsg();
-//        ActorRef tenantActor = getOrCreateTenants(toDeviceActorMsg.getTenantId());
-//        tenantActor.tell(toDeviceActorMsg, getSelf());
-//
-//        System.out.println("发送Device消息 --- end");
-
     }
 
     public ActorRef getOrCreateTenants(TenantId tenantId){
@@ -64,7 +56,23 @@ public class DeviceAppActor extends AppActor {
 
     @Override
     protected boolean process(IoTActorMessage msg) {
-        return false;
+        switch (msg.getMsgType()) {
+            case PROTOCOL_ONLINE_MSG:
+                // 设备上线通知消息
+                onProtocolOnlineMsg((FromDeviceOnlineMsg) msg);
+                break;
+
+            default:
+                return false;
+        }
+        return true;
+    }
+
+    private void onProtocolOnlineMsg(FromDeviceOnlineMsg msg) {
+        ActorRef tenantActor = getOrCreateTenants(msg.getTenantId());
+        if(tenantActor != null){
+            tenantActor.tell(msg, getSelf());
+        }
     }
 
     public static class ActorCreator extends ContextBaseCreator<DeviceAppActor>{

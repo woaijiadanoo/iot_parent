@@ -12,7 +12,10 @@ public enum MsgType {
     RULE_NODE_TO_RULE_CHAIN_TELL_NEXT_MSG,
 
     // 通知节点变更事件的消息
-    COMPONENT_EVENT_MSG
+    COMPONENT_EVENT_MSG,
+
+    // 设备上线通知消息
+    PROTOCOL_ONLINE_MSG
     ;
 
 }
