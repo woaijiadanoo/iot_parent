@@ -1,9 +1,11 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt;
 
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
+import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.mqtt.*;
@@ -12,6 +14,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
+import java.util.UUID;
 
 /**
  * @author jiangzheng
@@ -25,8 +28,16 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
     private volatile InetSocketAddress address;
 
+    private final UUID sessionId;
+
+    private volatile DeviceSessionCtx deviceSessionCtx;
+
     public MqttProtocolHander(MqttProtocolContext context){
         this.context = context;
+
+        sessionId = UUIDHelper.genUuid();
+        deviceSessionCtx = new DeviceSessionCtx(sessionId);
+
     }
 
     @Override
@@ -110,9 +121,19 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
     private void onValidateDeviceResponse(DeviceAuthRespMsg msg, ChannelHandlerContext ctx) {
         // 验证一下返回的device是否有效
         if(msg.getDeviceId() == null){
+            // 链接无效的情况
             ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED));
             ctx.close();
         }else{
+            // 链接有效的情况
+            DeviceInfoVO deviceInfoVO = new DeviceInfoVO();
+            deviceInfoVO.setDeviceId(msg.getDeviceId());
+            deviceInfoVO.setTenantId(msg.getTenantId());
+            deviceInfoVO.setProductId(msg.getProductId());
+
+            deviceSessionCtx.setDeviceInfo(deviceInfoVO);
+            deviceSessionCtx.setChannel(ctx);
+
             ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_ACCEPTED));
         }
     }
