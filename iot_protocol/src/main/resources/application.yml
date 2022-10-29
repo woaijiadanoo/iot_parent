@@ -4,6 +4,13 @@ server:
 
 
 protocol:
+  rate:
+    limits:
+      device:
+        config: 100:1,300:10
+      tenant:
+        config: 100:1,300:10
+      enabled: true
   mqtt:
     max_payload_size: 65535
     bind_address: 0.0.0.0

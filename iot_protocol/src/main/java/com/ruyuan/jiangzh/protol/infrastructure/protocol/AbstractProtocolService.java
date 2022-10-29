@@ -1,10 +1,19 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol;
 
+import com.google.common.collect.Maps;
 import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
+import com.ruyuan.jiangzh.iot.base.uuid.EntityType;
+import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
+import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolRateLimits;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolRateLimitsException;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,4 +51,54 @@ public abstract class AbstractProtocolService implements ProtocolService{
         this.protocolCallbackExecutor = Executors.newWorkStealingPool(20);
     }
 
+
+    /*
+        限流表达式： 容量:窗口长度,容量:窗口长度
+     */
+    // 是否开启限流
+    @Value("${protocol.rate.limits.enabled}")
+    private boolean rateLimitEnabled;
+    // Tenant的限流方案
+    @Value("${protocol.rate.limits.tenant.config}")
+    private String perTenantsLimitsConf;
+    // Device的限流方案
+    @Value("${protocol.rate.limits.device.config}")
+    private String perDevicesLimitsConf;
+    // 存储TenantId对应的令牌桶
+    private ConcurrentMap<TenantId, ProtocolRateLimits> perTenantLimits = Maps.newConcurrentMap();
+    // 存储DeviceId对应的令牌桶
+    private ConcurrentMap<DeviceId, ProtocolRateLimits> perDeviceLimits = Maps.newConcurrentMap();
+
+    @Override
+    public boolean checkLimits(DeviceInfoVO deviceInfo, Object msg, ProtocolServiceCallback<DeviceAuthRespMsg> callback) {
+        if(!rateLimitEnabled){
+            return true;
+        }
+
+        /*
+            按照TenantId来进行限流
+         */
+        TenantId tenantId = deviceInfo.getTenantId();
+        ProtocolRateLimits tenantRateLimit = perTenantLimits.computeIfAbsent(tenantId, id -> new ProtocolRateLimits(perTenantsLimitsConf));
+        if(!tenantRateLimit.tryConsume()){
+            if(callback != null){
+                callback.onError(new ProtocolRateLimitsException(EntityType.TENANT));
+            }
+            return false;
+        }
+
+        /*
+            按照DeviceId来进行限流
+         */
+        DeviceId deviceId = deviceInfo.getDeviceId();
+        ProtocolRateLimits deviceRateLimit = perDeviceLimits.computeIfAbsent(deviceId, id -> new ProtocolRateLimits(perDevicesLimitsConf));
+        if(!deviceRateLimit.tryConsume()){
+            if(callback != null){
+                callback.onError(new ProtocolRateLimitsException(EntityType.DEVICE));
+            }
+            return false;
+        }
+
+        return true;
+    }
 }
