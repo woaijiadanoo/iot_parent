@@ -2,10 +2,14 @@ package com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt;
 
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.AbstractProtocolService;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionEventEnum;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.mqtt.*;
@@ -32,8 +36,12 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
     private volatile DeviceSessionCtx deviceSessionCtx;
 
+    private ProtocolService protocolService;
+
     public MqttProtocolHander(MqttProtocolContext context){
         this.context = context;
+
+        this.protocolService = context.getProtocolService();
 
         sessionId = UUIDHelper.genUuid();
         deviceSessionCtx = new DeviceSessionCtx(sessionId);
@@ -64,7 +72,7 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
                 processConnect(ctx, (MqttConnectMessage) msg);
                 break;
             case DISCONNECT:
-
+                processDisConnect(ctx);
             default:
                 break;
         }
@@ -91,7 +99,7 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         DeviceAuthReqMsg deviceAuthReqMsg = new DeviceAuthReqMsg(productKey,deviceName,deviceSerct);
 
         // 2、通过三元组信息来获取设备详情
-        context.getProtocolService().process(deviceAuthReqMsg, new ProtocolServiceCallback<DeviceAuthRespMsg>() {
+        protocolService.process(deviceAuthReqMsg, new ProtocolServiceCallback<DeviceAuthRespMsg>() {
             @Override
             public void onSuccess(DeviceAuthRespMsg msg) {
                 // 鉴权流程
@@ -117,6 +125,7 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         });
     }
 
+    private SessionInfoVO sessionInfo;
 
     private void onValidateDeviceResponse(DeviceAuthRespMsg msg, ChannelHandlerContext ctx) {
         // 验证一下返回的device是否有效
@@ -133,6 +142,9 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
             deviceSessionCtx.setDeviceInfo(deviceInfoVO);
             deviceSessionCtx.setChannel(ctx);
+
+            // session信息管理
+            sessionInfo = new SessionInfoVO(sessionId, msg.getDeviceId(), msg.getTenantId());
 
             ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_ACCEPTED));
         }
@@ -152,6 +164,11 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
     private void processDisConnect(ChannelHandlerContext ctx) {
         ctx.close();
+        if(deviceSessionCtx.isConnected()){
+            // 广播给所有的设备模块， 我被干掉了， 你也把actor关掉把
+            protocolService.process(sessionInfo,
+                    AbstractProtocolService.getSessionEventMsg(SessionEventEnum.CLOSE), null);
+        }
     }
 
     @Override

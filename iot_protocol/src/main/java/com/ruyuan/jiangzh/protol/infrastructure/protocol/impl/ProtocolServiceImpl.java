@@ -8,8 +8,10 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolApiService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.FutureCallbackUtils;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.ProtocolApiReqMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.SessionEventMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +31,14 @@ public class ProtocolServiceImpl extends AbstractProtocolService {
     @Autowired
     private RpcManagerService rpcManagerService;
 
+    @Override
+    protected void doProcess(SessionInfoVO sessionInfo, SessionEventMsg sessionEventMsg, ProtocolServiceCallback<Void> callback) {
+
+    }
+
     /*
-        实际业务处理的封装
-     */
+            实际业务处理的封装
+         */
     @Override
     protected void doProcess(DeviceAuthReqMsg msg, ProtocolServiceCallback<DeviceAuthRespMsg> callback) {
         // 实现callback的调用

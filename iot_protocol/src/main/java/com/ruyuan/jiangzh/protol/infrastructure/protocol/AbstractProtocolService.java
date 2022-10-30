@@ -8,9 +8,12 @@ import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolRateLimits;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolRateLimitsException;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.SessionEventMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionEventEnum;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.concurrent.ConcurrentMap;
@@ -42,6 +45,17 @@ public abstract class AbstractProtocolService implements ProtocolService{
         doProcess(msg);
     }
 
+    @Override
+    public void process(SessionInfoVO sessionInfo, SessionEventMsg sessionEventMsg, ProtocolServiceCallback<Void> callback) {
+        // 加入限流操作
+        if(checkLimits(sessionInfo, sessionEventMsg, callback)){
+            doProcess(sessionInfo, sessionEventMsg, callback);
+        }
+    }
+
+    // 设备事件的统一处理
+    protected abstract void doProcess(SessionInfoVO sessionInfo, SessionEventMsg sessionEventMsg, ProtocolServiceCallback<Void> callback);
+
     // 具体的设备鉴权实现，交给子类处理
     protected abstract void doProcess(DeviceAuthReqMsg msg, ProtocolServiceCallback<DeviceAuthRespMsg> callback);
 
@@ -70,7 +84,7 @@ public abstract class AbstractProtocolService implements ProtocolService{
     private ConcurrentMap<DeviceId, ProtocolRateLimits> perDeviceLimits = Maps.newConcurrentMap();
 
     @Override
-    public boolean checkLimits(DeviceInfoVO deviceInfo, Object msg, ProtocolServiceCallback<DeviceAuthRespMsg> callback) {
+    public boolean checkLimits(SessionInfoVO sessionInfo, Object msg, ProtocolServiceCallback<Void> callback) {
         if(!rateLimitEnabled){
             return true;
         }
@@ -78,7 +92,7 @@ public abstract class AbstractProtocolService implements ProtocolService{
         /*
             按照TenantId来进行限流
          */
-        TenantId tenantId = deviceInfo.getTenantId();
+        TenantId tenantId = sessionInfo.getTenantId();
         ProtocolRateLimits tenantRateLimit = perTenantLimits.computeIfAbsent(tenantId, id -> new ProtocolRateLimits(perTenantsLimitsConf));
         if(!tenantRateLimit.tryConsume()){
             if(callback != null){
@@ -90,7 +104,7 @@ public abstract class AbstractProtocolService implements ProtocolService{
         /*
             按照DeviceId来进行限流
          */
-        DeviceId deviceId = deviceInfo.getDeviceId();
+        DeviceId deviceId = sessionInfo.getDeviceId();
         ProtocolRateLimits deviceRateLimit = perDeviceLimits.computeIfAbsent(deviceId, id -> new ProtocolRateLimits(perDevicesLimitsConf));
         if(!deviceRateLimit.tryConsume()){
             if(callback != null){
@@ -101,4 +115,15 @@ public abstract class AbstractProtocolService implements ProtocolService{
 
         return true;
     }
+
+
+    public static SessionEventMsg getSessionEventMsg(SessionEventEnum sessionEventEnum){
+        /*
+            1、包括了事件的类型  open , close
+            2、同步和异步
+            3、额外的payload
+         */
+        return new SessionEventMsg(sessionEventEnum);
+    }
+
 }
