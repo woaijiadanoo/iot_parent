@@ -41,7 +41,6 @@ public class DefaultActorService implements ActorService{
 
     @Override
     public void onBroadcast(ToAllNodesMsg msg) {
-        System.err.println("onBroadcast msg ="+msg);
         // 通知当前JVM进行处理
         appActor.tell(msg, ActorRef.noSender());
     }

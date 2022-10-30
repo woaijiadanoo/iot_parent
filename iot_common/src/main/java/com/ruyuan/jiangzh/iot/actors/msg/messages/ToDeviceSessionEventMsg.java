@@ -24,6 +24,7 @@ public class ToDeviceSessionEventMsg implements ToAllNodesMsg, ToDeviceActorMsg 
      */
     private final int sessionEventCode;
 
+    private ServerAddress serverAddress;
 
     public ToDeviceSessionEventMsg(DeviceId deviceId,TenantId tenantId,int sessionEventCode){
         this.deviceId = deviceId;
@@ -38,12 +39,12 @@ public class ToDeviceSessionEventMsg implements ToAllNodesMsg, ToDeviceActorMsg 
 
     @Override
     public TenantId getTenantId() {
-        return null;
+        return tenantId;
     }
 
     @Override
     public DeviceId getDeviceId() {
-        return null;
+        return deviceId;
     }
 
     @Override
@@ -51,8 +52,30 @@ public class ToDeviceSessionEventMsg implements ToAllNodesMsg, ToDeviceActorMsg 
         return null;
     }
 
+    public void setServerAddress(ServerAddress serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
+    public int getSessionEventCode() {
+        return sessionEventCode;
+    }
+
     @Override
     public Optional<ServerAddress> getServerAddress() {
+        if(serverAddress != null){
+            return Optional.of(serverAddress);
+        }
         return Optional.empty();
+    }
+
+
+    @Override
+    public String toString() {
+        return "ToDeviceSessionEventMsg{" +
+                "deviceId=" + deviceId +
+                ", tenantId=" + tenantId +
+                ", sessionEventCode=" + sessionEventCode +
+                ", serverAddress=" + serverAddress +
+                '}';
     }
 }

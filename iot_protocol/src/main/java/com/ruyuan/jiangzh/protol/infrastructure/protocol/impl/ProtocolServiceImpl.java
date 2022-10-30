@@ -2,6 +2,7 @@ package com.ruyuan.jiangzh.protol.infrastructure.protocol.impl;
 
 import com.ruyuan.jiangzh.iot.actors.RpcManager;
 import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.ToDeviceSessionEventMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.acl.RpcManagerService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.AbstractProtocolService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolApiService;
@@ -33,7 +34,11 @@ public class ProtocolServiceImpl extends AbstractProtocolService {
 
     @Override
     protected void doProcess(SessionInfoVO sessionInfo, SessionEventMsg sessionEventMsg, ProtocolServiceCallback<Void> callback) {
-
+        // 封装待传递的对象
+        ToDeviceSessionEventMsg toDeviceSessionEventMsg = new ToDeviceSessionEventMsg(
+                sessionInfo.getDeviceId(),sessionInfo.getTenantId(),sessionEventMsg.getSessionEvent().getSessionEventCode());
+        // 调用RPCManager
+        rpcManagerService.broadcast(toDeviceSessionEventMsg);
     }
 
     /*

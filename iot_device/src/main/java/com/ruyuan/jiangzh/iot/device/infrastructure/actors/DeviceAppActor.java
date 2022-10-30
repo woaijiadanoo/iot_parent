@@ -7,6 +7,7 @@ import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.app.AppActor;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.ToDeviceSessionEventMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.device.infrastructure.configs.ActorConfigs;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
@@ -61,13 +62,25 @@ public class DeviceAppActor extends AppActor {
                 // 设备上线通知消息
                 onProtocolOnlineMsg((FromDeviceOnlineMsg) msg);
                 break;
-
+            case TO_DEVICE_SESSION_EVENT_MSG:
+                // 设备关键事件通知
+                onToDeviceSessionEventMsg((ToDeviceSessionEventMsg) msg);
+                break;
             default:
                 return false;
         }
         return true;
     }
 
+    // 设备关键事件通知
+    private void onToDeviceSessionEventMsg(ToDeviceSessionEventMsg msg) {
+        ActorRef tenantActorRef = getOrCreateTenants(msg.getTenantId());
+        if(tenantActorRef != null){
+            tenantActorRef.tell(msg, getSelf());
+        }
+    }
+
+    // 设备上线通知消息
     private void onProtocolOnlineMsg(FromDeviceOnlineMsg msg) {
         ActorRef tenantActor = getOrCreateTenants(msg.getTenantId());
         if(tenantActor != null){

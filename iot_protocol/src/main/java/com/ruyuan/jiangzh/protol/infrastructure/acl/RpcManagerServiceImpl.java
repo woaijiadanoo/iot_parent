@@ -8,6 +8,7 @@ import com.ruyuan.jiangzh.iot.actors.msg.ServerAddress;
 import com.ruyuan.jiangzh.iot.actors.msg.ToAllNodesMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.ToDeviceSessionEventMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
 import com.ruyuan.jiangzh.service.dto.DeviceSercetDTO;
@@ -62,6 +63,25 @@ public class RpcManagerServiceImpl implements RpcManagerService{
 
     @Override
     public void broadcast(ToAllNodesMsg msg) {
+        String hostAddr = null;
+        // 可以通过dubbo的ProtocolConfig来获取
+        int dubboPort = 20885;
+
+        try {
+            hostAddr = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+
+        ServerAddress serverAddress = new ServerAddress(hostAddr, dubboPort);
+
+        if(msg instanceof ToDeviceSessionEventMsg){
+            ToDeviceSessionEventMsg sessionEventMsg = (ToDeviceSessionEventMsg) msg;
+            sessionEventMsg.setServerAddress(serverAddress);
+
+            ActorService actorService = getActorService(DEVICE_GROUP_NAME, true);
+            actorService.onBroadcast(sessionEventMsg);
+        }
 
     }
 
@@ -79,8 +99,6 @@ public class RpcManagerServiceImpl implements RpcManagerService{
 
         ServerAddress serverAddress = new ServerAddress(hostAddr, dubboPort);
 
-        System.out.println("RpcManagerServiceImpl serverAddress : " + serverAddress);
-
         if(msg instanceof FromDeviceOnlineMsg){
             FromDeviceOnlineMsg onlineMsg = (FromDeviceOnlineMsg) msg;
             onlineMsg.setServerAddress(serverAddress);
@@ -93,16 +111,19 @@ public class RpcManagerServiceImpl implements RpcManagerService{
 
     private void onDeviceOnlineMsg(FromDeviceOnlineMsg onlineMsg) {
         service.submit(() -> {
-            ActorService actorService = getActorService(DEVICE_GROUP_NAME);
+            ActorService actorService = getActorService(DEVICE_GROUP_NAME, false);
             actorService.onMsg(onlineMsg);
         });
     }
 
 
-    public ActorService getActorService(String groupName){
+    public ActorService getActorService(String groupName, boolean boardcast){
         ReferenceConfig<ActorService> referConfig = new ReferenceConfig<>();
         referConfig.setInterface(ActorService.class);
         referConfig.setGroup(groupName);
+        if(boardcast){
+            referConfig.setCluster("broadcast");
+        }
 
         ActorService actorService = referenceCache.get(referConfig);
         return actorService;

@@ -8,7 +8,7 @@
             http://dubbo.apache.org/schema/dubbo
             http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
-    <dubbo:protocol name="dubbo" port="20882" />
+    <dubbo:protocol name="dubbo" port="-1" />
     
     <dubbo:application name="iot-device"/>
 

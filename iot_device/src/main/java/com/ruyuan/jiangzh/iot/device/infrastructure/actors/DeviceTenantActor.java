@@ -9,6 +9,7 @@ import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.actors.msg.ServerAddress;
 import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceActorMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.ToDeviceSessionEventMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 
@@ -62,13 +63,31 @@ public class DeviceTenantActor extends ContextAwareActor {
                 // 设备上线通知消息
                 onProtocolOnlineMsg((FromDeviceOnlineMsg) msg);
                 break;
-
+            case TO_DEVICE_SESSION_EVENT_MSG:
+                // 设备关键事件通知
+                onToDeviceSessionEventMsg((ToDeviceSessionEventMsg) msg);
+                break;
             default:
                 return false;
         }
         return true;
     }
 
+    // 设备关键事件通知
+    private void onToDeviceSessionEventMsg(ToDeviceSessionEventMsg msg) {
+        System.err.println("DeviceTenantActor msg : "+msg);
+        // 设备已经离线
+        if(msg.getSessionEventCode() == 1){
+            ActorRef deviceActorRef = deviceActors.get(msg.getDeviceId());
+            if(deviceActorRef != null){
+                deviceActorRef.tell(msg, getSelf());
+            }else{
+                System.err.println("onToDeviceSessionEventMsg no device actor" + msg.getDeviceId());
+            }
+        }
+    }
+
+    // 设备上线通知消息
     private void onProtocolOnlineMsg(FromDeviceOnlineMsg msg) {
         ActorRef deviceActor = getOrCreateDeviceActor(msg.getDeviceId(), msg.getServerAddress());
         if(deviceActor != null){
