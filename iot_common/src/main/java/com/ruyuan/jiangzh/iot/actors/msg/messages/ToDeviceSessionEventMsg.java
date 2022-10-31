@@ -26,6 +26,8 @@ public class ToDeviceSessionEventMsg implements ToAllNodesMsg, ToDeviceActorMsg 
 
     private ServerAddress serverAddress;
 
+    private long lastActivityTimestamp;
+
     public ToDeviceSessionEventMsg(DeviceId deviceId,TenantId tenantId,int sessionEventCode){
         this.deviceId = deviceId;
         this.tenantId = tenantId;
@@ -68,6 +70,13 @@ public class ToDeviceSessionEventMsg implements ToAllNodesMsg, ToDeviceActorMsg 
         return Optional.empty();
     }
 
+    public long getLastActivityTimestamp() {
+        return lastActivityTimestamp;
+    }
+
+    public void setLastActivityTimestamp(long lastActivityTimestamp) {
+        this.lastActivityTimestamp = lastActivityTimestamp;
+    }
 
     @Override
     public String toString() {

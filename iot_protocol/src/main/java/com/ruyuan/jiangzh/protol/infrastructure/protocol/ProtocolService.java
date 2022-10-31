@@ -24,4 +24,5 @@ public interface ProtocolService {
 
     boolean checkLimits(SessionInfoVO sessionInfo, Object msg, ProtocolServiceCallback<Void> callback);
 
+    void deleteSessionMetaData(SessionInfoVO sessionInfo);
 }

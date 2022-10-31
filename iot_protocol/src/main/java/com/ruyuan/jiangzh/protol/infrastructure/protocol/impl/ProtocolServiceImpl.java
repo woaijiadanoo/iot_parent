@@ -37,6 +37,14 @@ public class ProtocolServiceImpl extends AbstractProtocolService {
         // 封装待传递的对象
         ToDeviceSessionEventMsg toDeviceSessionEventMsg = new ToDeviceSessionEventMsg(
                 sessionInfo.getDeviceId(),sessionInfo.getTenantId(),sessionEventMsg.getSessionEvent().getSessionEventCode());
+
+        if(getSessionMetaData(sessionInfo) != null){
+            toDeviceSessionEventMsg.setLastActivityTimestamp(getSessionMetaData(sessionInfo).getLastActivityTime());
+        }else{
+            // 如果最后记录为空， 就以当前时间为准
+            toDeviceSessionEventMsg.setLastActivityTimestamp(System.currentTimeMillis());
+        }
+
         // 调用RPCManager
         rpcManagerService.broadcast(toDeviceSessionEventMsg);
     }

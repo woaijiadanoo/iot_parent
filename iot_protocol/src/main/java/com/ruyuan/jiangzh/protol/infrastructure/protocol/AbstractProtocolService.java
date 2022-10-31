@@ -14,8 +14,10 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAut
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionEventEnum;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionMetaData;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +30,8 @@ import java.util.concurrent.Executors;
 public abstract class AbstractProtocolService implements ProtocolService{
 
     protected ExecutorService protocolCallbackExecutor;
+
+    private ConcurrentMap<UUID, SessionMetaData> sessions = Maps.newConcurrentMap();
 
     @Override
     public void process(DeviceAuthReqMsg msg, ProtocolServiceCallback<DeviceAuthRespMsg> callback) {
@@ -49,6 +53,7 @@ public abstract class AbstractProtocolService implements ProtocolService{
     public void process(SessionInfoVO sessionInfo, SessionEventMsg sessionEventMsg, ProtocolServiceCallback<Void> callback) {
         // 加入限流操作
         if(checkLimits(sessionInfo, sessionEventMsg, callback)){
+            reportActivityInternal(sessionInfo);
             doProcess(sessionInfo, sessionEventMsg, callback);
         }
     }
@@ -124,6 +129,28 @@ public abstract class AbstractProtocolService implements ProtocolService{
             3、额外的payload
          */
         return new SessionEventMsg(sessionEventEnum);
+    }
+
+
+    private SessionMetaData reportActivityInternal(SessionInfoVO sessionInfo){
+        UUID sessionId = sessionInfo.getSessionId();
+        SessionMetaData sessionMetaData = sessions.get(sessionId);
+        if(sessionMetaData != null){
+            sessionMetaData.updateLastActivityTime();
+        }else{
+            sessionMetaData = new SessionMetaData(sessionInfo);
+            sessions.put(sessionId, sessionMetaData);
+        }
+        return sessionMetaData;
+    }
+
+    @Override
+    public void deleteSessionMetaData(SessionInfoVO sessionInfo){
+        sessions.remove(sessionInfo.getSessionId());
+    }
+
+    protected SessionMetaData getSessionMetaData(SessionInfoVO sessionInfo){
+        return sessions.get(sessionInfo);
     }
 
 }

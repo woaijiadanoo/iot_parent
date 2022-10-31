@@ -173,6 +173,11 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
     @Override
     public void operationComplete(Future<? super Void> future) throws Exception {
-        System.out.println("operationComplete 被执行到了 ");
+        // 完全看项目需求
+//        if(deviceSessionCtx.isConnected()){
+//            // 广播给所有的设备模块， 我被干掉了， 你也把actor关掉把
+//            protocolService.process(sessionInfo,
+//                    AbstractProtocolService.getSessionEventMsg(SessionEventEnum.CLOSE), null);
+//        }
     }
 }

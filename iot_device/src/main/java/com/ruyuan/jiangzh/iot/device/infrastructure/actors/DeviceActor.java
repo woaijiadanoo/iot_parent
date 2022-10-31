@@ -59,6 +59,11 @@ public class DeviceActor extends ContextAwareActor {
 
     private void onToDeviceSessionEventMsg(ToDeviceSessionEventMsg msg) {
         if(msg.getSessionEventCode() == 1){
+            // 更新设备的在线状态以及离线时间
+            AggrDeviceEntity deviceEntity = deviceFactory.getDeviceById(deviceId);
+            deviceEntity.updateDeviceStatusAndOnlineTime(DeviceStatusEnums.OFFLINE, msg.getLastActivityTimestamp());
+
+            // 关闭当前设备对应的Actor
             getContext().stop(getSelf());
         }
     }
