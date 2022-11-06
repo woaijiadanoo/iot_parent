@@ -1,12 +1,16 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt;
 
+import com.google.common.collect.Maps;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.AbstractProtocolService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.exceptions.AdaptorException;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt.common.MqttProtocolAdaptor;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.PostTelemetryMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionEventEnum;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
@@ -18,7 +22,11 @@ import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.UUID;
+import static com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt.common.MqttTopics.*;
+import static io.netty.handler.codec.mqtt.MqttMessageType.*;
+import static io.netty.handler.codec.mqtt.MqttQoS.*;
 
 /**
  * @author jiangzheng
@@ -38,8 +46,18 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
     private ProtocolService protocolService;
 
+    private SessionInfoVO sessionInfo;
+
+    private final MqttProtocolAdaptor adaptor;
+
+    private static final String PRODUCT_KEY = "productKey";
+    private static final String DEVICE_NAME = "deviceName";
+
+
     public MqttProtocolHander(MqttProtocolContext context){
         this.context = context;
+
+        this.adaptor = context.getProtocolAdaptor();
 
         this.protocolService = context.getProtocolService();
 
@@ -70,6 +88,9 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
             // 处理连接请求
             case CONNECT:
                 processConnect(ctx, (MqttConnectMessage) msg);
+                break;
+            case PUBLISH:
+                processPublish(ctx,(MqttPublishMessage) msg);
                 break;
             case DISCONNECT:
                 processDisConnect(ctx);
@@ -125,8 +146,6 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         });
     }
 
-    private SessionInfoVO sessionInfo;
-
     private void onValidateDeviceResponse(DeviceAuthRespMsg msg, ChannelHandlerContext ctx) {
         // 验证一下返回的device是否有效
         if(msg.getDeviceId() == null){
@@ -180,4 +199,101 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 //                    AbstractProtocolService.getSessionEventMsg(SessionEventEnum.CLOSE), null);
 //        }
     }
+
+
+
+    /*
+        处理所有的publish请求
+     */
+    private void processPublish(ChannelHandlerContext ctx, MqttPublishMessage mqttMsg) {
+        // 检查连接情况
+        if(!checkConnected(ctx, mqttMsg)){
+            return;
+        }
+
+        // 获取关键元数据
+        String topicName = mqttMsg.variableHeader().topicName();
+        int msgId = mqttMsg.variableHeader().packetId();
+
+        System.err.println("MqttProtocolHander topicName : "+topicName + " , msgId : " + msgId);
+
+        // 区分业务类型
+        // /sys 设备标签
+        if(topicName.startsWith(BASE_DEVICE_TOPIC_PER)){
+            if(topicName.endsWith(UPLOAD_DEVICE_TAG_TOPIC)){
+                // 设备上报标签数据
+                Map<String, String> topicMetaData = parseTopicName(topicName, 1, 2);
+                onDeviceTagUpload(ctx, mqttMsg, msgId, topicMetaData);
+            }
+        }
+    }
+
+    private void onDeviceTagUpload(ChannelHandlerContext ctx, MqttPublishMessage mqttMsg, int msgId, Map<String, String> topicMetaData) {
+        try {
+            PostTelemetryMsg postTelemetryMsg = adaptor.convertToPostTelemetryMsg(deviceSessionCtx, mqttMsg);
+            protocolService.process(sessionInfo, postTelemetryMsg, getPubAckCallback(ctx, msgId, postTelemetryMsg));
+        } catch (AdaptorException e) {
+            ctx.close();
+        }
+    }
+
+    private <T> ProtocolServiceCallback getPubAckCallback(ChannelHandlerContext ctx, int msgId, T msg){
+        return new ProtocolServiceCallback() {
+            @Override
+            public void onSuccess(Object msg) {
+                if(msgId > 0){
+                    ctx.writeAndFlush(createMqttPubAckMsg(msgId));
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // 极端的处理方式就是直接关闭链接，节省服务器资源
+                processDisConnect(ctx);
+            }
+        };
+    }
+
+
+    /*
+        构建一个publish的返回消息
+     */
+    private MqttPubAckMessage createMqttPubAckMsg(int msgId) {
+        MqttFixedHeader mqttFixedHeader =
+                new MqttFixedHeader(PUBACK, false, AT_LEAST_ONCE, false, 0);
+
+        MqttMessageIdVariableHeader mqttMessageIdVariableHeader =
+                MqttMessageIdVariableHeader.from(msgId);
+
+        return new MqttPubAckMessage(mqttFixedHeader, mqttMessageIdVariableHeader);
+    }
+
+
+    // 解析出productKey和deviceName
+    private Map<String,String> parseTopicName(String topicName, int productKeyIndex,int deviceNameIndex){
+        String[] topicPaths = topicName.split("/");
+        Map<String,String> result = null;
+        if(topicPaths.length >= productKeyIndex && topicPaths.length >= deviceNameIndex){
+            result = Maps.newHashMap();
+            result.put(PRODUCT_KEY,  topicPaths[productKeyIndex]);
+            result.put(DEVICE_NAME, topicPaths[deviceNameIndex]);
+        }
+        return result;
+    }
+
+    private boolean checkConnected(ChannelHandlerContext ctx, MqttMessage mqttMsg) {
+        if(deviceSessionCtx.isConnected()){
+            return true;
+        }else{
+            ctx.close();
+            return false;
+        }
+    }
+
+
+
+
+
+
+
 }

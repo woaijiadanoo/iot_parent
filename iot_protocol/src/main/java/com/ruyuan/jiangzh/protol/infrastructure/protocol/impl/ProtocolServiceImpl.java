@@ -8,6 +8,7 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.AbstractProtocolService
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolApiService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.FutureCallbackUtils;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.PostTelemetryMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.ProtocolApiReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.SessionEventMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
@@ -31,6 +32,7 @@ public class ProtocolServiceImpl extends AbstractProtocolService {
 
     @Autowired
     private RpcManagerService rpcManagerService;
+
 
     @Override
     protected void doProcess(SessionInfoVO sessionInfo, SessionEventMsg sessionEventMsg, ProtocolServiceCallback<Void> callback) {
@@ -81,4 +83,15 @@ public class ProtocolServiceImpl extends AbstractProtocolService {
             }
         };
     }
+
+
+    /*
+    处理tag数据上报
+ */
+    @Override
+    protected void doProcess(SessionInfoVO sessionInfo, PostTelemetryMsg postTelemetryMsg, ProtocolServiceCallback<Void> callback) {
+        System.out.println("ProtocolServiceImpl postTelemetryMsg = " + postTelemetryMsg);
+        callback.onSuccess(null);
+    }
+
 }

@@ -5,7 +5,7 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceC
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.SessionEventMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.PostTelemetryMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
 
 /**
@@ -21,6 +21,8 @@ public interface ProtocolService {
     void process(FromDeviceMsg msg);
 
     void process(SessionInfoVO sessionInfo, SessionEventMsg sessionEventMsg, ProtocolServiceCallback<Void> callback);
+
+    void process(SessionInfoVO sessionInfo, PostTelemetryMsg postTelemetryMsg, ProtocolServiceCallback<Void> callback);
 
     boolean checkLimits(SessionInfoVO sessionInfo, Object msg, ProtocolServiceCallback<Void> callback);
 

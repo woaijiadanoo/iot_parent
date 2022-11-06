@@ -11,7 +11,7 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceC
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.SessionEventMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.PostTelemetryMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionEventEnum;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionMetaData;
@@ -57,6 +57,17 @@ public abstract class AbstractProtocolService implements ProtocolService{
             doProcess(sessionInfo, sessionEventMsg, callback);
         }
     }
+
+    @Override
+    public void process(SessionInfoVO sessionInfo, PostTelemetryMsg postTelemetryMsg, ProtocolServiceCallback<Void> callback) {
+        // 加入限流操作
+        if(checkLimits(sessionInfo, postTelemetryMsg, callback)){
+            reportActivityInternal(sessionInfo);
+            doProcess(sessionInfo, postTelemetryMsg, callback);
+        }
+    }
+
+    protected abstract void doProcess(SessionInfoVO sessionInfo, PostTelemetryMsg postTelemetryMsg, ProtocolServiceCallback<Void> callback);
 
     // 设备事件的统一处理
     protected abstract void doProcess(SessionInfoVO sessionInfo, SessionEventMsg sessionEventMsg, ProtocolServiceCallback<Void> callback);
