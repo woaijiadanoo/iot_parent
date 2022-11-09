@@ -40,6 +40,7 @@
         <gson.version>2.6.2</gson.version>
         <kafka.version>2.0.0</kafka.version>
         <bucket4j.version>4.1.1</bucket4j.version>
+        <common.lang3.version>3.12.0</common.lang3.version>
 
         <delight-nashorn-sandbox.version>0.1.14</delight-nashorn-sandbox.version>
     </properties>
@@ -221,6 +222,12 @@
                 <groupId>com.github.vladimir-bukhtoyarov</groupId>
                 <artifactId>bucket4j-core</artifactId>
                 <version>${bucket4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${common.lang3.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

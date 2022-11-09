@@ -4,6 +4,8 @@ server:
 
 
 protocol:
+  json:
+    max_string_value_length: 0
   rate:
     limits:
       device:
