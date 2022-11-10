@@ -1,5 +1,6 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol.impl;
 
+import com.google.gson.Gson;
 import com.ruyuan.jiangzh.iot.actors.RpcManager;
 import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ToDeviceSessionEventMsg;
@@ -87,10 +88,24 @@ public class ProtocolServiceImpl extends AbstractProtocolService {
 
     /*
     处理tag数据上报
+    ProtocolServiceImpl postTelemetryMsg =
+    {"kvList":
+        {
+            "reviceTime":1668094392526,
+            "kvs":
+                [
+                    {"key":"key","type":"STRING_V","stringValue":"testKey"},
+                    {"key":"value","type":"STRING_V","stringValue":"testValue"}
+               ]
+         }
+
+
+          {"kvList":{"reviceTime":1668094514000,"kvs":[{"key":"key","type":"STRING_V","stringValue":"testKey"},{"key":"value","type":"LONG_V","longValue":38}]}}
+    }
  */
     @Override
     protected void doProcess(SessionInfoVO sessionInfo, PostTelemetryMsg postTelemetryMsg, ProtocolServiceCallback<Void> callback) {
-        System.out.println("ProtocolServiceImpl postTelemetryMsg = " + postTelemetryMsg);
+        System.out.println("ProtocolServiceImpl postTelemetryMsg = " + new Gson().toJson(postTelemetryMsg));
         callback.onSuccess(null);
     }
 
