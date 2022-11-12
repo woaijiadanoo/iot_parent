@@ -10,7 +10,7 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.exceptions.AdaptorExcep
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt.common.MqttProtocolAdaptor;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.PostTelemetryMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.PostTelemetryMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionEventEnum;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;

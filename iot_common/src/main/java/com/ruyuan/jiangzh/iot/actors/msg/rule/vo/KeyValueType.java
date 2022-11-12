@@ -1,4 +1,4 @@
-package com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.vo;
+package com.ruyuan.jiangzh.iot.actors.msg.rule.vo;
 
 public enum KeyValueType {
 

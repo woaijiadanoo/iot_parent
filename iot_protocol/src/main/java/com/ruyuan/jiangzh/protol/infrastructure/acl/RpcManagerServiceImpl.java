@@ -9,6 +9,7 @@ import com.ruyuan.jiangzh.iot.actors.msg.ToAllNodesMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ToDeviceSessionEventMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.TransportToRuleEngineActorMsgWrapper;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
 import com.ruyuan.jiangzh.service.dto.DeviceSercetDTO;
@@ -36,6 +37,7 @@ public class RpcManagerServiceImpl implements RpcManagerService{
     private final ReferenceCache referenceCache = SimpleReferenceCache.getCache();
 
     private static final String DEVICE_GROUP_NAME = "device";
+    private static final String RULE_ENGINE_GROUP_NAME = "rule";
 
     private ListeningExecutorService service =
             MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
@@ -104,9 +106,22 @@ public class RpcManagerServiceImpl implements RpcManagerService{
             onlineMsg.setServerAddress(serverAddress);
 
             onDeviceOnlineMsg(onlineMsg);
+        } else if (msg instanceof TransportToRuleEngineActorMsgWrapper){
+            TransportToRuleEngineActorMsgWrapper msgWrapper = (TransportToRuleEngineActorMsgWrapper) msg;
+            msgWrapper.setServerAddress(serverAddress);
+
+            // 远程服务调用
+            onTransportToRuleEngineActorMsgWrapper(msgWrapper);
         }
 
 
+    }
+
+    private void onTransportToRuleEngineActorMsgWrapper(TransportToRuleEngineActorMsgWrapper msgWrapper) {
+        service.submit(() -> {
+            ActorService actorService = getActorService(RULE_ENGINE_GROUP_NAME, false);
+            actorService.onMsg(msgWrapper);
+        });
     }
 
     private void onDeviceOnlineMsg(FromDeviceOnlineMsg onlineMsg) {

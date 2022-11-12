@@ -1,6 +1,6 @@
-package com.ruyuan.jiangzh.protol.infrastructure.protocol.messages;
+package com.ruyuan.jiangzh.iot.actors.msg.rule;
 
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.vo.TsKvListProtoVO;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.vo.TsKvListProtoVO;
 
 public class PostTelemetryMsg {
 

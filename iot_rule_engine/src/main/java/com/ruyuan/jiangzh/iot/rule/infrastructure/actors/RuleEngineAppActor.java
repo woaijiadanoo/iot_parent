@@ -9,6 +9,7 @@ import com.ruyuan.jiangzh.iot.actors.app.AppActor;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ComponentEventMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ServiceToRuleEngineMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.TransportToRuleEngineActorMsgWrapper;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.configs.ActorConfigs;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
@@ -44,10 +45,19 @@ public class RuleEngineAppActor  extends AppActor {
                 // 新增，修改或删除等事件变更的通知
                 onComponentEventMsg((ComponentEventMsg)msg);
                 break;
+            case TRANSPORT_TO_RULE_ENGINE_ACTOR_MSG_WRAPPER:
+                // 设备投递给规则引擎的消息
+                onTransportToRuleEngineActorMsgWrapper((TransportToRuleEngineActorMsgWrapper) msg);
+                break;
             default:
                 return false;
         }
         return true;
+    }
+
+    // 设备投递给规则引擎的消息
+    private void onTransportToRuleEngineActorMsgWrapper(TransportToRuleEngineActorMsgWrapper msg) {
+
     }
 
     private void onComponentEventMsg(ComponentEventMsg msg) {

@@ -5,16 +5,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.PostTelemetryMsg;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.vo.KeyValueProtoVO;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.vo.KeyValueType;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.vo.TsKvListProtoVO;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.PostTelemetryMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.vo.KeyValueProtoVO;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.vo.KeyValueType;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.vo.TsKvListProtoVO;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.checkerframework.checker.units.qual.K;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class JsonConverter {
 

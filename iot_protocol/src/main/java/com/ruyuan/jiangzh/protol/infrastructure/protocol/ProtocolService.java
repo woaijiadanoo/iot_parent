@@ -5,7 +5,7 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceC
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.SessionEventMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.PostTelemetryMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.PostTelemetryMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
 
 /**

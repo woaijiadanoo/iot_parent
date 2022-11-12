@@ -18,7 +18,10 @@ public enum MsgType {
     PROTOCOL_ONLINE_MSG,
 
     // 设备时间通知类消息
-    TO_DEVICE_SESSION_EVENT_MSG
+    TO_DEVICE_SESSION_EVENT_MSG,
+
+    // 设备上报数据封装对象
+    TRANSPORT_TO_RULE_ENGINE_ACTOR_MSG_WRAPPER
     ;
 
 }

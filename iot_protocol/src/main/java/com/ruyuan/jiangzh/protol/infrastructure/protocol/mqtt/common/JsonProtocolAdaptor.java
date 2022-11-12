@@ -5,7 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.JsonConverter;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.exceptions.AdaptorException;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt.DeviceSessionCtx;
-import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.PostTelemetryMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.PostTelemetryMsg;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import org.springframework.stereotype.Service;
