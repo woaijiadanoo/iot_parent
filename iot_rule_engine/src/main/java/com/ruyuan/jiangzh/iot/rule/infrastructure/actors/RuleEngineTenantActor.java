@@ -7,6 +7,9 @@ import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ComponentEventMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ServiceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.DeviceToRuleEngineMsg;
+
+import javax.sql.rowset.BaseRowSet;
 
 public class RuleEngineTenantActor extends RuleChainManagerActor{
     private final TenantId tenantId;
@@ -24,16 +27,23 @@ public class RuleEngineTenantActor extends RuleChainManagerActor{
     protected boolean process(IoTActorMessage msg) {
         switch (msg.getMsgType()){
             case SERVICE_TO_RULE_ENGINE_MSG:
-                onServiceToRuleEngineMsg((ServiceToRuleEngineMsg)msg);
+                onServiceToRuleEngineMsg((ServiceToRuleEngineMsg) msg);
                 break;
             case COMPONENT_EVENT_MSG:
                 // 新增，修改或删除等事件变更的通知
-                onComponentEventMsg((ComponentEventMsg)msg);
+                onComponentEventMsg((ComponentEventMsg) msg);
+                break;
+            case DEVICE_TO_RULE_ENGINE_MSG:
+                onDeviceToRuleEngineMsg((DeviceToRuleEngineMsg) msg);
                 break;
             default:
                 return false;
         }
         return true;
+    }
+
+    private void onDeviceToRuleEngineMsg(DeviceToRuleEngineMsg msg) {
+
     }
 
     private void onComponentEventMsg(ComponentEventMsg msg) {

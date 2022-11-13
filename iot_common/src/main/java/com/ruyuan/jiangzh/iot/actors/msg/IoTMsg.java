@@ -14,8 +14,22 @@ public class IoTMsg implements Serializable {
     private final String type;
     private final EntityId originator;
 
+    /*
+        元数据
+        ry_device_01 元数据
+            tenantId
+            deviceId
+            deviceName
+            productId
+
+        ry_device_01 上报的数据
+        {
+            "tempature" :  45
+        }
+     */
     private final String data;
 
+    // ry_device_01 元数据
     private final IoTMsgMetaData metaData;
 
     private final RuleChainId ruleChainId;
@@ -23,6 +37,10 @@ public class IoTMsg implements Serializable {
 
     public IoTMsg(UUID id, String type, String data){
         this(id,type, null ,data, new IoTMsgMetaData(Maps.newHashMap()), null, null);
+    }
+
+    public IoTMsg(UUID id, String type, String data, IoTMsgMetaData metaData){
+        this(id,type, null ,data, metaData, null, null);
     }
 
     public IoTMsg(UUID id, String type, EntityId originator, String data,

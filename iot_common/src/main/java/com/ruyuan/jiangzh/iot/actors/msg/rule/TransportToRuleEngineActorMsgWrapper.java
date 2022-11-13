@@ -44,6 +44,10 @@ public class TransportToRuleEngineActorMsgWrapper implements ToRuleEngineActorMs
         this.serverAddress = serverAddress;
     }
 
+    public TransportToRuleEngineActorMsg getMsg() {
+        return msg;
+    }
+
     @Override
     public Optional<ServerAddress> getServerAddress() {
         if(serverAddress != null){

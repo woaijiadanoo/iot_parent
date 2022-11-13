@@ -21,7 +21,10 @@ public enum MsgType {
     TO_DEVICE_SESSION_EVENT_MSG,
 
     // 设备上报数据封装对象
-    TRANSPORT_TO_RULE_ENGINE_ACTOR_MSG_WRAPPER
+    TRANSPORT_TO_RULE_ENGINE_ACTOR_MSG_WRAPPER,
+
+    // 设备发送给规则引擎的消息内容
+    DEVICE_TO_RULE_ENGINE_MSG
     ;
 
 }
