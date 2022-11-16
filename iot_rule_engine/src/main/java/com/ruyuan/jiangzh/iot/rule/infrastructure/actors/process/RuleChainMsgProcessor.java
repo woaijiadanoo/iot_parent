@@ -21,6 +21,7 @@ import com.ruyuan.jiangzh.iot.rule.domain.entity.RuleChainEntity;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.ComponentState;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleEngineActorSystemContext;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.RuleNodeActor;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.DeviceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.RuleChainToRuleNodeMsg;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.RuleNodeToRuleChainTellNextMsg;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.DefaultRuleEngineContext;
@@ -134,6 +135,13 @@ public class RuleChainMsgProcessor extends ComponentMsgProcessor<RuleChainId>{
     }
 
     public void onServiceToRuleEngineMsg(ServiceToRuleEngineMsg msg) {
+        checkActive();
+        if(firstNode != null){
+            pushMsgToNode(firstNode, getIoTMsgByRuleChain(msg.getMsg()),  "");
+        }
+    }
+
+    public void onDeviceToRuleEngineMsg(DeviceToRuleEngineMsg msg) {
         checkActive();
         if(firstNode != null){
             pushMsgToNode(firstNode, getIoTMsgByRuleChain(msg.getMsg()),  "");

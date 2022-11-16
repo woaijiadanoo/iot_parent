@@ -7,6 +7,7 @@ import com.ruyuan.jiangzh.iot.actors.msg.messages.ComponentEventMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ServiceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.rule.RuleChainId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.DeviceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.RuleNodeToRuleChainTellNextMsg;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.process.RuleChainMsgProcessor;
 
@@ -45,6 +46,9 @@ public class RuleChainActor extends ComponentActor<RuleChainId, RuleChainMsgProc
                 // 新增，修改或删除等事件变更的通知
                 onComponentEventMsg((ComponentEventMsg)msg);
                 break;
+            case DEVICE_TO_RULE_ENGINE_MSG:
+                onDeviceToRuleEngineMsg((DeviceToRuleEngineMsg) msg);
+                break;
             default:
                 return false;
         }
@@ -82,6 +86,15 @@ public class RuleChainActor extends ComponentActor<RuleChainId, RuleChainMsgProc
         getProcessor().onServiceToRuleEngineMsg(msg);
         // 分类型做日志记录
     }
+
+
+    /*
+        所有设备上报并且交给规则引擎处理的逻辑
+     */
+    private void onDeviceToRuleEngineMsg(DeviceToRuleEngineMsg msg) {
+        getProcessor().onDeviceToRuleEngineMsg(msg);
+    }
+
 
 
     public static class ActorCreator extends ContextBaseCreator<RuleChainActor> {

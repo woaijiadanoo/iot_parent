@@ -43,7 +43,7 @@ public class RuleEngineTenantActor extends RuleChainManagerActor{
     }
 
     private void onDeviceToRuleEngineMsg(DeviceToRuleEngineMsg msg) {
-
+        broadcast(msg);
     }
 
     private void onComponentEventMsg(ComponentEventMsg msg) {
