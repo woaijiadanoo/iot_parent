@@ -152,7 +152,7 @@ public class RuleChainMsgProcessor extends ComponentMsgProcessor<RuleChainId>{
         获取一个新的IoTMsg， 避免引用原始对象
      */
     private IoTMsg getIoTMsgByRuleChain(IoTMsg msg) {
-        return new IoTMsg(msg.getId(), msg.getType(), msg.getOriginator(), msg.getData(), entityId, null);
+        return new IoTMsg(msg.getId(), msg.getType(), msg.getOriginator(), msg.getData(), msg.getMetaData(),entityId, null);
     }
 
     /*
