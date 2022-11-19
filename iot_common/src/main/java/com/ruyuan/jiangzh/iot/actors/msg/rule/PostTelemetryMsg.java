@@ -2,7 +2,9 @@ package com.ruyuan.jiangzh.iot.actors.msg.rule;
 
 import com.ruyuan.jiangzh.iot.actors.msg.rule.vo.TsKvListProtoVO;
 
-public class PostTelemetryMsg {
+import java.io.Serializable;
+
+public class PostTelemetryMsg implements Serializable {
 
     private TsKvListProtoVO kvList;
 

@@ -17,7 +17,7 @@
 
     <!-- services -->
     <dubbo:service ref="actorService"
-                   group="rule"
+                   group="protocol"
                    interface="com.ruyuan.jiangzh.iot.actors.ActorService"/>
 
     <!-- references -->

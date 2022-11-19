@@ -1,6 +1,8 @@
 package com.ruyuan.jiangzh.iot.actors.msg.rule.vo;
 
-public class KeyValueProtoVO {
+import java.io.Serializable;
+
+public class KeyValueProtoVO implements Serializable {
     private String key;
 
     private KeyValueType type;
@@ -12,6 +14,8 @@ public class KeyValueProtoVO {
     private Double doubleValue;
 
     private String stringValue;
+
+    public KeyValueProtoVO(){}
 
     public KeyValueProtoVO(NewBuilder newBuilder){
         this.key = newBuilder.key;

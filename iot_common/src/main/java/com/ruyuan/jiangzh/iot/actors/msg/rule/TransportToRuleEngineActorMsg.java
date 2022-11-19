@@ -1,12 +1,16 @@
 package com.ruyuan.jiangzh.iot.actors.msg.rule;
 
-public class TransportToRuleEngineActorMsg {
+import java.io.Serializable;
+
+public class TransportToRuleEngineActorMsg implements Serializable {
 
     // TAG类型的数据
     private PostTelemetryMsg postTelemetryMsg;
     // 属性类型的数据
 
     // 状态类型的数据
+
+    public TransportToRuleEngineActorMsg(){}
 
     public TransportToRuleEngineActorMsg(NewBuilder builder){
         this.postTelemetryMsg = builder.postTelemetryMsg;

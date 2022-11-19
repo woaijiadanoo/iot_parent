@@ -1,8 +1,9 @@
 package com.ruyuan.jiangzh.iot.actors.msg.rule.vo;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class TsKvListProtoVO {
+public class TsKvListProtoVO implements Serializable {
 
     private long reviceTime;
 
