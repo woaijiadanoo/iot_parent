@@ -7,6 +7,7 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.SessionEventMs
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.rule.PostTelemetryMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt.SessionMsgListener;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
 
 /**
@@ -30,4 +31,7 @@ public interface ProtocolService {
     boolean checkLimits(SessionInfoVO sessionInfo, Object msg, ProtocolServiceCallback<Void> callback);
 
     void deleteSessionMetaData(SessionInfoVO sessionInfo);
+
+    void registerSession(SessionInfoVO sessionInfo, SessionMsgListener listener);
+
 }

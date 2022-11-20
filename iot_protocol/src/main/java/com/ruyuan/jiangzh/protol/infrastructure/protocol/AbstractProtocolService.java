@@ -13,6 +13,7 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.SessionEventMs
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.rule.PostTelemetryMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt.SessionMsgListener;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionEventEnum;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionMetaData;
@@ -175,5 +176,12 @@ public abstract class AbstractProtocolService implements ProtocolService{
     protected SessionMetaData getSessionMetaData(SessionInfoVO sessionInfo){
         return sessions.get(sessionInfo);
     }
+
+
+    @Override
+    public void registerSession(SessionInfoVO sessionInfo, SessionMsgListener listener) {
+        sessions.putIfAbsent(sessionInfo.getSessionId(), new SessionMetaData(sessionInfo, listener));
+    }
+
 
 }

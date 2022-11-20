@@ -3,6 +3,7 @@ package com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt;
 import com.datastax.oss.driver.shaded.guava.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import com.ruyuan.jiangzh.iot.actors.msg.device.ServiceToDeviceAttributeMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.SubscribeToAttrUpdateMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
@@ -179,6 +180,9 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
             // session信息管理
             sessionInfo = new SessionInfoVO(sessionId, msg.getDeviceId(), msg.getTenantId());
 
+            // 通道管理
+            protocolService.registerSession(sessionInfo, this);
+
             ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_ACCEPTED));
         }
     }
@@ -342,33 +346,34 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         ctx.writeAndFlush(createSubAckMessage(msgId, grantedQosList));
 
         // TODO 测试，给设备推送订阅消息, 测试代码，记得删除
-        try {
-            Thread.sleep(5000L);
-
-            for(int i=0; i<5; i++){
-                String message = "{\"testKey\":\"ry \""+i+", \"testValue\":  \"hahaha\"}";
-                Thread.sleep(1000L);
-                // 相当于将服务端请求封装成publishMessage，然后推送给设备端
-                onAttributeUpdate(message);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(5000L);
+//
+//            for(int i=0; i<5; i++){
+//                String message = "{\"testKey\":\"ry \""+i+", \"testValue\":  \"hahaha\"}";
+//                Thread.sleep(1000L);
+//                // 相当于将服务端请求封装成publishMessage，然后推送给设备端
+//                onAttributeUpdate(message);
+//            }
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
     // 当订阅的Topics有消息，并且接收到信息
 
     // 创建一个publish的请求，并且发送给对应的Topics
-    public void onAttributeUpdate(String message){
-        Optional<MqttMessage> messageOptional = convertToPublish(deviceSessionCtx, message);
+    @Override
+    public void onAttributeUpdate(ServiceToDeviceAttributeMsg deviceAttributeMsg){
+        Optional<MqttMessage> messageOptional = convertToPublish(deviceSessionCtx, deviceAttributeMsg);
         // 通过通道传递消息给设备
         messageOptional.ifPresent(deviceSessionCtx.getChannel() :: writeAndFlush);
     }
 
-    private Optional<MqttMessage> convertToPublish(DeviceSessionCtx deviceSessionCtx, String message) {
+    private Optional<MqttMessage> convertToPublish(DeviceSessionCtx deviceSessionCtx, ServiceToDeviceAttributeMsg deviceAttributeMsg) {
         String topicName = "/sys/i4g423najn/ry_device_02/thing/device/attr/update";
-        MqttPublishMessage result = createMqttPublishMsg(deviceSessionCtx, topicName, message);
+        MqttPublishMessage result = createMqttPublishMsg(deviceSessionCtx, topicName, deviceAttributeMsg);
         if(result == null){
             return Optional.empty();
         }else{
@@ -376,12 +381,12 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         }
     }
 
-    private MqttPublishMessage createMqttPublishMsg(DeviceSessionCtx deviceSessionCtx, String topicName, String message) {
+    private MqttPublishMessage createMqttPublishMsg(DeviceSessionCtx deviceSessionCtx, String topicName,ServiceToDeviceAttributeMsg deviceAttributeMsg) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(PUBLISH,false, AT_LEAST_ONCE, false, 0);
         MqttPublishVariableHeader variableHeader = new MqttPublishVariableHeader(topicName, deviceSessionCtx.nextMsgId());
         ByteBuf payload = ByteBufAllocator.DEFAULT.buffer();
 
-        payload.writeBytes(GSON.toJson(message).getBytes(UTF8));
+        payload.writeBytes(GSON.toJson(deviceAttributeMsg).getBytes(UTF8));
 
         return new MqttPublishMessage(fixedHeader, variableHeader, payload);
     }
