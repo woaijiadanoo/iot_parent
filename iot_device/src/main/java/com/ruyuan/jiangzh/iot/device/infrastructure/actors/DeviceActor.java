@@ -19,13 +19,16 @@ public class DeviceActor extends ContextAwareActor {
     private final TenantId tenantId;
     private final DeviceId deviceId;
 
+    private final String sessionId;
     private final ServerAddress serverAddress;
 
     private AggrDeviceFactory deviceFactory;
 
     public DeviceActor(ActorSystemContext actorSystemContext,
+                       String sessionId,
                        TenantId tenantId,DeviceId deviceId,ServerAddress serverAddress) {
         super(actorSystemContext);
+        this.sessionId = sessionId;
         this.tenantId = tenantId;
         this.deviceId = deviceId;
         this.serverAddress = serverAddress;
@@ -37,7 +40,8 @@ public class DeviceActor extends ContextAwareActor {
 
     @Override
     public void preStart() throws Exception {
-        System.out.println("tenantId = " + tenantId + " , deviceId = "+ deviceId);
+        System.out.println(
+                "tenantId = " + tenantId + " , deviceId = "+ deviceId + " , sessionId = "+sessionId + " serverAddr = "+serverAddress);
     }
 
     @Override
@@ -89,21 +93,22 @@ public class DeviceActor extends ContextAwareActor {
         private final TenantId tenantId;
         private final DeviceId deviceId;
 
+        private final String sessionId;
         private final ServerAddress serverAddress;
 
         public ActorCreator(ActorSystemContext actorSystemContext,
+                            String sessionId,
                             TenantId tenantId,DeviceId deviceId,ServerAddress serverAddress) {
             super(actorSystemContext);
+            this.sessionId = sessionId;
             this.tenantId = tenantId;
             this.deviceId = deviceId;
             this.serverAddress = serverAddress;
         }
 
-
-
         @Override
         public DeviceActor create() throws Exception {
-            return new DeviceActor(actorSystemContext,tenantId,deviceId, serverAddress);
+            return new DeviceActor(actorSystemContext, sessionId, tenantId,deviceId, serverAddress);
         }
     }
 

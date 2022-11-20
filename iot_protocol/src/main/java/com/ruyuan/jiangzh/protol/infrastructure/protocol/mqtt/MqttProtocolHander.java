@@ -149,6 +149,9 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
                 onlineMsg.setProductId(msg.getProductId());
                 onlineMsg.setOnlineTime(System.currentTimeMillis());
 
+                // 持有代表当前Handler引用的session
+                onlineMsg.setSessionId(sessionId.toString());
+
                 context.getProtocolService().process(onlineMsg);
 
             }

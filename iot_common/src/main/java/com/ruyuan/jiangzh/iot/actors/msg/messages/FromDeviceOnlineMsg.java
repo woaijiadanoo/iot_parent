@@ -28,6 +28,8 @@ public class FromDeviceOnlineMsg implements FromDeviceMsg {
 
     private long onlineTime;
 
+    private String sessionId;
+
     @Override
     public MsgType getMsgType() {
         return MsgType.PROTOCOL_ONLINE_MSG;
@@ -80,6 +82,14 @@ public class FromDeviceOnlineMsg implements FromDeviceMsg {
 
     public void setOnlineTime(long onlineTime) {
         this.onlineTime = onlineTime;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     @Override

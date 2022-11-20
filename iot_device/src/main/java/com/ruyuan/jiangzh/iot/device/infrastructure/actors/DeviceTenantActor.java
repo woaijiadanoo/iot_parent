@@ -34,13 +34,13 @@ public class DeviceTenantActor extends ContextAwareActor {
     /*
         获取或创建DeviceActor
      */
-    private ActorRef getOrCreateDeviceActor(DeviceId deviceId, ServerAddress serverAddress){
+    private ActorRef getOrCreateDeviceActor(DeviceId deviceId,String sessionId, ServerAddress serverAddress){
         ActorRef deviceActor = deviceActors.get(deviceId);
         if(deviceActor == null){
             deviceActor = getContext().actorOf(
                     Props.create(
                             new DeviceActor
-                                    .ActorCreator(actorSystemContext,tenantId,deviceId, serverAddress))
+                                    .ActorCreator(actorSystemContext, sessionId, tenantId, deviceId,  serverAddress))
                             .withDispatcher(DEVICE_DISPATCHER_NAME),
                             deviceId.toString()
             );
@@ -89,7 +89,7 @@ public class DeviceTenantActor extends ContextAwareActor {
 
     // 设备上线通知消息
     private void onProtocolOnlineMsg(FromDeviceOnlineMsg msg) {
-        ActorRef deviceActor = getOrCreateDeviceActor(msg.getDeviceId(), msg.getServerAddress());
+        ActorRef deviceActor = getOrCreateDeviceActor(msg.getDeviceId(), msg.getSessionId(), msg.getServerAddress());
         if(deviceActor != null){
             deviceActor.tell(msg, getSelf());
         }
