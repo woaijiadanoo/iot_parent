@@ -1,7 +1,10 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt;
 
+import com.datastax.oss.driver.shaded.guava.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.SubscribeToAttrUpdateMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.AbstractProtocolService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolService;
@@ -14,6 +17,8 @@ import com.ruyuan.jiangzh.iot.actors.msg.rule.PostTelemetryMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionEventEnum;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.mqtt.*;
@@ -22,7 +27,10 @@ import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import static com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt.common.MqttTopics.*;
 import static io.netty.handler.codec.mqtt.MqttMessageType.*;
@@ -52,6 +60,9 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
     private static final String PRODUCT_KEY = "productKey";
     private static final String DEVICE_NAME = "deviceName";
+
+    private static final Gson GSON = new Gson();
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
 
     public MqttProtocolHander(MqttProtocolContext context){
@@ -91,6 +102,9 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
                 break;
             case PUBLISH:
                 processPublish(ctx,(MqttPublishMessage) msg);
+                break;
+            case SUBSCRIBE:
+                processSubscribe(ctx,(MqttSubscribeMessage) msg);
                 break;
             case DISCONNECT:
                 processDisConnect(ctx);
@@ -291,9 +305,99 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
     }
 
 
+    /*
+        处理MQTT订阅相关的内容
+     */
+    private void processSubscribe(ChannelHandlerContext ctx, MqttSubscribeMessage mqttMsg) {
+        // 检查连接是不是正常
+        if(!checkConnected(ctx, mqttMsg)){
+            return ;
+        }
+
+        int msgId = mqttMsg.variableHeader().messageId();
+        // 订阅某个或某几个topic的信息
+        List<Integer> grantedQosList = Lists.newArrayList();
+        for(MqttTopicSubscription subscrption : mqttMsg.payload().topicSubscriptions()){
+            String topicName = subscrption.topicName();
+            MqttQoS reqQos = subscrption.qualityOfService();
+
+            // 分类别 -> topicName
+            /*
+                OTA
+                属性变更
+                状态变更
+             */
+            // 区分业务类型
+            // /sys 设备标签
+            if(topicName.startsWith(BASE_DEVICE_TOPIC_PER)){
+                if(topicName.endsWith(DEVICE_ATTR_UPDATE_SUB)){
+                    // 设备上报标签数据
+                    Map<String, String> topicMetaData = parseTopicName(topicName, 1, 2);
+                    protocolService.process(sessionInfo, new SubscribeToAttrUpdateMsg(), null);
+                }
+            }
+        }
+
+        // 告诉设备端， 你的订阅已经成功了
+        ctx.writeAndFlush(createSubAckMessage(msgId, grantedQosList));
+
+        // TODO 测试，给设备推送订阅消息, 测试代码，记得删除
+        try {
+            Thread.sleep(5000L);
+
+            for(int i=0; i<5; i++){
+                String message = "{\"testKey\":\"ry \""+i+", \"testValue\":  \"hahaha\"}";
+                Thread.sleep(1000L);
+                // 相当于将服务端请求封装成publishMessage，然后推送给设备端
+                onAttributeUpdate(message);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    // 当订阅的Topics有消息，并且接收到信息
+
+    // 创建一个publish的请求，并且发送给对应的Topics
+    public void onAttributeUpdate(String message){
+        Optional<MqttMessage> messageOptional = convertToPublish(deviceSessionCtx, message);
+        // 通过通道传递消息给设备
+        messageOptional.ifPresent(deviceSessionCtx.getChannel() :: writeAndFlush);
+    }
+
+    private Optional<MqttMessage> convertToPublish(DeviceSessionCtx deviceSessionCtx, String message) {
+        String topicName = "/sys/i4g423najn/ry_device_02/thing/device/attr/update";
+        MqttPublishMessage result = createMqttPublishMsg(deviceSessionCtx, topicName, message);
+        if(result == null){
+            return Optional.empty();
+        }else{
+            return Optional.of(result);
+        }
+    }
+
+    private MqttPublishMessage createMqttPublishMsg(DeviceSessionCtx deviceSessionCtx, String topicName, String message) {
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(PUBLISH,false, AT_LEAST_ONCE, false, 0);
+        MqttPublishVariableHeader variableHeader = new MqttPublishVariableHeader(topicName, deviceSessionCtx.nextMsgId());
+        ByteBuf payload = ByteBufAllocator.DEFAULT.buffer();
+
+        payload.writeBytes(GSON.toJson(message).getBytes(UTF8));
+
+        return new MqttPublishMessage(fixedHeader, variableHeader, payload);
+    }
 
 
+    private MqttSubAckMessage createSubAckMessage(int msgId, List<Integer> grantedQosList) {
+        // MQTT 固定头
+        MqttFixedHeader mqttFixedHeader
+                = new MqttFixedHeader(SUBACK, false, AT_LEAST_ONCE, false, 0);
+        // MQTT可变头
+        MqttMessageIdVariableHeader mqttMessageIdVariableHeader =
+                MqttMessageIdVariableHeader.from(msgId);
+        // payload
+        MqttSubAckPayload mqttSubAckPayload = new MqttSubAckPayload(grantedQosList);
 
-
+        return new MqttSubAckMessage(mqttFixedHeader, mqttMessageIdVariableHeader, mqttSubAckPayload);
+    }
 
 }

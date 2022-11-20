@@ -1,6 +1,7 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol;
 
 import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.SubscribeToAttrUpdateMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.SessionEventMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
@@ -23,6 +24,8 @@ public interface ProtocolService {
     void process(SessionInfoVO sessionInfo, SessionEventMsg sessionEventMsg, ProtocolServiceCallback<Void> callback);
 
     void process(SessionInfoVO sessionInfo, PostTelemetryMsg postTelemetryMsg, ProtocolServiceCallback<Void> callback);
+
+    void process(SessionInfoVO sessionInfo, SubscribeToAttrUpdateMsg attrUpdateMsg, ProtocolServiceCallback<Void> callback);
 
     boolean checkLimits(SessionInfoVO sessionInfo, Object msg, ProtocolServiceCallback<Void> callback);
 

@@ -2,6 +2,7 @@ package com.ruyuan.jiangzh.protol.infrastructure.protocol;
 
 import com.google.common.collect.Maps;
 import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.messages.SubscribeToAttrUpdateMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.EntityType;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
@@ -66,6 +67,17 @@ public abstract class AbstractProtocolService implements ProtocolService{
             doProcess(sessionInfo, postTelemetryMsg, callback);
         }
     }
+
+    @Override
+    public void process(SessionInfoVO sessionInfo, SubscribeToAttrUpdateMsg attrUpdateMsg, ProtocolServiceCallback<Void> callback) {
+        // 加入限流操作
+        if(checkLimits(sessionInfo, attrUpdateMsg, callback)){
+            reportActivityInternal(sessionInfo);
+            doProcess(sessionInfo, attrUpdateMsg, callback);
+        }
+    }
+
+    protected abstract void doProcess(SessionInfoVO sessionInfo, SubscribeToAttrUpdateMsg attrUpdateMsg, ProtocolServiceCallback<Void> callback);
 
     protected abstract void doProcess(SessionInfoVO sessionInfo, PostTelemetryMsg postTelemetryMsg, ProtocolServiceCallback<Void> callback);
 

@@ -11,4 +11,10 @@ public class MqttTopics {
     // 上报标签数据
     public static final String UPLOAD_DEVICE_TAG_TOPIC = "/thing/deviceinfo/update";
 
+    /*
+        /sys/a1HVQQL2Lvw/${deviceName}/thing/device/attr/update
+     */
+    // 更改设备属性数据
+    public static final String DEVICE_ATTR_UPDATE_SUB = "/thing/device/attr/update";
+
 }
