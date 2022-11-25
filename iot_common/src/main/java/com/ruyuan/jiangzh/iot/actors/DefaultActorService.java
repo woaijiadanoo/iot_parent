@@ -2,10 +2,20 @@ package com.ruyuan.jiangzh.iot.actors;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.dispatch.OnSuccess;
+import akka.pattern.Patterns;
 import com.ruyuan.jiangzh.iot.actors.msg.BaseMessage;
 import com.ruyuan.jiangzh.iot.actors.msg.ToAllNodesMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.device.InvokeDeviceAttributeMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceMsg;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import scala.concurrent.Future;
+
 
 public class DefaultActorService implements ActorService{
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final String ACTOR_SYSTEM_NAME = "akka";
 
@@ -30,7 +40,31 @@ public class DefaultActorService implements ActorService{
 
     @Override
     public void onMsg(BaseMessage msg) {
+        logger.info("BaseMessage onMsg : [{}]", msg);
         appActor.tell(msg, ActorRef.noSender());
+    }
+
+    @Override
+    public void onMsg(ToDeviceMsg msg) {
+        logger.info("ToDeviceMsg onMsg : [{}]", msg);
+        if(msg.getServerAddress() == null){
+            Future<Object> future = Patterns.ask(appActor, msg, 1000L);
+            future.onSuccess(new OnSuccess<Object>() {
+                @Override
+                public void onSuccess(Object result) throws Throwable {
+                    if(result == null){
+                        logger.error("ToDeviceMsg onMsg device offline");
+                    }
+                    // 当询问到Address和sessionId时，进行的操作
+                    if(result instanceof InvokeDeviceAttributeMsg){
+                        logger.info("ToDeviceMsg onMsg onSuccess : [{}]", result);
+                        rpcManager.onMsg((InvokeDeviceAttributeMsg) result);
+                    }
+                }
+            }, actorSystem.dispatcher());
+        } else {
+            rpcManager.onMsg(msg);
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.ruyuan.jiangzh.iot.actors.ContextAwareActor;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.actors.msg.ServerAddress;
+import com.ruyuan.jiangzh.iot.actors.msg.device.InvokeDeviceAttributeMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceActorMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ToDeviceSessionEventMsg;
@@ -31,6 +32,9 @@ public class DeviceTenantActor extends ContextAwareActor {
         this.deviceActors = new HashMap<>();
     }
 
+    private ActorRef getDeviceActor(DeviceId deviceId){
+        return deviceActors.get(deviceId);
+    }
     /*
         获取或创建DeviceActor
      */
@@ -67,10 +71,23 @@ public class DeviceTenantActor extends ContextAwareActor {
                 // 设备关键事件通知
                 onToDeviceSessionEventMsg((ToDeviceSessionEventMsg) msg);
                 break;
+            case INVOKE_DEVICE_ATTR_MSG:
+                onInvokeDeviceAttrMsg((InvokeDeviceAttributeMsg) msg);
+                break;
             default:
                 return false;
         }
         return true;
+    }
+
+    private void onInvokeDeviceAttrMsg(InvokeDeviceAttributeMsg msg) {
+        DeviceId deviceId = msg.getDeviceId();
+        ActorRef deviceActorRef = getDeviceActor(deviceId);
+        if(deviceActorRef != null){
+            deviceActorRef.tell(msg, getSender());
+        }else{
+            getSender().tell(null, getSelf());
+        }
     }
 
     // 设备关键事件通知

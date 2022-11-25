@@ -6,6 +6,7 @@ import akka.actor.Props;
 import com.ruyuan.jiangzh.iot.actors.ActorService;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.DefaultActorService;
+import com.ruyuan.jiangzh.iot.actors.RpcManager;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.factory.AggrDeviceFactory;
 import com.ruyuan.jiangzh.iot.device.infrastructure.actors.DeviceActorSystemContext;
 import com.ruyuan.jiangzh.iot.device.infrastructure.actors.DeviceAppActor;
@@ -24,6 +25,9 @@ public class ActorConfigs {
 
     @Autowired
     private AggrDeviceFactory deviceFactory;
+
+    @Autowired
+    private RpcManager rpcManager;
 
     private static final String APP_DISPATCHER_NAME = "app-dispatcher";
     public static final String TENANT_DISPATCHER_NAME = "app-dispatcher";
@@ -46,6 +50,7 @@ public class ActorConfigs {
 
         // 完成根结构的Actor初始化
         actorService.initActor(actorSystemContext);
+        actorService.setRpcManager(rpcManager);
 
         return actorService;
     }

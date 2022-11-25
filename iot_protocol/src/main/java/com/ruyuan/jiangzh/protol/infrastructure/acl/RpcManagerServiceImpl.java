@@ -7,6 +7,7 @@ import com.ruyuan.jiangzh.iot.actors.ActorService;
 import com.ruyuan.jiangzh.iot.actors.msg.ServerAddress;
 import com.ruyuan.jiangzh.iot.actors.msg.ToAllNodesMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ToDeviceSessionEventMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.rule.TransportToRuleEngineActorMsgWrapper;
@@ -114,6 +115,11 @@ public class RpcManagerServiceImpl implements RpcManagerService{
             onTransportToRuleEngineActorMsgWrapper(msgWrapper);
         }
 
+
+    }
+
+    @Override
+    public void onMsg(ToDeviceMsg msg) {
 
     }
 

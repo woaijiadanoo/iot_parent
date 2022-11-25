@@ -1,6 +1,8 @@
 package com.ruyuan.jiangzh.iot.device.interfaces.controller;
 
 import com.google.common.collect.Maps;
+import com.ruyuan.jiangzh.iot.actors.ActorService;
+import com.ruyuan.jiangzh.iot.actors.msg.device.InvokeDeviceAttributeMsg;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
@@ -29,6 +31,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/api/v1")
 public class DeviceController extends BaseController {
+
+    @Autowired
+    private ActorService actorService;
 
     @Autowired
     private AggrDeviceFactory deviceFactory;
@@ -214,6 +219,46 @@ public class DeviceController extends BaseController {
         // 然后根据用户的tenant和user编号+productId， 判断是否有权限处理这个设备
         deviceEntity.updateDeviceStatus(DeviceStatusEnums.getByCode(deviceStatusDTO.getDeviceStatus()));
 
+        return RespDTO.success();
+    }
+
+
+    /*
+        调用设备，并传递属性
+
+        http://localhost:8082/api/v1/product/{productId}/device/{deviceId}:invoke?ruyuan_name=ruyuan_00
+
+        5ad5f8d0-d90c-11ec-9f6a-7fff0967ec80
+
+        {
+            "deviceStatus":"5",
+            "deviceAttr":"10"
+        }
+     */
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
+    @RequestMapping(value = "/product/{productId}/device/{deviceId}:invoke", method = RequestMethod.POST)
+    public RespDTO invokeDevice(
+            @PathVariable("productId") String productIdStr,
+            @PathVariable("deviceId") String deviceIdStr,
+            @RequestBody String commandJsonStr
+    ) {
+        checkParameter(deviceIdStr, DEVICE_ID_IS_NULL);
+        // 正常实现的时候， 应该再定义一个错误信息，在这里我们就不赘述了
+        checkParameter(productIdStr, DEVICE_ID_IS_NULL);
+        DeviceId deviceId = new DeviceId(toUUID(deviceIdStr));
+        ProductId productId = new ProductId(toUUID(productIdStr));
+
+        // 根据DeviceId获取Device
+        AggrDeviceEntity deviceEntity = deviceFactory.getDeviceById(deviceId);
+        if(deviceEntity != null){
+            InvokeDeviceAttributeMsg attributeMsg = new InvokeDeviceAttributeMsg();
+            attributeMsg.setTenantId(deviceEntity.getTenantId());
+            attributeMsg.setDeviceId(deviceEntity.getId());
+            attributeMsg.setMsg(commandJsonStr);
+
+            // 进行远程调用
+            actorService.onMsg(attributeMsg);
+        }
         return RespDTO.success();
     }
 

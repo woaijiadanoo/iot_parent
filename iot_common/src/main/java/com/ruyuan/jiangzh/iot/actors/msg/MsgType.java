@@ -24,7 +24,10 @@ public enum MsgType {
     TRANSPORT_TO_RULE_ENGINE_ACTOR_MSG_WRAPPER,
 
     // 设备发送给规则引擎的消息内容
-    DEVICE_TO_RULE_ENGINE_MSG
+    DEVICE_TO_RULE_ENGINE_MSG,
+
+    // 给设备传递属性
+    INVOKE_DEVICE_ATTR_MSG
     ;
 
 }

@@ -6,6 +6,7 @@ import com.ruyuan.jiangzh.iot.actors.ContextAwareActor;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.msg.IoTActorMessage;
 import com.ruyuan.jiangzh.iot.actors.msg.ServerAddress;
+import com.ruyuan.jiangzh.iot.actors.msg.device.InvokeDeviceAttributeMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ToDeviceSessionEventMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
@@ -54,11 +55,21 @@ public class DeviceActor extends ContextAwareActor {
                 // 设备关键事件通知
                 onToDeviceSessionEventMsg((ToDeviceSessionEventMsg) msg);
                 break;
+            case INVOKE_DEVICE_ATTR_MSG:
+                onInvokeDeviceAttrMsg((InvokeDeviceAttributeMsg) msg);
+                break;
             default:
                 return false;
         }
 
         return true;
+    }
+
+    private void onInvokeDeviceAttrMsg(InvokeDeviceAttributeMsg msg) {
+        msg.setServerAddress(serverAddress);
+        msg.setSessionId(sessionId);
+        // 将消息返回给ask的对象
+        getSender().tell(msg, getSelf());
     }
 
     private void onToDeviceSessionEventMsg(ToDeviceSessionEventMsg msg) {
