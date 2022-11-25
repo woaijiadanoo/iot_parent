@@ -2,10 +2,14 @@ package com.ruyuan.jiangzh.protol.infrastructure.protocol;
 
 import com.google.common.collect.Maps;
 import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.device.InvokeDeviceAttributeMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.device.ServiceToDeviceAttributeMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.SubscribeToAttrUpdateMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.EntityType;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolRateLimits;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolRateLimitsException;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
@@ -17,6 +21,8 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt.SessionMsgListener
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionEventEnum;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionMetaData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.UUID;
@@ -30,6 +36,7 @@ import java.util.concurrent.Executors;
  * @description:
  */
 public abstract class AbstractProtocolService implements ProtocolService{
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected ExecutorService protocolCallbackExecutor;
 
@@ -184,4 +191,33 @@ public abstract class AbstractProtocolService implements ProtocolService{
     }
 
 
+    @Override
+    public void process(ToDeviceMsg msg) {
+        logger.info("ToDeviceMsg process  msg : [{}]" , msg);
+        // 获取sessionId
+        String sessionIdStr = msg.getSessionId();
+        if(IoTStringUtils.isBlank(sessionIdStr)){
+            return;
+        }
+        UUID sessionId = IoTStringUtils.toUUID(sessionIdStr);
+        // 通过sessionId获取对应的Metadata
+        SessionMetaData sessionMetaData = sessions.get(sessionId);
+
+        if(sessionMetaData != null && sessionMetaData.getSessionMsgListener() != null){
+
+            // 获取对应的listener
+            SessionMsgListener sessionMsgListener = sessionMetaData.getSessionMsgListener();
+            // 调用listener的对应方法
+            if(msg instanceof InvokeDeviceAttributeMsg){
+                // 组织参数
+                ServiceToDeviceAttributeMsg attributeMsg = new ServiceToDeviceAttributeMsg();
+                attributeMsg.setMessage(msg.getMsg());
+
+                logger.info("process ServiceToDeviceAttributeMsg msg : [{}]", attributeMsg.getMessage() );
+                // 调用handler实例
+                sessionMsgListener.onAttributeUpdate(attributeMsg);
+            }
+        }
+
+    }
 }

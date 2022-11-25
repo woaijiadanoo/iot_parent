@@ -11,6 +11,7 @@ import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.FromDeviceOnlineMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.ToDeviceSessionEventMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.rule.TransportToRuleEngineActorMsgWrapper;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
 import com.ruyuan.jiangzh.service.dto.DeviceSercetDTO;
@@ -18,7 +19,10 @@ import com.ruyuan.jiangzh.service.sdk.DeviceServiceAPI;
 import org.apache.dubbo.common.config.ReferenceCache;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.utils.SimpleReferenceCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
@@ -34,6 +38,7 @@ import java.util.concurrent.Executors;
  */
 @Service
 public class RpcManagerServiceImpl implements RpcManagerService{
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final ReferenceCache referenceCache = SimpleReferenceCache.getCache();
 
@@ -45,6 +50,13 @@ public class RpcManagerServiceImpl implements RpcManagerService{
 
     @Resource
     private DeviceServiceAPI deviceService;
+
+    /*
+        这个实现不优雅，建议修改成RpcManager的实现类来完成
+     */
+    @Autowired
+    @Lazy
+    private ProtocolService protocolService;
 
     @Override
     public ListenableFuture<DeviceAuthRespMsg> findDeviceBySercet(DeviceAuthReqMsg requestMsg) {
@@ -120,7 +132,8 @@ public class RpcManagerServiceImpl implements RpcManagerService{
 
     @Override
     public void onMsg(ToDeviceMsg msg) {
-
+        logger.info("rpcManager ToDeviceMsg onMsg : [{}]", msg);
+        protocolService.process(msg);
     }
 
     private void onTransportToRuleEngineActorMsgWrapper(TransportToRuleEngineActorMsgWrapper msgWrapper) {

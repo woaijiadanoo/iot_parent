@@ -32,9 +32,9 @@ public class DeviceRpcManager implements RpcManager {
     public void onMsg(ToDeviceMsg msg) {
         System.err.println("DeviceRpcManager msg : "+ msg);
         // 通知所有的网关节点，接收消息
-//        ActorService actorService = getActorService(PROTOCOL_GROUP_NAME, msg.getServerAddress(), msg.broadcast());
+        ActorService actorService = getActorService(PROTOCOL_GROUP_NAME, msg.getServerAddress(), msg.broadcast());
         // 进行远程RPC调用
-//        actorService.onMsg(msg);
+        actorService.onMsg(msg);
     }
 
     public ActorService getActorService(String groupName, ServerAddress serverAddress, boolean broadcast){

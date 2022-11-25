@@ -5,6 +5,8 @@ import akka.actor.ActorSystem;
 import com.ruyuan.jiangzh.iot.actors.ActorService;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.DefaultActorService;
+import com.ruyuan.jiangzh.iot.actors.RpcManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,6 +20,9 @@ public class ActorConfigs {
     public static final String TENANT_DISPATCHER_NAME = "app-dispatcher";
 
     public static final String APP_ACTOR_NAME = "ruleEngineActor";
+
+    @Autowired
+    private RpcManager rpcManager;
 
     @Bean(name = "actorService")
     public ActorService actorService(){
@@ -34,6 +39,7 @@ public class ActorConfigs {
 
         // 完成根结构的Actor初始化
         actorService.initActor(actorSystemContext);
+        actorService.setRpcManager(rpcManager);
 
         return actorService;
     }

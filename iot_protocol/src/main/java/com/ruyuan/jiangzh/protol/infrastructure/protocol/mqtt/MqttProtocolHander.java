@@ -25,6 +25,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
@@ -44,6 +46,7 @@ import static io.netty.handler.codec.mqtt.MqttQoS.*;
  */
 public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         implements GenericFutureListener<Future<? super Void>>, SessionMsgListener {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final MqttProtocolContext context;
 
@@ -376,7 +379,7 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
     private Optional<MqttMessage> convertToPublish(DeviceSessionCtx deviceSessionCtx, ServiceToDeviceAttributeMsg deviceAttributeMsg) {
         String topicName = "/sys/i4g423najn/ry_device_02/thing/device/attr/update";
-        MqttPublishMessage result = createMqttPublishMsg(deviceSessionCtx, topicName, deviceAttributeMsg);
+        MqttPublishMessage result = createMqttPublishMsg(deviceSessionCtx, topicName, deviceAttributeMsg.getMessage());
         if(result == null){
             return Optional.empty();
         }else{
@@ -384,12 +387,13 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         }
     }
 
-    private MqttPublishMessage createMqttPublishMsg(DeviceSessionCtx deviceSessionCtx, String topicName,ServiceToDeviceAttributeMsg deviceAttributeMsg) {
+    private MqttPublishMessage createMqttPublishMsg(DeviceSessionCtx deviceSessionCtx, String topicName, String message) {
+        logger.info("createMqttPublishMsg topic : [{}], message : [{}]", topicName, message);
         MqttFixedHeader fixedHeader = new MqttFixedHeader(PUBLISH,false, AT_LEAST_ONCE, false, 0);
         MqttPublishVariableHeader variableHeader = new MqttPublishVariableHeader(topicName, deviceSessionCtx.nextMsgId());
         ByteBuf payload = ByteBufAllocator.DEFAULT.buffer();
 
-        payload.writeBytes(GSON.toJson(deviceAttributeMsg).getBytes(UTF8));
+        payload.writeBytes(GSON.toJson(message).getBytes(UTF8));
 
         return new MqttPublishMessage(fixedHeader, variableHeader, payload);
     }

@@ -1,6 +1,7 @@
 package com.ruyuan.jiangzh.protol.infrastructure.protocol;
 
 import com.ruyuan.jiangzh.iot.actors.msg.device.FromDeviceMsg;
+import com.ruyuan.jiangzh.iot.actors.msg.device.ToDeviceMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.messages.SubscribeToAttrUpdateMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.SessionEventMsg;
@@ -33,5 +34,10 @@ public interface ProtocolService {
     void deleteSessionMetaData(SessionInfoVO sessionInfo);
 
     void registerSession(SessionInfoVO sessionInfo, SessionMsgListener listener);
+
+    /*
+        专门给设备发送消息的处理过程
+     */
+    void process(ToDeviceMsg msg);
 
 }
