@@ -17,4 +17,10 @@ public class MqttTopics {
     // 更改设备属性数据
     public static final String DEVICE_ATTR_UPDATE_SUB = "/thing/device/attr/update";
 
+
+    public static String attrDeviceTopic(String productKey, String deviceName){
+        // /sys/a1HVQQL2Lvw/${deviceName}/thing/device/attr/update
+        return BASE_DEVICE_TOPIC_PER+"/"+productKey+"/"+deviceName+DEVICE_ATTR_UPDATE_SUB;
+    }
+
 }

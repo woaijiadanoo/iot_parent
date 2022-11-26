@@ -18,6 +18,11 @@ public class SessionInfoVO {
 
     private final TenantId tenantId;
 
+    private String productKey;
+
+    private String deviceName;
+
+
     public SessionInfoVO(UUID sessionId,DeviceId deviceId,TenantId tenantId){
         this.sessionId = sessionId;
         this.deviceId = deviceId;
@@ -34,5 +39,21 @@ public class SessionInfoVO {
 
     public TenantId getTenantId() {
         return tenantId;
+    }
+
+    public String getProductKey() {
+        return productKey;
+    }
+
+    public void setProductKey(String productKey) {
+        this.productKey = productKey;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 }

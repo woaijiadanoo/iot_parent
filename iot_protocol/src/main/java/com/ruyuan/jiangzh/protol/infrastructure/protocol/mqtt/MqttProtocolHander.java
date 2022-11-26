@@ -15,6 +15,7 @@ import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAut
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthRespMsg;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt.common.MqttProtocolAdaptor;
 import com.ruyuan.jiangzh.iot.actors.msg.rule.PostTelemetryMsg;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.mqtt.common.MqttTopics;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.DeviceInfoVO;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionEventEnum;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.vo.SessionInfoVO;
@@ -137,12 +138,13 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
         DeviceAuthReqMsg deviceAuthReqMsg = new DeviceAuthReqMsg(productKey,deviceName,deviceSerct);
 
+        final String deviceNameStr = deviceName;
         // 2、通过三元组信息来获取设备详情
         protocolService.process(deviceAuthReqMsg, new ProtocolServiceCallback<DeviceAuthRespMsg>() {
             @Override
             public void onSuccess(DeviceAuthRespMsg msg) {
                 // 鉴权流程
-                onValidateDeviceResponse(msg, ctx);
+                onValidateDeviceResponse(msg, ctx, productKey, deviceNameStr);
 
                 // 修改设备的激活状态以及在线时间
                 FromDeviceOnlineMsg onlineMsg = new FromDeviceOnlineMsg();
@@ -167,7 +169,7 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
         });
     }
 
-    private void onValidateDeviceResponse(DeviceAuthRespMsg msg, ChannelHandlerContext ctx) {
+    private void onValidateDeviceResponse(DeviceAuthRespMsg msg, ChannelHandlerContext ctx, String productKey,String deviceName) {
         // 验证一下返回的device是否有效
         if(msg.getDeviceId() == null){
             // 链接无效的情况
@@ -185,6 +187,8 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
             // session信息管理
             sessionInfo = new SessionInfoVO(sessionId, msg.getDeviceId(), msg.getTenantId());
+            sessionInfo.setProductKey(productKey);
+            sessionInfo.setDeviceName(deviceName);
 
             // 通道管理
             protocolService.registerSession(sessionInfo, this);
@@ -378,7 +382,7 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
     }
 
     private Optional<MqttMessage> convertToPublish(DeviceSessionCtx deviceSessionCtx, ServiceToDeviceAttributeMsg deviceAttributeMsg) {
-        String topicName = "/sys/i4g423najn/ry_device_02/thing/device/attr/update";
+        String topicName = MqttTopics.attrDeviceTopic(sessionInfo.getProductKey(), sessionInfo.getDeviceName());
         MqttPublishMessage result = createMqttPublishMsg(deviceSessionCtx, topicName, deviceAttributeMsg.getMessage());
         if(result == null){
             return Optional.empty();
