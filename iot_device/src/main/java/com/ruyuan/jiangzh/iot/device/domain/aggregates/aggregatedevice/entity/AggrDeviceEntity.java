@@ -1,15 +1,19 @@
 package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.ruyuan.jiangzh.iot.base.exception.AppException;
 import com.ruyuan.jiangzh.iot.base.uuid.CreateTimeIdBase;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.UserId;
 import com.ruyuan.jiangzh.iot.base.web.PageDTO;
+import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;
 import com.ruyuan.jiangzh.iot.common.DateUtils;
 import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceSercetRepository;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrThingModelRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DevicePO;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.vo.DeviceInfosVO;
@@ -70,15 +74,22 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
 
     private AggrDeviceRepository deviceRepository;
 
+    private AggrThingModelRepository thingModelRepository;
+
+    private static final String JSON_FORMAT_ERROR = "thing.thing_format_error";
+
     public AggrDeviceEntity(){}
-    public AggrDeviceEntity(AggrDeviceRepository deviceRepository, AggrDeviceSercetRepository deviceSercetRepository){
+    public AggrDeviceEntity(AggrDeviceRepository deviceRepository, AggrDeviceSercetRepository deviceSercetRepository, AggrThingModelRepository thingModelRepository){
         this.deviceRepository = deviceRepository;
         this.deviceSercetRepository = deviceSercetRepository;
+        this.thingModelRepository = thingModelRepository;
+
     }
-    public AggrDeviceEntity(DeviceId deviceId,AggrDeviceRepository deviceRepository, AggrDeviceSercetRepository deviceSercetRepository){
+    public AggrDeviceEntity(DeviceId deviceId,AggrDeviceRepository deviceRepository, AggrDeviceSercetRepository deviceSercetRepository, AggrThingModelRepository thingModelRepository){
         super(deviceId);
         this.deviceRepository = deviceRepository;
         this.deviceSercetRepository = deviceSercetRepository;
+        this.thingModelRepository = thingModelRepository;
     }
 
     /*
@@ -261,6 +272,58 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
     }
 
     public void saveThingModel(JsonElement thingModelJsonElement){
+        // 解析需要入库的信息
+        parseThingModel(thingModelJsonElement);
+    }
+
+    private void parseThingModel(JsonElement thingModelJsonElement) {
+        String productKey = null;
+        String schema = "";
+        String profileJsonStr = null;
+        String shadowJsonStr = null;
+        String propertiesJsonStr = null;
+        String eventsJsonStr = null;
+        String servicesJsonStr = null;
+        String thingJsonStr = thingModelJsonElement.toString();
+
+        JsonObject thingModelJson = thingModelJsonElement.getAsJsonObject();
+        // schema
+        if(!thingModelJson.get("schema").isJsonNull()){
+            schema = thingModelJson.get("schema").getAsString();
+        }else{
+            throw new AppException(RespCodeEnum.PARAM_IS_NULL.getCode(), JSON_FORMAT_ERROR);
+        }
+
+        // profile & productKey
+        if(!thingModelJson.get("profile").isJsonNull()){
+            JsonObject profileJson = thingModelJson.get("profile").getAsJsonObject();
+            profileJsonStr = profileJson.toString();
+            if(!thingModelJson.get("productKey").isJsonNull()){
+                productKey = profileJson.get("productKey").getAsString();
+            }else{
+                throw new AppException(RespCodeEnum.PARAM_IS_NULL.getCode(), JSON_FORMAT_ERROR);
+            }
+        }else{
+            throw new AppException(RespCodeEnum.PARAM_IS_NULL.getCode(), JSON_FORMAT_ERROR);
+        }
+
+        if(!thingModelJson.get("shadow").isJsonNull()){
+            shadowJsonStr =  thingModelJson.get("shadow").toString();
+        }
+
+        if(!thingModelJson.get("properties").isJsonNull()){
+            propertiesJsonStr =  thingModelJson.get("properties").toString();
+        }
+
+        if(!thingModelJson.get("events").isJsonNull()){
+            eventsJsonStr =  thingModelJson.get("events").toString();
+        }
+
+        if(!thingModelJson.get("services").isJsonNull()){
+            servicesJsonStr =  thingModelJson.get("services").toString();
+        }
+
+        // 将对应的信息入库
 
     }
 

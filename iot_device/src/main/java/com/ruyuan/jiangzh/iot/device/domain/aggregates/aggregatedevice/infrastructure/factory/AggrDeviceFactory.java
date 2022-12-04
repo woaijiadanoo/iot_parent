@@ -5,6 +5,7 @@ import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.Ag
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceSercetEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceSercetRepository;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrThingModelRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DevicePO;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
@@ -22,9 +23,12 @@ public class AggrDeviceFactory {
     @Autowired
     private AggrDeviceSercetRepository deviceSercetRepository;
 
+    @Autowired
+    private AggrThingModelRepository thingModelRepository;
+
     public AggrDeviceEntity getDevice(){
         AggrDeviceSercetEntity deviceSercetEntity = new AggrDeviceSercetEntity();
-        AggrDeviceEntity deviceEntity = new AggrDeviceEntity(deviceRepository, deviceSercetRepository);
+        AggrDeviceEntity deviceEntity = new AggrDeviceEntity(deviceRepository, deviceSercetRepository, thingModelRepository);
         deviceEntity.setDeviceSercetEntity(deviceSercetEntity);
 
         return deviceEntity;
@@ -37,7 +41,7 @@ public class AggrDeviceFactory {
         AggrDeviceSercetEntity deviceSercetEntity = new AggrDeviceSercetEntity();
         deviceSercetEntity.poToEntity(deviceSercetInfoPO);
 
-        AggrDeviceEntity deviceEntity = new AggrDeviceEntity(deviceRepository, deviceSercetRepository);
+        AggrDeviceEntity deviceEntity = new AggrDeviceEntity(deviceRepository, deviceSercetRepository, thingModelRepository);
         deviceEntity.poToEntity(devicePO);
 
         deviceEntity.setDeviceSercetEntity(deviceSercetEntity);
@@ -55,7 +59,7 @@ public class AggrDeviceFactory {
         AggrDeviceSercetEntity deviceSercetEntity = new AggrDeviceSercetEntity();
         deviceSercetEntity.poToEntity(deviceSercetInfoPO);
 
-        AggrDeviceEntity deviceEntity = new AggrDeviceEntity(deviceRepository, deviceSercetRepository);
+        AggrDeviceEntity deviceEntity = new AggrDeviceEntity(deviceRepository, deviceSercetRepository, thingModelRepository);
         deviceEntity.poToEntity(devicePO);
 
         deviceEntity.setDeviceSercetEntity(deviceSercetEntity);
