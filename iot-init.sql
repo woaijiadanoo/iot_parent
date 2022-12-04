@@ -131,3 +131,18 @@ CREATE TABLE IF NOT EXISTS `rule_node_relation`
   COLLATE = utf8_bin;
 
 
+CREATE TABLE IF NOT EXISTS `device_thing_case`
+(
+    `id`             VARCHAR(31)  NOT NULL,
+    `device_id`             VARCHAR(31)  NOT NULL,
+    `product_key`             VARCHAR(10)  NOT NULL,
+    `schema`                VARCHAR(200)  NOT NULL,
+    `thing_json`             TEXT  NOT NULL,
+    `profile_json`             TEXT  NOT NULL,
+    `properties_json`             TEXT  NOT NULL,
+    `events_json`             TEXT  NOT NULL,
+    `services_json`             TEXT  NOT NULL,
+    `shadow_json`             TEXT  NOT NULL
+) ENGINE = INNODB DEFAULT CHARSET = utf8 COLLATE = utf8_bin;
+
+

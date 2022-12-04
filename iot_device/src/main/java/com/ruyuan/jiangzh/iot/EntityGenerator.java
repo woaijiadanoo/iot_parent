@@ -19,7 +19,7 @@ import java.util.Map;
 public class EntityGenerator {
 
     // 生成输出目录，定位到工程的java目录下
-    private String outputDir = "D:\\jiangzh\\workspace\\ruyuan_workspace\\iot_parent\\src\\main\\java";
+    private String outputDir = "D:\\workspace\\ruyuan_workspace\\iot_parent\\iot_device\\src\\main";
     // 生成类的作者
     private String author = "jiangzh";
     // 数据源相关配置
@@ -34,7 +34,7 @@ public class EntityGenerator {
 
     static{
         tableNames = new String[]{
-                "device","device_sercet_info"
+                "device_thing_case"
         };
     }
 
