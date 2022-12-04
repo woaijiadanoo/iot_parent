@@ -1,5 +1,6 @@
 package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity;
 
+import com.google.gson.JsonElement;
 import com.ruyuan.jiangzh.iot.base.uuid.CreateTimeIdBase;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
@@ -257,6 +258,10 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         }else{
             return false;
         }
+    }
+
+    public void saveThingModel(JsonElement thingModelJsonElement){
+
     }
 
 
