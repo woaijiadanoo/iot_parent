@@ -299,7 +299,7 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         if(!thingModelJson.get("profile").isJsonNull()){
             JsonObject profileJson = thingModelJson.get("profile").getAsJsonObject();
             profileJsonStr = profileJson.toString();
-            if(!thingModelJson.get("productKey").isJsonNull()){
+            if(!profileJson.get("productKey").isJsonNull()){
                 productKey = profileJson.get("productKey").getAsString();
             }else{
                 throw new AppException(RespCodeEnum.PARAM_IS_NULL.getCode(), JSON_FORMAT_ERROR);
@@ -326,7 +326,8 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
 
         // 将对应的信息入库
         DeviceThingCasePO po = new DeviceThingCasePO();
-        po.setSchema(schema);
+        po.setDeviceId(UUIDHelper.fromTimeUUID(this.getId().getUuid()));
+        po.setSchemaStr(schema);
         po.setProfileJson(profileJsonStr);
         po.setProductKey(productKey);
         po.setShadowJson(shadowJsonStr);

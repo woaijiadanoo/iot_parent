@@ -30,6 +30,14 @@ public class ThingController extends BaseController {
 
     private static final String JSON_FORMAT_ERROR = "thing.thing_format_error";
 
+
+    /*
+        http://localhost:8082/api/v1/productId/{productId}/deviceId/{deviceId}/thing:save?ruyuan_name=ruyuan_00
+
+        http://localhost:8082/api/v1/productId/9a97f910-d28f-11ec-a05f-dbd50d7d93eb/deviceId/5ad5f8d0-d90c-11ec-9f6a-7fff0967ec80/thing:save?ruyuan_name=ruyuan_00
+
+        见附件
+     */
     @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
     @RequestMapping(value = "/productId/{productId}/deviceId/{deviceId}/thing:save", method = RequestMethod.POST)
     public RespDTO saveThingModel(

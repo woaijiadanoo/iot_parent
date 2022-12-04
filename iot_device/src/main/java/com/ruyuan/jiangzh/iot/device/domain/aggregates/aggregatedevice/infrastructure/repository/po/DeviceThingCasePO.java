@@ -16,7 +16,7 @@ public class DeviceThingCasePO extends Model<DeviceThingCasePO> {
 
     private String productKey;
 
-    private String schema;
+    private String schemaStr;
 
     private String thingJson;
 
@@ -54,12 +54,12 @@ public class DeviceThingCasePO extends Model<DeviceThingCasePO> {
         this.productKey = productKey;
     }
 
-    public String getSchema() {
-        return schema;
+    public String getSchemaStr() {
+        return schemaStr;
     }
 
-    public void setSchema(String schema) {
-        this.schema = schema;
+    public void setSchemaStr(String schemaStr) {
+        this.schemaStr = schemaStr;
     }
 
     public String getThingJson() {
@@ -121,7 +121,7 @@ public class DeviceThingCasePO extends Model<DeviceThingCasePO> {
         ", uuid=" + uuid +
         ", deviceId=" + deviceId +
         ", productKey=" + productKey +
-        ", schema=" + schema +
+        ", schemaStr=" + schemaStr +
         ", thingJson=" + thingJson +
         ", profileJson=" + profileJson +
         ", propertiesJson=" + propertiesJson +

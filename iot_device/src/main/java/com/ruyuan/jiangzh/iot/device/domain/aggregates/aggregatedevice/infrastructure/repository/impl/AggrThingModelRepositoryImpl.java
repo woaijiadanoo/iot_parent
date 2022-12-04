@@ -17,17 +17,21 @@ public class AggrThingModelRepositoryImpl implements AggrThingModelRepository {
 
     @Override
     public void saveThingModel(DeviceThingCasePO thingCase) {
-        if(thingCase != null){
-            if(thingCase.getUuid() != null){
-                // 修改逻辑
-                thingCaseMapper.updateById(thingCase);
-            }else{
-                // 新增的逻辑
-                UUID thingModelId = UUIDHelper.genUuid();
-                thingCase.setUuid(UUIDHelper.fromTimeUUID(thingModelId));
+        try {
+            if(thingCase != null){
+                if(thingCase.getUuid() != null){
+                    // 修改逻辑
+                    thingCaseMapper.updateById(thingCase);
+                }else{
+                    // 新增的逻辑
+                    UUID thingModelId = UUIDHelper.genUuid();
+                    thingCase.setUuid(UUIDHelper.fromTimeUUID(thingModelId));
 
-                thingCaseMapper.insert(thingCase);
+                    thingCaseMapper.insert(thingCase);
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
