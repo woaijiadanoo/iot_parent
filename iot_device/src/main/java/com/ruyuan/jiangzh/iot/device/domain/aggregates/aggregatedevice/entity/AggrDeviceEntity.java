@@ -16,6 +16,7 @@ import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastru
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrThingModelRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DevicePO;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceThingCasePO;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.vo.DeviceInfosVO;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceStatusEnums;
 import com.ruyuan.jiangzh.iot.device.domain.infrastructure.enums.DeviceTypeEnums;
@@ -278,7 +279,7 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
 
     private void parseThingModel(JsonElement thingModelJsonElement) {
         String productKey = null;
-        String schema = "";
+        String schema = null;
         String profileJsonStr = null;
         String shadowJsonStr = null;
         String propertiesJsonStr = null;
@@ -324,6 +325,17 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         }
 
         // 将对应的信息入库
+        DeviceThingCasePO po = new DeviceThingCasePO();
+        po.setSchema(schema);
+        po.setProfileJson(profileJsonStr);
+        po.setProductKey(productKey);
+        po.setShadowJson(shadowJsonStr);
+        po.setPropertiesJson(propertiesJsonStr);
+        po.setEventsJson(eventsJsonStr);
+        po.setServicesJson(servicesJsonStr);
+        po.setThingJson(thingJsonStr);
+
+        thingModelRepository.saveThingModel(po);
 
     }
 
