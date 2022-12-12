@@ -35,11 +35,10 @@ public class AggrThingEntity implements Serializable {
     }
 
     public void poToEntity(DeviceThingCasePO po){
-        AggrThingEntity aggrThingEntity = new AggrThingEntity();
-        aggrThingEntity.setShadowJsonStr(po.getShadowJson());
-        aggrThingEntity.setPropertiesJsonStr(po.getPropertiesJson());
-        aggrThingEntity.setEventsJsonStr(po.getEventsJson());
-        aggrThingEntity.setServicesJsonStr(po.getServicesJson());
+        this.setShadowJsonStr(po.getShadowJson());
+        this.setPropertiesJsonStr(po.getPropertiesJson());
+        this.setEventsJsonStr(po.getEventsJson());
+        this.setServicesJsonStr(po.getServicesJson());
     }
 
     public String getShadowJsonStr() {

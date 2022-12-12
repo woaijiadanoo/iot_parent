@@ -3,14 +3,18 @@ package com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastr
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceSercetEntity;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrThingEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrDeviceSercetRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.AggrThingModelRepository;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DevicePO;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceSercetInfoPO;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.repository.po.DeviceThingCasePO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class AggrDeviceFactory {
@@ -38,6 +42,15 @@ public class AggrDeviceFactory {
         DevicePO devicePO = deviceRepository.findDeviceById(deviceId);
         DeviceSercetInfoPO deviceSercetInfoPO = deviceSercetRepository.findDeviceSercetById(deviceId);
 
+        // 获取设备对应的物模型，并且放入到设备聚合实体中
+        Optional<DeviceThingCasePO> thingModelOptional = thingModelRepository.findThingModelByDeviceId(deviceId);
+        AggrThingEntity aggrThingEntity = new AggrThingEntity();
+        // 设备是有可能没有物模型的
+        if(thingModelOptional.isPresent()){
+            DeviceThingCasePO thingCasePO = thingModelOptional.get();
+            aggrThingEntity.poToEntity(thingCasePO);
+        }
+
         AggrDeviceSercetEntity deviceSercetEntity = new AggrDeviceSercetEntity();
         deviceSercetEntity.poToEntity(deviceSercetInfoPO);
 
@@ -45,6 +58,7 @@ public class AggrDeviceFactory {
         deviceEntity.poToEntity(devicePO);
 
         deviceEntity.setDeviceSercetEntity(deviceSercetEntity);
+        deviceEntity.setThingEntity(aggrThingEntity);
 
         return deviceEntity;
     }
