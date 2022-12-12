@@ -1,5 +1,6 @@
 package com.ruyuan.jiangzh.iot.device.interfaces.controller;
 
+import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -12,12 +13,15 @@ import com.ruyuan.jiangzh.iot.base.web.RespCodeEnum;
 import com.ruyuan.jiangzh.iot.base.web.RespDTO;
 import com.ruyuan.jiangzh.iot.common.AuthorityRole;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrDeviceEntity;
+import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.entity.AggrThingEntity;
 import com.ruyuan.jiangzh.iot.device.domain.aggregates.aggregatedevice.infrastructure.factory.AggrDeviceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -75,6 +79,30 @@ public class ThingController extends BaseController {
             throw new AppException(RespCodeEnum.PARAM_IS_NULL.getCode(), JSON_FORMAT_ERROR);
         }
         return RespDTO.success();
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN','TENANT_ADMIN', 'USER')")
+    @RequestMapping(value = "/productId/{productId}/deviceId/{deviceId}/thing", method = RequestMethod.GET)
+    public RespDTO queryThingModel(
+            @PathVariable("productId") String productIdStr,
+            @PathVariable("deviceId") String deviceIdStr){
+        DeviceId deviceId = new DeviceId(toUUID(deviceIdStr));
+        ProductId productId = new ProductId(toUUID(productIdStr));
+
+        AggrDeviceEntity deviceEntity = deviceFactory.getDeviceById(deviceId);
+        Map<String, String> result = Maps.newHashMap();
+
+        if(deviceEntity != null && deviceEntity.getThingEntity() != null){
+            AggrThingEntity thingEntity = deviceEntity.getThingEntity();
+
+            result.put("shadow", thingEntity.getShadowJsonStr());
+            result.put("properties", thingEntity.getPropertiesJsonStr());
+            result.put("services", thingEntity.getServicesJsonStr());
+            result.put("events", thingEntity.getEventsJsonStr());
+        }
+
+        return RespDTO.success(result);
     }
 
 }

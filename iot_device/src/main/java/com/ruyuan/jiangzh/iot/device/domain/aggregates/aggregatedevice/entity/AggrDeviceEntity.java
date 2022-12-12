@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -69,6 +70,8 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
 
     // 三元组聚合实体
     private AggrDeviceSercetEntity deviceSercetEntity;
+
+    private AggrThingEntity thingEntity;
 
     private AggrDeviceSercetRepository deviceSercetRepository;
 
@@ -165,15 +168,27 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         DevicePO devicePO = deviceRepository.findDeviceById(deviceId);
         DeviceSercetInfoPO deviceSercetPO = deviceSercetRepository.findDeviceSercetById(deviceId);
 
+        // 获取设备对应的物模型，并且放入到设备聚合实体中
+        Optional<DeviceThingCasePO> thingModelOptional = thingModelRepository.findThingModelByDeviceId(deviceId);
+
         // 数据实体转换为聚合
         AggrDeviceEntity aggrDeviceEntity = new AggrDeviceEntity();
         AggrDeviceSercetEntity aggrDeviceSercetEntity = new AggrDeviceSercetEntity();
+        AggrThingEntity aggrThingEntity = new AggrThingEntity();
 
         aggrDeviceEntity.poToEntity(devicePO);
         aggrDeviceSercetEntity.poToEntity(deviceSercetPO);
 
+        // 设备是有可能没有物模型的
+        if(thingModelOptional.isPresent()){
+            DeviceThingCasePO thingCasePO = thingModelOptional.get();
+            aggrThingEntity.poToEntity(thingCasePO);
+        }
+
+
         // 拼装聚合根
         aggrDeviceEntity.setDeviceSercetEntity(aggrDeviceSercetEntity);
+        aggrDeviceEntity.setThingEntity(aggrThingEntity);
 
         return aggrDeviceEntity;
     }
@@ -558,6 +573,14 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
         this.deviceSercetEntity = deviceSercetEntity;
     }
 
+    public AggrThingEntity getThingEntity() {
+        return thingEntity;
+    }
+
+    public void setThingEntity(AggrThingEntity thingEntity) {
+        this.thingEntity = thingEntity;
+    }
+
     @Override
     public String toString() {
         return "AggrDeviceEntity{" +
@@ -573,6 +596,7 @@ public class AggrDeviceEntity extends CreateTimeIdBase<DeviceId> implements Seri
                 ", ipAddr='" + ipAddr + '\'' +
                 ", fwVersion='" + fwVersion + '\'' +
                 ", activeTime=" + activeTime +
+                ", thingEntity=" + thingEntity +
                 ", lastOnlineTime=" + lastOnlineTime +
                 ", deviceStatus=" + deviceStatus +
                 ", sdkType='" + sdkType + '\'' +
