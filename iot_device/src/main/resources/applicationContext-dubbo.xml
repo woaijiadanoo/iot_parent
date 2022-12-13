@@ -22,6 +22,9 @@
                    group="device"
                    interface="com.ruyuan.jiangzh.iot.actors.ActorService"/>
 
+    <dubbo:service ref="thingModelServiceImpl"
+                   interface="com.ruyuan.jiangzh.service.sdk.ThingModelServiceAPI"/>
+
     <!-- references -->
     <dubbo:reference check="false"
             interface="com.ruyuan.jiangzh.service.sdk.UserServiceAPI"/>

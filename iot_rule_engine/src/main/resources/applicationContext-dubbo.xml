@@ -27,4 +27,7 @@
     <dubbo:reference check="false"
                      interface="com.ruyuan.jiangzh.service.sdk.TenantServiceAPI"/>
 
+    <dubbo:reference check="false"
+                     interface="com.ruyuan.jiangzh.service.sdk.ThingModelServiceAPI"/>
+
 </beans>
