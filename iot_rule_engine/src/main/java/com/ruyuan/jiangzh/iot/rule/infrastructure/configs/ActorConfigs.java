@@ -14,6 +14,7 @@ import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.rpc.RuleEngineRpcManage
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.script.JsInvokeService;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.engine.common.script.impls.JsExecutorService;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
+import com.ruyuan.jiangzh.service.sdk.ThingModelServiceAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,9 @@ public class ActorConfigs {
 
     @Resource
     private TenantServiceAPI tenantServiceAPI;
+
+    @Resource
+    private ThingModelServiceAPI thingModelServiceAPI;
 
     @Resource
     private RuleChainDomainService ruleChainDomainService;
@@ -43,7 +47,9 @@ public class ActorConfigs {
     @Bean(name = "actorService")
     public ActorService actorService(){
         DefaultActorService actorService = new DefaultActorService();
-        RuleEngineActorSystemContext actorSystemContext  =new RuleEngineActorSystemContext(ruleChainDomainService,tenantServiceAPI);
+        RuleEngineActorSystemContext actorSystemContext  =
+                new RuleEngineActorSystemContext(ruleChainDomainService,
+                        thingModelServiceAPI ,tenantServiceAPI);
         // 初始化ActorSystem和ActorSystemContext
         actorService.initActorSystem(actorSystemContext);
 

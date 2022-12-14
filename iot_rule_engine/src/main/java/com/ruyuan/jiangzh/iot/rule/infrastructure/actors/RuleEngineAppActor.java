@@ -21,10 +21,14 @@ import com.ruyuan.jiangzh.iot.actors.msg.rule.vo.TsKvListProtoVO;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
 import com.ruyuan.jiangzh.iot.base.uuid.tenant.TenantId;
+import com.ruyuan.jiangzh.iot.common.IoTStringUtils;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.DeviceToRuleEngineMsg;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.FromDeviceMsgType;
 import com.ruyuan.jiangzh.iot.rule.infrastructure.configs.ActorConfigs;
+import com.ruyuan.jiangzh.service.dto.ThingModelTransportDTO;
+import com.ruyuan.jiangzh.service.dto.ThingModelType;
 import com.ruyuan.jiangzh.service.sdk.TenantServiceAPI;
+import com.ruyuan.jiangzh.service.sdk.ThingModelServiceAPI;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +39,7 @@ public class RuleEngineAppActor  extends AppActor {
 
     private final TenantServiceAPI tenantService;
 
+    private final ThingModelServiceAPI thingModelService;
 
     private static final String RECIVE_TIME = "reciveTime";
     private static final String TENANT_ID = "tenantId";
@@ -50,8 +55,10 @@ public class RuleEngineAppActor  extends AppActor {
         if(actorSystemContext instanceof RuleEngineActorSystemContext){
             RuleEngineActorSystemContext systemContext = (RuleEngineActorSystemContext) actorSystemContext;
             this.tenantService = systemContext.getTenantService();
+            this.thingModelService = systemContext.getThingModelService();
         }else{
             this.tenantService = null;
+            this.thingModelService = null;
         }
         tenantActos = Maps.newHashMap();
     }
@@ -108,7 +115,28 @@ public class RuleEngineAppActor  extends AppActor {
         // 将转换好的Msg 发给RuleChain
         TsKvListProtoVO kvProto = postTelemetryMsg.getKvList();
 
-        JsonObject dataJson = getJsonObject(kvProto.getKvs());
+        // 将协议网关需要的内容转换为jsonObject，交给后续的actor处理
+        ThingModelTransportDTO dto = new ThingModelTransportDTO(
+                deviceId, ThingModelType.PROPERTIES.getCode(), postTelemetryMsg.getKvList().getKvs());
+
+        /*
+            物模型输出的样子
+            [
+                {id:"a" , "type":"int", value :"1111"}
+            ]
+
+
+            扩展的规则需要的样子
+            {
+                "a" : 1,
+                "b" : "abc"
+            }
+         */
+        String thingModelStr = thingModelService.transportToThingModel(dto);
+        if(IoTStringUtils.isBlank(thingModelStr)){
+            return;
+        }
+        JsonObject dataJson = getJsonObject(thingModelStr);
 
         long reciveTime = kvProto.getReviceTime();
 
@@ -138,28 +166,47 @@ public class RuleEngineAppActor  extends AppActor {
 
     /*
         将 KeyValueProtoVO 中封装的设备上报数据，转换为Data的json
-     */
-    private JsonObject getJsonObject(List<KeyValueProtoVO> kvs) {
-        JsonObject json = new JsonObject();
-        for(KeyValueProtoVO vo : kvs){
-            switch (vo.getType()) {
-                case BOOLEAN_V:
-                    json.addProperty(vo.getKey(), vo.getBoolValue());
-                    break;
-                case LONG_V:
-                    json.addProperty(vo.getKey(), vo.getLongValue());
-                    break;
-                case DOUBLE_V:
-                    json.addProperty(vo.getKey(), vo.getDoubleValue());
-                    break;
-                case STRING_V:
-                    json.addProperty(vo.getKey(), vo.getStringValue());
-                    break;
-                default:
-            }
+
+        {
+            "a" : 1,
+            "b" : "abc"
         }
-        return json;
-    }
+
+     */
+
+
+        /*
+            根据协议网关的返回进行处理
+         */
+//    private JsonObject getJsonObject(List<KeyValueProtoVO> kvs) {
+//        JsonObject json = new JsonObject();
+//        for(KeyValueProtoVO vo : kvs){
+//            switch (vo.getType()) {
+//                case BOOLEAN_V:
+//                    json.addProperty(vo.getKey(), vo.getBoolValue());
+//                    break;
+//                case LONG_V:
+//                    json.addProperty(vo.getKey(), vo.getLongValue());
+//                    break;
+//                case DOUBLE_V:
+//                    json.addProperty(vo.getKey(), vo.getDoubleValue());
+//                    break;
+//                case STRING_V:
+//                    json.addProperty(vo.getKey(), vo.getStringValue());
+//                    break;
+//                default:
+//            }
+//        }
+//        return json;
+//    }
+
+        /*
+            根据物模型的返回进行处理
+         */
+        private JsonObject getJsonObject(String thingModelStr) {
+
+            return null;
+        }
 
     private void onComponentEventMsg(ComponentEventMsg msg) {
         ActorRef tenantActor = getOrCreateTenants(msg.getTenantId());
