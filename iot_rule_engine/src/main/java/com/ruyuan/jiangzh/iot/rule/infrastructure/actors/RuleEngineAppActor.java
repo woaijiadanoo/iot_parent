@@ -3,8 +3,7 @@ package com.ruyuan.jiangzh.iot.rule.infrastructure.actors;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.ruyuan.jiangzh.iot.actors.ActorSystemContext;
 import com.ruyuan.jiangzh.iot.actors.ContextBaseCreator;
 import com.ruyuan.jiangzh.iot.actors.app.AppActor;
@@ -17,6 +16,7 @@ import com.ruyuan.jiangzh.iot.actors.msg.rule.PostTelemetryMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.rule.TransportToRuleEngineActorMsg;
 import com.ruyuan.jiangzh.iot.actors.msg.rule.TransportToRuleEngineActorMsgWrapper;
 import com.ruyuan.jiangzh.iot.actors.msg.rule.vo.KeyValueProtoVO;
+import com.ruyuan.jiangzh.iot.actors.msg.rule.vo.KeyValueType;
 import com.ruyuan.jiangzh.iot.actors.msg.rule.vo.TsKvListProtoVO;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.iot.base.uuid.device.DeviceId;
@@ -35,7 +35,7 @@ import java.util.Map;
 
 import static com.ruyuan.jiangzh.iot.rule.infrastructure.actors.messages.FromDeviceMsgType.POST_TELEMETRY_MSG;
 
-public class RuleEngineAppActor  extends AppActor {
+public class RuleEngineAppActor extends AppActor {
 
     private final TenantServiceAPI tenantService;
 
@@ -45,6 +45,12 @@ public class RuleEngineAppActor  extends AppActor {
     private static final String TENANT_ID = "tenantId";
     private static final String DEVICE_ID = "deviceId";
 
+    private static final String IDENTIFIER_KEY_NAME = "identifier";
+
+    private static final String TYPE_KEY_NAME = "type";
+
+    private static final String VALUE_KEY_NAME = "value";
+
     private final Gson gson = new Gson();
 
 
@@ -52,11 +58,11 @@ public class RuleEngineAppActor  extends AppActor {
 
     public RuleEngineAppActor(ActorSystemContext actorSystemContext) {
         super(actorSystemContext);
-        if(actorSystemContext instanceof RuleEngineActorSystemContext){
+        if (actorSystemContext instanceof RuleEngineActorSystemContext) {
             RuleEngineActorSystemContext systemContext = (RuleEngineActorSystemContext) actorSystemContext;
             this.tenantService = systemContext.getTenantService();
             this.thingModelService = systemContext.getThingModelService();
-        }else{
+        } else {
             this.tenantService = null;
             this.thingModelService = null;
         }
@@ -65,14 +71,14 @@ public class RuleEngineAppActor  extends AppActor {
 
     @Override
     protected boolean process(IoTActorMessage msg) {
-        switch (msg.getMsgType()){
+        switch (msg.getMsgType()) {
             case SERVICE_TO_RULE_ENGINE_MSG:
                 // service调用ruleEngine
-                onServiceToRuleEngineMsg((ServiceToRuleEngineMsg)msg);
+                onServiceToRuleEngineMsg((ServiceToRuleEngineMsg) msg);
                 break;
             case COMPONENT_EVENT_MSG:
                 // 新增，修改或删除等事件变更的通知
-                onComponentEventMsg((ComponentEventMsg)msg);
+                onComponentEventMsg((ComponentEventMsg) msg);
                 break;
             case TRANSPORT_TO_RULE_ENGINE_ACTOR_MSG_WRAPPER:
                 // 设备投递给规则引擎的消息
@@ -102,9 +108,9 @@ public class RuleEngineAppActor  extends AppActor {
     private void onTransportToRuleEngineActorMsgWrapper(TransportToRuleEngineActorMsgWrapper wrapper) {
         // 消息转换 Wrapper -> ruleEngineMsg
         TransportToRuleEngineActorMsg msg = wrapper.getMsg();
-        if(msg != null){
+        if (msg != null) {
             // 分类型进行消息处理
-            if(msg.getPostTelemetryMsg() != null){
+            if (msg.getPostTelemetryMsg() != null) {
                 handlePostTelemetryRequest(wrapper.getTenantId(), wrapper.getDeviceId(), msg.getPostTelemetryMsg());
             }
         }
@@ -133,22 +139,24 @@ public class RuleEngineAppActor  extends AppActor {
             }
          */
         String thingModelStr = thingModelService.transportToThingModel(dto);
-        if(IoTStringUtils.isBlank(thingModelStr)){
+        if (IoTStringUtils.isBlank(thingModelStr)) {
             return;
         }
         JsonObject dataJson = getJsonObject(thingModelStr);
 
+        System.err.println("RuleEngineAppActor handlePostTelemetryRequest dataJson : "+ dataJson.toString());
+
         long reciveTime = kvProto.getReviceTime();
 
-        Map<String,String> data = Maps.newHashMap();
-        data.put(RECIVE_TIME, reciveTime+"");
+        Map<String, String> data = Maps.newHashMap();
+        data.put(RECIVE_TIME, reciveTime + "");
         data.put(TENANT_ID, tenantId.toString());
         data.put(DEVICE_ID, deviceId.toString());
 
         IoTMsgMetaData metaData = new IoTMsgMetaData(data);
 
         IoTMsg ioTMsg = new IoTMsg(
-                UUIDHelper.genUuid(), POST_TELEMETRY_MSG.name(),  gson.toJson(dataJson), metaData);
+                UUIDHelper.genUuid(), POST_TELEMETRY_MSG.name(), gson.toJson(dataJson), metaData);
 
         DeviceToRuleEngineMsg deviceToRuleEngineMsg = new DeviceToRuleEngineMsg(tenantId, ioTMsg);
         deviceToRuleEngineMsg.setFromDeviceMsgType(POST_TELEMETRY_MSG);
@@ -200,17 +208,52 @@ public class RuleEngineAppActor  extends AppActor {
 //        return json;
 //    }
 
-        /*
-            根据物模型的返回进行处理
-         */
-        private JsonObject getJsonObject(String thingModelStr) {
-
-            return null;
+    /*
+        根据物模型的返回进行处理
+     */
+    private JsonObject getJsonObject(String thingModelStr) {
+        JsonObject result = new JsonObject();
+            /*
+                [
+                    {"id": "111", "type": 5, "value": "111"}
+                ]
+             */
+        JsonArray rootArray = new JsonParser().parse(thingModelStr).getAsJsonArray();
+        for (JsonElement ele : rootArray) {
+            JsonObject eleObject = ele.getAsJsonObject();
+            parseThingModel(result, eleObject);
         }
+
+        return result;
+    }
+
+    private void parseThingModel(JsonObject result, JsonObject eleObject) {
+        // 判断数据类型
+        int typeCode = eleObject.get(TYPE_KEY_NAME).getAsInt();
+        KeyValueType type = KeyValueType.getByTypeCode(typeCode);
+        String key = eleObject.get(IDENTIFIER_KEY_NAME).getAsString();
+        JsonElement valueElement = eleObject.get(VALUE_KEY_NAME);
+        switch (type) {
+            case BOOLEAN_V:
+                result.addProperty(key, valueElement.getAsBoolean());
+                break;
+            case LONG_V:
+                result.addProperty(key, valueElement.getAsBigInteger());
+                break;
+            case DOUBLE_V:
+                result.addProperty(key, valueElement.getAsDouble());
+                break;
+            case STRING_V:
+                result.addProperty(key, valueElement.getAsString());
+                break;
+            default:
+        }
+        // 将key + value按照对应类型放入result
+    }
 
     private void onComponentEventMsg(ComponentEventMsg msg) {
         ActorRef tenantActor = getOrCreateTenants(msg.getTenantId());
-        if(tenantActor != null){
+        if (tenantActor != null) {
             tenantActor.tell(msg, ActorRef.noSender());
         }
     }
@@ -234,7 +277,7 @@ public class RuleEngineAppActor  extends AppActor {
 
     private ActorRef getOrCreateTenants(TenantId tenantId) {
         ActorRef tenantActor = tenantActos.get(tenantId);
-        if(tenantActor != null){
+        if (tenantActor != null) {
             return tenantActor;
         }
 
@@ -250,7 +293,7 @@ public class RuleEngineAppActor  extends AppActor {
     }
 
     public static class ActorCreator extends ContextBaseCreator<RuleEngineAppActor> {
-        public ActorCreator(ActorSystemContext actorSystemContext){
+        public ActorCreator(ActorSystemContext actorSystemContext) {
             super(actorSystemContext);
         }
 

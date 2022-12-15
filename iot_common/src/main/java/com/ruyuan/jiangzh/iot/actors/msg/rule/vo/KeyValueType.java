@@ -10,6 +10,16 @@ public enum KeyValueType {
         this.typeCode = typeCode;
     }
 
+    public static KeyValueType getByTypeCode(int code){
+        for(KeyValueType type : values()){
+            if(type.getTypeCode() == code){
+                return type;
+            }
+        }
+
+        return null;
+    }
+
     public int getTypeCode() {
         return typeCode;
     }

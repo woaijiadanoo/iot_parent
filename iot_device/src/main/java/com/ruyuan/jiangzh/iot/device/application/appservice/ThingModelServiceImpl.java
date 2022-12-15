@@ -76,8 +76,12 @@ public class ThingModelServiceImpl implements ThingModelServiceAPI {
                continue;
             }
 
-            JsonObject identifierJsonObject = identifierEle.getAsJsonObject();
-            String identifier = identifierJsonObject.getAsString();
+            /*
+                {
+                    "identifier" : "HighLight"
+                }
+             */
+            String identifier = identifierEle.getAsString();
 
             if(kvsMap.containsKey(identifier)){
                 resultJsonArray.add(protoTransport(kvsMap.get(identifier), propertyJsonObject));
@@ -85,7 +89,7 @@ public class ThingModelServiceImpl implements ThingModelServiceAPI {
 
         }
 
-        return null;
+        return resultJsonArray.toString();
     }
 
     private JsonObject protoTransport(KeyValueProtoVO protoVO, JsonObject jsonObject) {
