@@ -36,7 +36,7 @@ import java.util.concurrent.Executors;
  * @version 1.0
  * @description: rpc调用的实现
  */
-@Service
+//@Service
 public class RpcManagerServiceImpl implements RpcManagerService{
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
