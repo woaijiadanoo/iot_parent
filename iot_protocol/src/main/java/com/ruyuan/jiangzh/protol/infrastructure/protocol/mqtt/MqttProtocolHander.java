@@ -9,6 +9,7 @@ import com.ruyuan.jiangzh.iot.actors.msg.messages.SubscribeToAttrUpdateMsg;
 import com.ruyuan.jiangzh.iot.base.uuid.UUIDHelper;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.AbstractProtocolService;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.ProtocolService;
+import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ChannelCounts;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.common.ProtocolServiceCallback;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.exceptions.AdaptorException;
 import com.ruyuan.jiangzh.protol.infrastructure.protocol.messages.auth.DeviceAuthReqMsg;
@@ -192,6 +193,9 @@ public class MqttProtocolHander extends ChannelInboundHandlerAdapter
 
             // 通道管理
             protocolService.registerSession(sessionInfo, this);
+
+            // 增加连接数统计
+            ChannelCounts.newChannel();
 
             ctx.writeAndFlush(createMqttConnAckMsg(MqttConnectReturnCode.CONNECTION_ACCEPTED));
         }
